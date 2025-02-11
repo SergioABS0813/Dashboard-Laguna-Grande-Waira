@@ -3,6 +3,7 @@ package pe.grande.laguna.dashboard.Controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.grande.laguna.dashboard.Service.VRMService;
 
 import java.util.HashMap;
@@ -20,9 +21,12 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard() {
+        
+        /*
 
         Map<String, Object> credentials = new HashMap<>();
 
+        // No hacer la consulta a la API si ya se cuenta con un Barear token activo
         // Las credenciales tendrán que sacarse de DB, el usuario va a configurar los accesos a cada plataforma (consultas a DB)
 
         credentials.put("username", "");
@@ -40,7 +44,16 @@ public class DashboardController {
 
         }
 
+        * */
+
         return "dashboard";
     }
+
+    @GetMapping("/logout")
+    public String logout(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("logoutMessage", "Se cerró sesión exitosamente");
+        return "redirect:/login?logout";
+    }
+
 
 }
