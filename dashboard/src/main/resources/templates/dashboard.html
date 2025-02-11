@@ -109,15 +109,15 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark" href="../pages/sign-in.html">
-                    <i class="material-symbols-rounded opacity-5">login</i>
-                    <span class="nav-link-text ms-1">Sign In</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link text-dark" href="../pages/sign-up.html">
                     <i class="material-symbols-rounded opacity-5">assignment</i>
                     <span class="nav-link-text ms-1">Sign Up</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" th:href="@{/logout}">
+                    <i class="material-symbols-rounded opacity-5">logout</i>
+                    <span class="nav-link-text ms-1">Log Out</span>
                 </a>
             </li>
         </ul>
@@ -149,9 +149,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 <ul class="navbar-nav d-flex align-items-center  justify-content-end">
                     <li class="nav-item d-flex align-items-center">
                         <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://www.creative-tim.com/builder?ref=navbar-material-dashboard">Online Builder</a>
-                    </li>
-                    <li class="mt-1">
-                        <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
                     </li>
                     <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
                         <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
@@ -740,13 +737,13 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             <div class="container-fluid">
                 <div class="row align-items-center justify-content-lg-between">
                     <div class="col-lg-6 mb-lg-0 mb-4">
-                        <div class="copyright text-center text-sm text-muted text-lg-start">
-                            © <script>
-                            document.write(new Date().getFullYear())
-                        </script>,
-                            made with <i class="fa fa-heart"></i> by
-                            <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-                            for a better web.
+                       <div class="copyright text-center text-sm text-muted text-lg-start">
+                            © <script> document.write(new Date().getFullYear()) </script>,
+                            by
+                            <a class="font-weight-bold" target="_blank">Alonso Escobedo</a>
+                            &
+                            <a class="font-weight-bold" target="_blank">Sergio Bustamante</a>
+                            for Innovatel
                         </div>
                     </div>
                     <div class="col-lg-6">

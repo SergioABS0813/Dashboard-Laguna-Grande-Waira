@@ -21,7 +21,7 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard() {
-        
+
         /*
 
         Map<String, Object> credentials = new HashMap<>();
