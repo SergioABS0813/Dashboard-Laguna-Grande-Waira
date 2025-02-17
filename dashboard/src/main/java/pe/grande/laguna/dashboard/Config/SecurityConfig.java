@@ -43,7 +43,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas
+                        // Recursos públicos
                         .requestMatchers(HttpMethod.GET, "/public/**", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/login").permitAll()
                         // Rutas protegidas por rol
@@ -52,12 +52,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(new AccessDeniedHandler() {
-                            @Override
-                            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                                response.sendRedirect("/access-denied");
-                            }
-                        })
+                        .accessDeniedHandler(accessDeniedHandler())
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
@@ -72,23 +67,7 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
-                        .logoutSuccessUrl("/login?logout=true")
-                        .logoutSuccessHandler(new SimpleUrlLogoutSuccessHandler() {
-                            @Override
-                            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                if (authentication != null) {
-                                    String userEmail = authentication.getName();
-                                    Optional<User> usuario = usersRepository.findByEmail(userEmail);
-                                    usuario.ifPresent(u -> {
-                                        u.setActive(false);
-                                        usersRepository.save(u);
-                                    });
-                                }
-                                request.getSession().setAttribute("logoutMessage", "Se cerró sesión exitosamente");
-                                setDefaultTargetUrl("/");
-                                super.onLogoutSuccess(request, response, authentication);
-                            }
-                        })
+                        .logoutSuccessHandler(logoutSuccessHandler())
                 );
 
         return http.build();
@@ -101,25 +80,45 @@ public class SecurityConfig {
             String userEmail = authentication.getName();
             Optional<User> usuario = usersRepository.findByEmail(userEmail);
 
-            usuario.ifPresent(user -> {
-                session.setAttribute("user", user);
-            });
+            usuario.ifPresent(user -> session.setAttribute("user", user));
 
             // Redirigir según el rol
-            String redirectUrl = "/dashboard";
+            String redirectUrl = "/micronetworks";
             for (GrantedAuthority authority : authentication.getAuthorities()) {
-                String role = authority.getAuthority();
-                switch (role) {
-                    case "ADMIN":
-                        redirectUrl = "/dashboard";
-                        break;
-                    case "USER":
-                        redirectUrl = "/dashboard";
-                        break;
+                if ("ADMIN".equals(authority.getAuthority())) {
+                    redirectUrl = "/micronetworks";
+                    break;
                 }
             }
 
             new DefaultRedirectStrategy().sendRedirect(request, response, redirectUrl);
         };
+    }
+
+    @Bean
+    public SimpleUrlLogoutSuccessHandler logoutSuccessHandler() {
+        return new SimpleUrlLogoutSuccessHandler() {
+            @Override
+            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+                    throws IOException, ServletException {
+
+                if (authentication != null) {
+                    String userEmail = authentication.getName();
+                    usersRepository.findByEmail(userEmail).ifPresent(user -> {
+                        user.setActive(false);
+                        usersRepository.save(user);
+                    });
+                }
+
+                request.getSession().setAttribute("logoutMessage", "Se cerró sesión exitosamente");
+                setDefaultTargetUrl("/login?logout=true");
+                super.onLogoutSuccess(request, response, authentication);
+            }
+        };
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
 }

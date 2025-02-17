@@ -20,8 +20,19 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = usersRepository.findByEmail(email);
-        return user.map(UserDetailsImplementation::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        System.out.println("Buscando usuario por email: " + email);
+        Optional<User> userOptional = usersRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            System.out.println("Usuario no encontrado: " + email);
+            throw new UsernameNotFoundException("Usuario no encontrado: " + email);
+        }
+        User user = userOptional.get();
+        System.out.println("Usuario encontrado: " + user.getEmail());
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .roles(user.getRole()) // Asegúrate de que user.getRole() devuelve algo como "USER" o "ADMIN"
+                .build();
     }
+
 }

@@ -1,5 +1,6 @@
 package pe.grande.laguna.dashboard.Repository;
 
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import pe.grande.laguna.dashboard.Entity.User;

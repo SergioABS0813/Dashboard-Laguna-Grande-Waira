@@ -35,10 +35,15 @@ public class LoginController {
 
         // Si el usuario ya está autenticado, lo redirigimos al dashboard
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
-            return "redirect:/dashboard";
+            System.out.println("EL USUARIO YA ESTÁ AUTENTICADO");
+            return "redirect:/micronetworks";
         }
 
         if (error != null) {
+
+            System.out.println(auth.getName());
+
+            System.out.println("CREDENCIALES INCORRECTAS");
             model.addAttribute("errorMessage", "Credenciales incorrectas. Intenta nuevamente.");
         }
 

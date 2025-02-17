@@ -18,7 +18,6 @@ public class DashboardController {
         this.VRMService = VRMService;
     }
 
-
     @GetMapping("/dashboard")
     public String dashboard() {
 
