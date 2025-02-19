@@ -18,10 +18,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.session.data.mongo.JdkMongoSessionConverter;
 import pe.grande.laguna.dashboard.Entity.User;
 import pe.grande.laguna.dashboard.Repository.UsersRepository;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Optional;
 
 @Configuration
@@ -121,4 +123,10 @@ public class SecurityConfig {
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
+
+    @Bean
+    public JdkMongoSessionConverter jdkMongoSessionConverter() {
+        return new JdkMongoSessionConverter(Duration.ofMinutes(30));
+    }
+
 }

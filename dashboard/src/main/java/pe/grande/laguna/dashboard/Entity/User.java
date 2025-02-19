@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -28,6 +29,9 @@ public class User implements Serializable {
 
     @Field(value = "active")
     private boolean active = true;
+
+    @Field(value = "micronetworkList")
+    private ArrayList<String> micronetworkList = new ArrayList<>();
 
     public User() {}
 
@@ -75,5 +79,13 @@ public class User implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public ArrayList<String> getMicronetworkList() {
+        return micronetworkList;
+    }
+
+    public void setMicronetworkList(ArrayList<String> micronetworkList) {
+        this.micronetworkList = micronetworkList;
     }
 }

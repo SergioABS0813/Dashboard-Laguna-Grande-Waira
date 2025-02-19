@@ -27,7 +27,7 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario no encontrado: " + email);
         }
         User user = userOptional.get();
-        System.out.println("Usuario encontrado: " + user.getEmail());
+        System.out.println("Usuario encontrado: " + user.getEmail() + " " + user.getId());
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
