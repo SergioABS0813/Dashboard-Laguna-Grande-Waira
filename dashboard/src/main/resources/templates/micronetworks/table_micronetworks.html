@@ -166,8 +166,8 @@
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Tables</li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Páginas</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Instalaciones</li>
                 </ol>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
@@ -292,9 +292,9 @@
                         <div class="card my-4">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                                 <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
-                                    <h6 class="text-white text-capitalize ps-3 d-inline-block">Microredes</h6>
+                                    <h6 class="text-white text-capitalize ps-3 d-inline-block">Instalaciones</h6>
                                     <a th:href="@{/micronetworks/create}" class="btn btn-secondary btn-sm position-absolute end-3 top-50 translate-middle-y">
-                                        + Añadir Microred
+                                        + Añadir Instalación
                                     </a>
                                 </div>
 
@@ -323,8 +323,12 @@
                                                 </div>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <span class="badge badge-sm bg-gradient-success" th:text="${microNetwork.getStatus()}">Online</span>
+                                                <span th:if="${microNetwork.getStatus().equals('ACTIVO')}" class="badge badge-sm bg-gradient-success" th:text="${microNetwork.getStatus()}">Online</span>
+                                                <span th:if="${microNetwork.getStatus().equals('INACTIVO')}" class="badge badge-sm bg-gradient-danger" th:text="${microNetwork.getStatus()}">Online</span>
                                             </td>
+
+
+
                                             <td class="align-middle text-center">
                                                 <span class="text-secondary text-xs font-weight-bold" th:text="${microNetwork.getLat()}">Latitud</span>
                                             </td>
@@ -358,11 +362,7 @@
 
                 <div class="card my-4" style="height: 740px;">
 
-                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
-                            <h6 class="text-white text-capitalize ps-3 d-inline-block">Mapa</h6>
-                        </div>
-                    </div>
+
 
                     <div class="card-body p-0" style="height: 600px;">
                         <!-- Ajusta el 60px según la altura aproximada del header -->
@@ -382,13 +382,12 @@
             <div class="container-fluid">
                 <div class="row align-items-center justify-content-lg-between">
                     <div class="col-lg-6 mb-lg-0 mb-4">
+
                         <div class="copyright text-center text-sm text-muted text-lg-start">
-                            © <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-                            document.write(new Date().getFullYear())
-                        </script>,
-                            made with <i class="fa fa-heart"></i> by
-                            <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-                            for a better web.
+                            © <script> document.write(new Date().getFullYear()) </script>,
+                            by
+                            <a  class="font-weight-bold" target="_blank">GTR PUCP</a>
+                            for Innovatel
                         </div>
                     </div>
                     <div class="col-lg-6">
