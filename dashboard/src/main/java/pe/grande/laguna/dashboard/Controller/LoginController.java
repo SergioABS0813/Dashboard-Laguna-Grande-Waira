@@ -41,16 +41,10 @@ public class LoginController {
         // Si el usuario ya está autenticado, agregamos información a la sesión y redirigimos
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
 
-
-            System.out.println(auth.getName());
-
-            // Supongamos que tu repositorio tiene un método findByUsername
-            Optional<User> userEntity = usersRepository.findByEmail(auth.getName());
-            if (userEntity.isPresent()) {
-                // Guarda el objeto completo en la sesión
-
-                System.out.println("GET NAME:" + auth.getName());
-                session.setAttribute("user", userEntity.get());
+            Optional<User> userOptional = usersRepository.findByEmail(auth.getName());
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                session.setAttribute("user", user); // Guardamos solo el objeto User, no el Optional
             }
 
             return "redirect:/micronetworks";

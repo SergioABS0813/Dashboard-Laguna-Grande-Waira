@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -30,15 +31,34 @@ public class User implements Serializable {
     @Field(value = "active")
     private boolean active = true;
 
+    @Field(value = "phone")
+    private String phone;
+
+    @Field(value = "name")
+    private String name;
+
+    @Field(value = "lastname")
+    private String lastname;
+
+    @Field(value = "creationTime")
+    private Date creationTime;
+
     @Field(value = "micronetworkList")
     private ArrayList<String> micronetworkList = new ArrayList<>();
 
     public User() {}
 
-    public User(String email, String password, String role) {
+    public User(@NonNull String id, String email, String password, String role, boolean active, String phone, String name, String lastname, Date creationTime, ArrayList<String> micronetworkList) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.active = active;
+        this.phone = phone;
+        this.name = name;
+        this.lastname = lastname;
+        this.creationTime = creationTime;
+        this.micronetworkList = micronetworkList;
     }
 
     public String getId() {
@@ -87,5 +107,37 @@ public class User implements Serializable {
 
     public void setMicronetworkList(ArrayList<String> micronetworkList) {
         this.micronetworkList = micronetworkList;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
     }
 }

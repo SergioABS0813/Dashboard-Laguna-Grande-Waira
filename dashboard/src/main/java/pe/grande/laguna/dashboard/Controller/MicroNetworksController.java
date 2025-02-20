@@ -21,11 +21,19 @@ public class MicroNetworksController {
     @GetMapping("/micronetworks")
     public String table(Model model) {
 
+        ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+        model.addAttribute("microNetworkList", microNetworkList);
 
+        return "micronetworks/table_micronetworks";
+    }
+
+    @GetMapping("/micronetworks/create")
+    public String add(Model model) {
 
         ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
         model.addAttribute("microNetworkList", microNetworkList);
 
-        return "table_micronetworks";
+        return "micronetworks/add_micronetwork";
     }
+
 }

@@ -47,6 +47,28 @@ public class MicroNetwork implements Serializable {
     @Field(value = "timeEdition")
     private Date timeEdition;
 
+    @Field(value = "status")
+    private String status;
+
+    public MicroNetwork() {
+    }
+
+    public MicroNetwork(@NonNull String id, String tokenVRM, String tokenWeatherLink, String tokenSparkMeter, String siteVRM, String siteWeatherLink, String siteSparkMeter, String alias, String lat, String lon, Date timeCreation, Date timeEdition, String status) {
+        this.id = id;
+        this.tokenVRM = tokenVRM;
+        this.tokenWeatherLink = tokenWeatherLink;
+        this.tokenSparkMeter = tokenSparkMeter;
+        this.siteVRM = siteVRM;
+        this.siteWeatherLink = siteWeatherLink;
+        this.siteSparkMeter = siteSparkMeter;
+        this.alias = alias;
+        this.lat = lat;
+        this.lon = lon;
+        this.timeCreation = timeCreation;
+        this.timeEdition = timeEdition;
+        this.status = status;
+    }
+
     public String getId() {
         return id;
     }
@@ -141,5 +163,13 @@ public class MicroNetwork implements Serializable {
 
     public void setTimeEdition(Date timeEdition) {
         this.timeEdition = timeEdition;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
