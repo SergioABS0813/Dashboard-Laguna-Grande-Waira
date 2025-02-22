@@ -37,6 +37,17 @@
         }
     </style>
 
+
+    <!-- START: SweetAlert2  -->
+    <!-- SweetAlert2 CSS (opcional si deseas estilos por defecto) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- END: SweetAlert2  -->
+
+
+
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -241,7 +252,7 @@
                     </div>
                     <div class="card-body">
                         <!-- Objeto microNetwork en el modelo -->
-                        <form th:action="@{/micronetworks/create}" th:object="${microNetwork}" method="post">
+                        <form id="createMicroredForm" th:action="@{/micronetworks/create}" th:object="${microNetwork}" method="post">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="input-group input-group-outline mb-3">
@@ -527,7 +538,54 @@
         });
     </script>
 <!-- END Leaflet: Empleado para el mapa -->
-<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+
+<!-- START JS ALERTA -->
+
+    <style>
+        /* Asegura que el overlay de SweetAlert2 esté por encima de tu sidebar */
+        .swal2-container {
+            z-index: 999999 !important; /* número muy alto para sobrepasar el sidebar */
+        }
+        /* Opcional: oscurecer más el fondo al mostrar la alerta */
+        .swal2-container.swal2-backdrop-show {
+            background: rgba(0, 0, 0, 0.7) !important; /* más opaco que el default */
+        }
+    </style>
+
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("createMicroredForm");
+
+            form.addEventListener("submit", function(event) {
+                // Detenemos el envío inmediato del formulario
+                event.preventDefault();
+
+                Swal.fire({
+                    title: '¿Crear Microred?',
+                    text: 'Confirma que deseas crear la microred con los datos ingresados.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, crear',
+                    cancelButtonText: 'Cancelar',
+                    allowOutsideClick: false, // Bloquea clics fuera de la alerta
+                    // backdrop: 'rgba(0,0,0,0.7)', // Alternativa para oscurecer (o usar CSS)
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Si el usuario confirma, se envía el formulario
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- END JS ALERTA -->
+
+
+
+    <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
 
 </body>
