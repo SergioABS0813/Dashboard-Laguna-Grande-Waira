@@ -21,13 +21,6 @@ public class MicroNetwork implements Serializable {
     @NonNull
     private String id;
 
-    @Field(value = "tokenVRM")
-    private String tokenVRM;
-    @Field(value = "tokenWeatherLink")
-    private String tokenWeatherLink;
-    @Field(value = "tokenSparkMeter")
-    private String tokenSparkMeter;
-
     @Field(value = "siteVRM")
     private String siteVRM;
     @Field(value = "siteWeatherLink")
@@ -53,11 +46,8 @@ public class MicroNetwork implements Serializable {
     public MicroNetwork() {
     }
 
-    public MicroNetwork(@NonNull String id, String tokenVRM, String tokenWeatherLink, String tokenSparkMeter, String siteVRM, String siteWeatherLink, String siteSparkMeter, String alias, String lat, String lon, Date timeCreation, Date timeEdition, String status) {
+    public MicroNetwork(@NonNull String id, String siteVRM, String siteWeatherLink, String siteSparkMeter, String alias, String lat, String lon, Date timeCreation, Date timeEdition, String status) {
         this.id = id;
-        this.tokenVRM = tokenVRM;
-        this.tokenWeatherLink = tokenWeatherLink;
-        this.tokenSparkMeter = tokenSparkMeter;
         this.siteVRM = siteVRM;
         this.siteWeatherLink = siteWeatherLink;
         this.siteSparkMeter = siteSparkMeter;
@@ -75,30 +65,6 @@ public class MicroNetwork implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getTokenVRM() {
-        return tokenVRM;
-    }
-
-    public void setTokenVRM(String tokenVRM) {
-        this.tokenVRM = tokenVRM;
-    }
-
-    public String getTokenWeatherLink() {
-        return tokenWeatherLink;
-    }
-
-    public void setTokenWeatherLink(String tokenWeatherLink) {
-        this.tokenWeatherLink = tokenWeatherLink;
-    }
-
-    public String getTokenSparkMeter() {
-        return tokenSparkMeter;
-    }
-
-    public void setTokenSparkMeter(String tokenSparkMeter) {
-        this.tokenSparkMeter = tokenSparkMeter;
     }
 
     public String getSiteVRM() {

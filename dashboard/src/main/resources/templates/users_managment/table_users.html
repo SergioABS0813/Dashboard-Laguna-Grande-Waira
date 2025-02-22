@@ -458,6 +458,17 @@
             "scrollCollapse": false,
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
+            },
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+
+                // Oculta la paginación si no es necesaria
+                if (pageInfo.pages <= 1) {
+                    $('.dataTables_paginate').hide();
+                } else {
+                    $('.dataTables_paginate').show();
+                }
             }
         });
     });
