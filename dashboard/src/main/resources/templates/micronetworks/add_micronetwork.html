@@ -480,36 +480,50 @@
     <!-- Script de inicialización del mapa -->
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function() {
-            // Inicializa el mapa en una posición por defecto (ej: Perú)
+            // 1. Inicializa el mapa en una posición por defecto, pero SIN marker.
             var map = L.map('map').setView([-9.189967, -75.015152], 6);
-
-            // Agrega la capa base
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 14,
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            // (Opcional) Agrega un marker en la posición inicial
-            var marker = L.marker([-9.189967, -75.015152]).addTo(map);
+            // 2. No creamos marker inicial
+            var marker = null;
 
-            // Referencias a los campos de lat y lon
+            // 3. Referencias a los inputs de lat y lon
             var latInput = document.getElementById('lat');
             var lonInput = document.getElementById('lon');
 
-            // Escucha cambios en lat o lon
-            latInput.addEventListener('input', updateMapLocation);
-            lonInput.addEventListener('input', updateMapLocation);
-
+            // 4. Función para actualizar la ubicación del mapa
             function updateMapLocation() {
                 var latValue = parseFloat(latInput.value);
                 var lonValue = parseFloat(lonInput.value);
 
-                // Si ambos valores son numéricos, actualiza el mapa
+                // Si lat/lon son válidos, creamos o movemos el marker
                 if (!isNaN(latValue) && !isNaN(lonValue)) {
+                    if (!marker) {
+                        // Creamos el marker si no existe
+                        marker = L.marker([latValue, lonValue]).addTo(map);
+                    } else {
+                        // Lo movemos si ya existe
+                        marker.setLatLng([latValue, lonValue]);
+                    }
+                    // Ajustamos la vista del mapa a la ubicación
                     map.setView([latValue, lonValue], 10);
-                    marker.setLatLng([latValue, lonValue]);
+                } else {
+                    // Si los valores no son válidos, removemos el marker si existe
+                    if (marker) {
+                        map.removeLayer(marker);
+                        marker = null;
+                    }
+                    // Opcional: Si quieres regresar el mapa a la posición inicial
+                    // map.setView([-9.189967, -75.015152], 6);
                 }
             }
+
+            // 5. Escucha cambios en los campos lat y lon
+            latInput.addEventListener('input', updateMapLocation);
+            lonInput.addEventListener('input', updateMapLocation);
         });
     </script>
 <!-- END Leaflet: Empleado para el mapa -->
