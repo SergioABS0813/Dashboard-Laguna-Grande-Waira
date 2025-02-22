@@ -8,9 +8,7 @@
 
     <link rel="icon" type="image/x-icon" th:href="@{/media/favicon.png}">
 
-    <title>
-        Nueva Microred
-    </title>
+    <title>Nueva Microred</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
@@ -235,13 +233,13 @@
     <div class="container-fluid py-2">
         <!-- START: FORMULARIOOOOOO -->
         <div class="row">
-            <div class="col-md-8 offset-md-2">
+            <!-- Columna Izquierda (Formulario) -->
+            <div class="col-lg-8 col-md-6">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Nueva Microred</h4>
                     </div>
                     <div class="card-body">
-                        <!-- Asume que en tu controlador envías al modelo un objeto "microNetwork" -->
                         <form th:action="@{/micronetworks/create}" th:object="${microNetwork}" method="post">
                             <!-- Fila 1 -->
                             <div class="row">
@@ -314,7 +312,6 @@
                                 <div class="col-md-6">
                                     <div class="input-group input-group-outline mb-3">
                                         <label class="form-label">Estado</label>
-                                        <!-- Puedes usar form-control o form-select según prefieras -->
                                         <select th:field="*{status}" class="form-control">
                                             <option value="">Seleccione estado</option>
                                             <option value="Activo">Activo</option>
@@ -323,12 +320,24 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Botón para enviar el formulario -->
                             <div class="text-center mt-4">
                                 <button type="submit" class="btn btn-primary">Crear Microred</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha (Mapa) -->
+            <div class="col-lg-4 col-md-6">
+                <!-- Ajusta la altura a tu gusto -->
+                <div class="card" style="height: 600px;">
+                    <div class="card-body p-0" style="height: 100%;">
+                        <!-- Contenedor del mapa -->
+                        <div id="map" style="width: 100%; height: 100%; border-radius: 0.5rem !important;">
+                            <!-- Aquí se inyectará el mapa (Leaflet, Google Maps, etc.) -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -453,6 +462,31 @@
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
+<!-- START Leaflet: Empleado para el mapa -->
+<link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+/>
+<script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+></script>
+
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        // Ejemplo para inicializar un mapa con Leaflet
+        var map = L.map('map').setView([-9.189967, -75.015152], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 14,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+    });
+</script>
+<!-- END Leaflet: Empleado para el mapa -->
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
 
