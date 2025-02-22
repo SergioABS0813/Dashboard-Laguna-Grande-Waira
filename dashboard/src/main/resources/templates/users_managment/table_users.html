@@ -120,9 +120,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark" href="../pages/billing.html">
+                <a class="nav-link text-dark" th:href="@{/settings}">
                     <i class="material-symbols-rounded opacity-5">settings</i>
-                    <span class="nav-link-text ms-1">Settings</span>
+                    <span class="nav-link-text ms-1">Ajustes</span>
                 </a>
             </li>
             <li class="nav-item mt-3">
@@ -278,7 +278,7 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
                             <h6 class="text-white text-capitalize ps-3 d-inline-block">Usuarios</h6>
-                            <a class="btn btn-outline-light position-absolute end-2 top-50 translate-middle-y"  th:href="@{/micronetworks/create}" type="button">+ Añadir Usuario</a>
+                            <a class="btn btn-outline-light position-absolute end-2 top-50 translate-middle-y"  th:href="@{/user_managment/create}" type="button">+ Añadir Usuario</a>
                         </div>
 
                     </div>

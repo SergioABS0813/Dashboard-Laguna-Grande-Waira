@@ -1,5 +1,19 @@
+<!--
+=========================================================
+* Material Dashboard 3 - v3.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2024 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8" />
@@ -8,7 +22,9 @@
 
     <link rel="icon" type="image/x-icon" th:href="@{/media/favicon.png}">
 
-    <title>Nueva Microred</title>
+    <title>
+        Ajustes
+    </title>
 
     <!-- Fonts -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
@@ -30,6 +46,48 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
+    <!-- Leaflet MAP -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <!-- AwesomeMarkers Icons -->
+    <link th:href="@{/css/leaflet.awesome-markers.css}" rel="stylesheet" />
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- DataTables Custom Styles -->
+    <style>
+        .dataTables_wrapper .dataTables_scrollBody table.dataTable tbody td {
+            white-space: nowrap;      /* No permitir salto de línea */
+            overflow: hidden;         /* Ocultar texto sobrante */
+            text-overflow: ellipsis;  /* Añadir "..." si el texto es muy largo */
+        }
+
+        .dataTables_filter {
+            margin-right: 18px !important;
+        }
+
+        .dataTables_length {
+            margin-left: 18px !important;
+        }
+
+        .dataTables_info {
+            margin-left: 18px !important;
+            font-size: 15px;
+        }
+
+        .paginate_button {
+            font-size: 15px;
+        }
+
+    </style>
+
     <!-- Anti-flicker snippet (recommended)  -->
     <style>
         .async-hide {
@@ -37,37 +95,22 @@
         }
     </style>
 
-
-    <!-- START: SweetAlert2  -->
-    <!-- SweetAlert2 CSS (opcional si deseas estilos por defecto) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- END: SweetAlert2  -->
-
-
-
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
-<!-- Extra details for Live View on GitHub Pages -->
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand px-4 py-3 m-0" th:href="@{/micronetworks}">
             <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
-            <span class="ms-1 text-sm text-dark">MicroRedes</span>
+            <span class="ms-1 text-sm text-dark">Ajustes</span>
         </a>
     </div>
     <hr class="horizontal dark mt-0 mb-2">
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link active bg-gradient-dark text-white" th:href="@{/micronetworks}">
+                <a class="nav-link text-dark" th:href="@{/micronetworks}">
                     <i class="material-symbols-rounded opacity-5">table_view</i>
                     <span class="nav-link-text ms-1">Instalaciones</span>
                 </a>
@@ -91,7 +134,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark" th:href="@{/settings}">
+                <a class="nav-link active bg-gradient-dark text-white" th:href="@{/settings}">
                     <i class="material-symbols-rounded opacity-5">settings</i>
                     <span class="nav-link-text ms-1">Ajustes</span>
                 </a>
@@ -126,8 +169,8 @@
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Tables</li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Páginas</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Ajustes</li>
                 </ol>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
@@ -242,107 +285,53 @@
 
 
 
-
-
-
-
-
     <div class="container-fluid py-2">
-        <!-- START: FORMULARIOOOOOO -->
-        <div class="row align-items-start">
-            <!-- Columna Izquierda: Formulario -->
-            <div class="col-lg-8 col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Nueva Microred</h4>
-                    </div>
-                    <div class="card-body">
-                        <!-- Objeto microNetwork en el modelo -->
-                        <form id="createMicroredForm" th:action="@{/micronetworks/create}" th:object="${microNetwork}" method="post">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label" for="alias">Alias</label>
-                                        <input id="alias" type="text" th:field="*{alias}" class="form-control" required>
-                                    </div>
+        <div class="row mb-1">
+            <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card my-4">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
+                                    <h6 class="text-white text-capitalize ps-3 d-inline-block">Instalaciones</h6>
+
+                                    <a class="btn btn-outline-light position-absolute end-2 top-50 translate-middle-y"  th:href="@{/micronetworks/create}" type="button">+ Añadir Instalación</a>
+
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Site VRM</label>
-                                        <input type="text" th:field="*{siteVRM}" class="form-control">
-                                    </div>
-                                </div>
+
                             </div>
-                            <!-- Fila 2 -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label" for="lat">Latitud</label>
-                                        <!-- Asigna id="lat" para que JS pueda acceder -->
-                                        <input id="lat" type="text" th:field="*{lat}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Site WeatherLink</label>
-                                        <input type="text" th:field="*{siteWeatherLink}" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Fila 3 -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label" for="lon">Longitud</label>
-                                        <!-- Asigna id="lon" para que JS pueda acceder -->
-                                        <input id="lon" type="text" th:field="*{lon}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Site SparkMeter</label>
-                                        <input type="text" th:field="*{siteSparkMeter}" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Fila 4 -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Provincia</label>
-                                        <input type="text" th:field="*{provincia}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Departamento</label>
-                                        <input type="text" th:field="*{departamento}" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="card-body px-0 pb-2">
+                                <div class="table-responsive p-0">
 
 
-                            <!-- Botón para enviar -->
-                            <div class="text-center mt-4">
-                                <button type="submit" class="btn btn-primary">Crear Microred</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Columna Derecha: Mapa -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card" style="height: 600px;">
-                    <div class="card-body p-0" style="height: 100%;">
-                        <div id="map" style="width: 100%; height: 100%; border-radius: 0.5rem !important;">
-                            <!-- Aquí va el mapa -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="card my-4" style="height: 740px;">
+
+
+
+                    <div class="card-body p-0" style="height: 600px;">
+                        <!-- Ajusta el 60px según la altura aproximada del header -->
+                        <div id="map" style="width: 100%; height: 100%; border-radius: 0.5rem !important;">
+                            <!-- Aquí se inyecta el mapa (Leaflet, Google Maps, etc.) -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
         </div>
-        <!-- END: FORMULARIOOOOOO -->
 
 
         <footer class="footer py-4  ">
@@ -459,122 +448,57 @@
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
-
-<!-- START Leaflet: Empleado para el mapa -->
-<link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""
-/>
-<script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""
-></script>
+<script th:src="@{/js/core/leaflet.awesome-markers.min.js}"></script>
 
 
-    <!-- Script de inicialización del mapa -->
-    <script th:inline="javascript">
-        document.addEventListener("DOMContentLoaded", function() {
-            // 1. Inicializa el mapa en una posición por defecto, pero SIN marker.
-            var map = L.map('map').setView([-9.189967, -75.015152], 6);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 14,
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
+<script th:inline="javascript">
 
-            // 2. No creamos marker inicial
-            var marker = null;
+    document.addEventListener("DOMContentLoaded", function() {
 
-            // 3. Referencias a los inputs de lat y lon
-            var latInput = document.getElementById('lat');
-            var lonInput = document.getElementById('lon');
+        var mapMarkersData = /*[[${mapMarkersData}]]*/ [];
 
-            // 4. Función para actualizar la ubicación del mapa
-            function updateMapLocation() {
-                var latValue = parseFloat(latInput.value);
-                var lonValue = parseFloat(lonInput.value);
+        var map = L.map('map').setView([-9.189967, -75.015152], 6);
 
-                // Si lat/lon son válidos, creamos o movemos el marker
-                if (!isNaN(latValue) && !isNaN(lonValue)) {
-                    if (!marker) {
-                        // Creamos el marker si no existe
-                        marker = L.marker([latValue, lonValue]).addTo(map);
-                    } else {
-                        // Lo movemos si ya existe
-                        marker.setLatLng([latValue, lonValue]);
-                    }
-                    // Ajustamos la vista del mapa a la ubicación
-                    map.setView([latValue, lonValue], 10);
-                } else {
-                    // Si los valores no son válidos, removemos el marker si existe
-                    if (marker) {
-                        map.removeLayer(marker);
-                        marker = null;
-                    }
-                    // Opcional: Si quieres regresar el mapa a la posición inicial
-                    // map.setView([-9.189967, -75.015152], 6);
-                }
-            }
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 14,
+            minZoom: 6,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-            // 5. Escucha cambios en los campos lat y lon
-            latInput.addEventListener('input', updateMapLocation);
-            lonInput.addEventListener('input', updateMapLocation);
+        // Recorremos el array y agregamos marcadores con sus alias
+        mapMarkersData.forEach(function(marker) {
+            L.marker([marker.lat, marker.lon])
+                .addTo(map)
+                .bindPopup(marker.alias);
         });
-    </script>
-<!-- END Leaflet: Empleado para el mapa -->
 
-<!-- START JS ALERTA -->
-
-    <style>
-        /* Asegura que el overlay de SweetAlert2 esté por encima de tu sidebar */
-        .swal2-container {
-            z-index: 999999 !important; /* número muy alto para sobrepasar el sidebar */
-        }
-        /* Opcional: oscurecer más el fondo al mostrar la alerta */
-        .swal2-container.swal2-backdrop-show {
-            background: rgba(0, 0, 0, 0.7) !important; /* más opaco que el default */
-        }
-    </style>
-
-    <script th:inline="javascript">
-        document.addEventListener("DOMContentLoaded", function() {
-            const form = document.getElementById("createMicroredForm");
-
-            form.addEventListener("submit", function(event) {
-                // Detenemos el envío inmediato del formulario
-                event.preventDefault();
-
-                Swal.fire({
-                    title: '¿Crear Microred?',
-                    text: 'Confirma que deseas crear la microred con los datos ingresados.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, crear',
-                    cancelButtonText: 'Cancelar',
-                    allowOutsideClick: false, // Bloquea clics fuera de la alerta
-                    // backdrop: 'rgba(0,0,0,0.7)', // Alternativa para oscurecer (o usar CSS)
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Si el usuario confirma, se envía el formulario
-                        form.submit();
-                    }
-                });
-            });
+        // Creates a red marker with the coffee icon
+        var redMarker = L.AwesomeMarkers.icon({
+            icon: 'coffee',
+            markerColor: 'red'
         });
-    </script>
 
-    <!-- END JS ALERTA -->
+        L.marker([-12.7464,77.88428], {icon: redMarker}).addTo(map);
+
+    });
+
+</script>
 
 
 
-    <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
 
 </body>
-
 
 </html>

@@ -18,7 +18,7 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    public String table(Model model) {
+    public String profile(Model model) {
 
 
         return "profile";
