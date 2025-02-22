@@ -30,11 +30,9 @@ public class MicroNetworksController {
 
     @GetMapping("/micronetworks/create")
     public String add(Model model) {
-
-        ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
-        model.addAttribute("microNetworkList", microNetworkList);
-
+        model.addAttribute("microNetwork", new MicroNetwork());
         return "micronetworks/add_micronetwork";
     }
+
 
 }
