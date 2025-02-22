@@ -241,74 +241,86 @@
                         <h4 class="card-title">Nueva Microred</h4>
                     </div>
                     <div class="card-body">
-                        <!-- Se asume que el objeto microNetwork se pasa al modelo -->
+                        <!-- Asume que en tu controlador envías al modelo un objeto "microNetwork" -->
                         <form th:action="@{/micronetworks/create}" th:object="${microNetwork}" method="post">
+                            <!-- Fila 1 -->
                             <div class="row">
-                                <!-- Alias -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="alias" class="form-label">Alias</label>
-                                    <input type="text" id="alias" th:field="*{alias}" class="form-control" placeholder="Ingrese el alias" required>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Alias</label>
+                                        <input type="text" th:field="*{alias}" class="form-control" required>
+                                    </div>
                                 </div>
-                                <!-- Latitud -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="lat" class="form-label">Latitud</label>
-                                    <input type="text" id="lat" th:field="*{lat}" class="form-control" placeholder="Ingrese la latitud" required>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Latitud</label>
+                                        <input type="text" th:field="*{lat}" class="form-control" required>
+                                    </div>
                                 </div>
                             </div>
-
+                            <!-- Fila 2 -->
                             <div class="row">
-                                <!-- Longitud -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="lon" class="form-label">Longitud</label>
-                                    <input type="text" id="lon" th:field="*{lon}" class="form-control" placeholder="Ingrese la longitud" required>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Longitud</label>
+                                        <input type="text" th:field="*{lon}" class="form-control" required>
+                                    </div>
                                 </div>
-                                <!-- Token VRM -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="tokenVRM" class="form-label">Token VRM</label>
-                                    <input type="text" id="tokenVRM" th:field="*{tokenVRM}" class="form-control" placeholder="Ingrese el token VRM">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Token VRM</label>
+                                        <input type="text" th:field="*{tokenVRM}" class="form-control">
+                                    </div>
                                 </div>
                             </div>
-
+                            <!-- Fila 3 -->
                             <div class="row">
-                                <!-- Token Weather Link -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="tokenWeatherLink" class="form-label">Token Weather Link</label>
-                                    <input type="text" id="tokenWeatherLink" th:field="*{tokenWeatherLink}" class="form-control" placeholder="Ingrese el token Weather Link">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Token Weather Link</label>
+                                        <input type="text" th:field="*{tokenWeatherLink}" class="form-control">
+                                    </div>
                                 </div>
-                                <!-- Token Spark Meter -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="tokenSparkMeter" class="form-label">Token Spark Meter</label>
-                                    <input type="text" id="tokenSparkMeter" th:field="*{tokenSparkMeter}" class="form-control" placeholder="Ingrese el token Spark Meter">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Token Spark Meter</label>
+                                        <input type="text" th:field="*{tokenSparkMeter}" class="form-control">
+                                    </div>
                                 </div>
                             </div>
-
+                            <!-- Fila 4 -->
                             <div class="row">
-                                <!-- Site VRM -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="siteVRM" class="form-label">Site VRM</label>
-                                    <input type="text" id="siteVRM" th:field="*{siteVRM}" class="form-control" placeholder="Ingrese el site VRM">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Site VRM</label>
+                                        <input type="text" th:field="*{siteVRM}" class="form-control">
+                                    </div>
                                 </div>
-                                <!-- Site Weather Link -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="siteWeatherLink" class="form-label">Site Weather Link</label>
-                                    <input type="text" id="siteWeatherLink" th:field="*{siteWeatherLink}" class="form-control" placeholder="Ingrese el site Weather Link">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Site Weather Link</label>
+                                        <input type="text" th:field="*{siteWeatherLink}" class="form-control">
+                                    </div>
                                 </div>
                             </div>
-
+                            <!-- Fila 5 -->
                             <div class="row">
-                                <!-- Site Spark Meter -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="siteSparkMeter" class="form-label">Site Spark Meter</label>
-                                    <input type="text" id="siteSparkMeter" th:field="*{siteSparkMeter}" class="form-control" placeholder="Ingrese el site Spark Meter">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Site Spark Meter</label>
+                                        <input type="text" th:field="*{siteSparkMeter}" class="form-control">
+                                    </div>
                                 </div>
-                                <!-- Estado -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="status" class="form-label">Estado</label>
-                                    <select id="status" th:field="*{status}" class="form-select">
-                                        <option value="">Seleccione estado</option>
-                                        <option value="Activo">Activo</option>
-                                        <option value="Inactivo">Inactivo</option>
-                                    </select>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Estado</label>
+                                        <!-- Puedes usar form-control o form-select según prefieras -->
+                                        <select th:field="*{status}" class="form-control">
+                                            <option value="">Seleccione estado</option>
+                                            <option value="Activo">Activo</option>
+                                            <option value="Inactivo">Inactivo</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
