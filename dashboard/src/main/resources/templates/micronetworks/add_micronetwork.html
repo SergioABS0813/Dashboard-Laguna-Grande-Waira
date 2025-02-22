@@ -262,13 +262,28 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Site VRM</label>
+                                        <input type="text" th:field="*{siteVRM}" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Fila 2 -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
                                         <label class="form-label" for="lat">Latitud</label>
                                         <!-- Asigna id="lat" para que JS pueda acceder -->
                                         <input id="lat" type="text" th:field="*{lat}" class="form-control">
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-outline mb-3">
+                                        <label class="form-label">Site WeatherLink</label>
+                                        <input type="text" th:field="*{siteWeatherLink}" class="form-control">
+                                    </div>
+                                </div>
                             </div>
-                            <!-- Fila 2 -->
+                            <!-- Fila 3 -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="input-group input-group-outline mb-3">
@@ -279,57 +294,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label" for="tokenVRM">Token VRM</label>
-                                        <input id="tokenVRM" type="text" th:field="*{tokenVRM}" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Fila 3 -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Token Weather Link</label>
-                                        <input type="text" th:field="*{tokenWeatherLink}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Token Spark Meter</label>
-                                        <input type="text" th:field="*{tokenSparkMeter}" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Fila 4 -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Site VRM</label>
-                                        <input type="text" th:field="*{siteVRM}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Site Weather Link</label>
-                                        <input type="text" th:field="*{siteWeatherLink}" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Fila 5 -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Site Spark Meter</label>
+                                        <label class="form-label">Site SparkMeter</label>
                                         <input type="text" th:field="*{siteSparkMeter}" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">Estado</label>
-                                        <select th:field="*{status}" class="form-control">
-                                            <option value="">Seleccione estado</option>
-                                            <option value="Activo">Activo</option>
-                                            <option value="Inactivo">Inactivo</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>
