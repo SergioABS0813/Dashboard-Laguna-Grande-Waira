@@ -46,6 +46,33 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
+    <!-- DataTables Custom Styles -->
+    <style>
+        .dataTables_wrapper .dataTables_scrollBody table.dataTable tbody td {
+            white-space: nowrap;      /* No permitir salto de línea */
+            overflow: hidden;         /* Ocultar texto sobrante */
+            text-overflow: ellipsis;  /* Añadir "..." si el texto es muy largo */
+        }
+
+        .dataTables_filter {
+            margin-right: 18px !important;
+        }
+
+        .dataTables_length {
+            margin-left: 18px !important;
+        }
+
+        .dataTables_info {
+            margin-left: 18px !important;
+            font-size: 15px;
+        }
+
+        .paginate_button {
+            font-size: 15px;
+        }
+
+    </style>
+
     <!-- Anti-flicker snippet (recommended)  -->
     <style>
         .async-hide {
@@ -56,16 +83,13 @@
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
-<!-- Extra details for Live View on GitHub Pages -->
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand px-4 py-3 m-0" th:href="@{/micronetworks}">
             <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
-            <span class="ms-1 text-sm text-dark">MicroRedes</span>
+            <span class="ms-1 text-sm text-dark">Usuarios</span>
         </a>
     </div>
     <hr class="horizontal dark mt-0 mb-2">
@@ -131,8 +155,8 @@
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Tables</li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Páginas</a></li>
+                    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Usuarios</li>
                 </ol>
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
@@ -254,15 +278,13 @@
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                         <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
                             <h6 class="text-white text-capitalize ps-3 d-inline-block">Usuarios</h6>
-                            <a th:href="@{/micronetworks/create}" class="btn btn-secondary btn-sm position-absolute end-3 top-50 translate-middle-y">
-                                + Añadir Usuario
-                            </a>
+                            <a class="btn btn-outline-light position-absolute end-2 top-50 translate-middle-y"  th:href="@{/micronetworks/create}" type="button">+ Añadir Usuario</a>
                         </div>
 
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
-                            <table id="micronets-table" class="table align-items-center mb-0">
+                            <table id="users-table" class="table align-items-center mb-0">
                                 <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Correo</th>
@@ -273,7 +295,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="user : ${userList}">
+                                <tr style="background-color: #f6f8f8; border-bottom: 1px solid #ddd;" th:each="user : ${userList}">
                                     <td>
                                         <div class="d-flex px-2 py-1">
                                             <div class="d-flex flex-column justify-content-center">
@@ -282,7 +304,8 @@
                                         </div>
                                     </td>
                                     <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-success" th:text="${user.getRole()}">Online</span>
+                                        <span th:if="${user.getRole().equals('ADMIN')}" class="badge badge-sm bg-gradient-info" th:text="${user.getRole()}">Role</span>
+                                        <span th:if="${user.getRole().equals('USER')}" class="badge badge-sm bg-gradient-success" th:text="${user.getRole()}">Role</span>
                                     </td>
                                     <td class="align-middle text-center text-sm">
                                         <span class="text-secondary text-xs font-weight-bold" th:text="${user.getName()} + ' ' + ${user.getLastname()}">Online</span>
@@ -310,12 +333,10 @@
                 <div class="row align-items-center justify-content-lg-between">
                     <div class="col-lg-6 mb-lg-0 mb-4">
                         <div class="copyright text-center text-sm text-muted text-lg-start">
-                            © <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-                            document.write(new Date().getFullYear())
-                        </script>,
-                            made with <i class="fa fa-heart"></i> by
-                            <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-                            for a better web.
+                            © <script> document.write(new Date().getFullYear()) </script>,
+                            by
+                            <a  class="font-weight-bold" target="_blank">GTR PUCP</a>
+                            for Innovatel
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -422,32 +443,19 @@
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
+
 <script>
     $(document).ready(function () {
-        $('#micronets-table').DataTable({
+        $('#users-table').DataTable({
             "paging": true,         // Habilita la paginación
             "searching": true,      // Habilita la barra de búsqueda
             "ordering": true,       // Habilita la ordenación por columnas
             "info": true,           // Muestra información sobre la tabla
             "lengthChange": true,   // Permite cambiar el número de registros mostrados
             "pageLength": 5,        // Número de registros mostrados por página
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
-            }
-        });
-    });
-</script>
-
-
-<script>
-    $(document).ready(function () {
-        $('#usuarios-table').DataTable({
-            "paging": true,         // Habilita la paginación
-            "searching": true,      // Habilita la barra de búsqueda
-            "ordering": true,       // Habilita la ordenación por columnas
-            "info": true,           // Muestra información sobre la tabla
-            "lengthChange": true,   // Permite cambiar el número de registros mostrados
-            "pageLength": 5,        // Número de registros mostrados por página
+            "scrollResize": true,
+            "scrollY": 540,
+            "scrollCollapse": false,
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
             }

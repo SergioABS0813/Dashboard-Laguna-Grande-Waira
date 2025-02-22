@@ -230,6 +230,9 @@
 
 
 
+
+
+
         </div>
 
 
@@ -238,12 +241,10 @@
                 <div class="row align-items-center justify-content-lg-between">
                     <div class="col-lg-6 mb-lg-0 mb-4">
                         <div class="copyright text-center text-sm text-muted text-lg-start">
-                            © <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-                            document.write(new Date().getFullYear())
-                        </script>,
-                            made with <i class="fa fa-heart"></i> by
-                            <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-                            for a better web.
+                            © <script> document.write(new Date().getFullYear()) </script>,
+                            by
+                            <a  class="font-weight-bold" target="_blank">GTR PUCP</a>
+                            for Innovatel
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -349,39 +350,6 @@
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
-
-<script>
-    $(document).ready(function () {
-        $('#micronets-table').DataTable({
-            "paging": true,         // Habilita la paginación
-            "searching": true,      // Habilita la barra de búsqueda
-            "ordering": true,       // Habilita la ordenación por columnas
-            "info": true,           // Muestra información sobre la tabla
-            "lengthChange": true,   // Permite cambiar el número de registros mostrados
-            "pageLength": 5,        // Número de registros mostrados por página
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
-            }
-        });
-    });
-</script>
-
-
-<script>
-    $(document).ready(function () {
-        $('#usuarios-table').DataTable({
-            "paging": true,         // Habilita la paginación
-            "searching": true,      // Habilita la barra de búsqueda
-            "ordering": true,       // Habilita la ordenación por columnas
-            "info": true,           // Muestra información sobre la tabla
-            "lengthChange": true,   // Permite cambiar el número de registros mostrados
-            "pageLength": 5,        // Número de registros mostrados por página
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
-            }
-        });
-    });
-</script>
 
 
 <script>

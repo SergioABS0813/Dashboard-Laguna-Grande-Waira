@@ -23,6 +23,7 @@ public class MicroNetworksController {
 
         ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
         model.addAttribute("microNetworkList", microNetworkList);
+        model.addAttribute("mapMarkersData", microNetworkList);
 
         return "micronetworks/table_micronetworks";
     }

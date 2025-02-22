@@ -55,6 +55,13 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
 
+    <!-- AwesomeMarkers Icons -->
+    <link th:href="@{/css/leaflet.awesome-markers.css}" rel="stylesheet" />
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- DataTables Custom Styles -->
     <style>
         .dataTables_wrapper .dataTables_scrollBody table.dataTable tbody td {
             white-space: nowrap;      /* No permitir salto de línea */
@@ -91,16 +98,12 @@
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
-<!-- Extra details for Live View on GitHub Pages -->
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand px-4 py-3 m-0" th:href="@{/micronetworks}">
             <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
-            <span class="ms-1 text-sm text-dark">MicroRedes</span>
+            <span class="ms-1 text-sm text-dark">Instalaciones</span>
         </a>
     </div>
     <hr class="horizontal dark mt-0 mb-2">
@@ -283,8 +286,6 @@
 
 
     <div class="container-fluid py-2">
-
-
         <div class="row mb-1">
             <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
                 <div class="row">
@@ -293,9 +294,9 @@
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                                 <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
                                     <h6 class="text-white text-capitalize ps-3 d-inline-block">Instalaciones</h6>
-                                    <a th:href="@{/micronetworks/create}" class="btn btn-secondary btn-sm position-absolute end-3 top-50 translate-middle-y">
-                                        + Añadir Instalación
-                                    </a>
+
+                                    <a class="btn btn-outline-light position-absolute end-2 top-50 translate-middle-y"  th:href="@{/micronetworks/create}" type="button">+ Añadir Instalación</a>
+
                                 </div>
 
                             </div>
@@ -326,8 +327,6 @@
                                                 <span th:if="${microNetwork.getStatus().equals('ACTIVO')}" class="badge badge-sm bg-gradient-success" th:text="${microNetwork.getStatus()}">Online</span>
                                                 <span th:if="${microNetwork.getStatus().equals('INACTIVO')}" class="badge badge-sm bg-gradient-danger" th:text="${microNetwork.getStatus()}">Online</span>
                                             </td>
-
-
 
                                             <td class="align-middle text-center">
                                                 <span class="text-secondary text-xs font-weight-bold" th:text="${microNetwork.getLat()}">Latitud</span>
@@ -382,7 +381,6 @@
             <div class="container-fluid">
                 <div class="row align-items-center justify-content-lg-between">
                     <div class="col-lg-6 mb-lg-0 mb-4">
-
                         <div class="copyright text-center text-sm text-muted text-lg-start">
                             © <script> document.write(new Date().getFullYear()) </script>,
                             by
@@ -493,6 +491,7 @@
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
+<script th:src="@{/js/core/leaflet.awesome-markers.min.js}"></script>
 
 <script>
     $(document).ready(function () {
@@ -508,28 +507,52 @@
             "scrollCollapse": false,
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
-            }
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": [2, 3, 6] } // Desactiva ordenamiento en la primera y cuarta columna
+            ]
         });
     });
 </script>
 
-
 <script th:inline="javascript">
+
     document.addEventListener("DOMContentLoaded", function() {
-        // Inicializamos el mapa centrado en Perú
+
+        var mapMarkersData = /*[[${mapMarkersData}]]*/ [];
+
         var map = L.map('map').setView([-9.189967, -75.015152], 6);
 
-        // Agregamos la capa base de OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 14,
             minZoom: 6,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Ajustamos la vista del mapa para abarcar los límites definidos
-        map.fitBounds([-18.35, -81.35], [-0.03, -68.67]);
+        // Recorremos el array y agregamos marcadores con sus alias
+        mapMarkersData.forEach(function(marker) {
+            L.marker([marker.lat, marker.lon])
+                .addTo(map)
+                .bindPopup(marker.alias);
+        });
+
+        // Creates a red marker with the coffee icon
+        var redMarker = L.AwesomeMarkers.icon({
+            icon: 'coffee',
+            markerColor: 'red'
+        });
+
+        L.marker([-12.7464,77.88428], {icon: redMarker}).addTo(map);
+
     });
+
+
+
+
 </script>
+
+
+
 
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
