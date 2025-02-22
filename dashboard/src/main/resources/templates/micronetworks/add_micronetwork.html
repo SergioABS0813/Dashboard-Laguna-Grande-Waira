@@ -225,12 +225,103 @@
     <!-- End Navbar -->
 
 
+
+
+
+
+
+
+
     <div class="container-fluid py-2">
+        <!-- START: FORMULARIOOOOOO -->
         <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Nueva Microred</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Se asume que el objeto microNetwork se pasa al modelo -->
+                        <form th:action="@{/micronetworks/create}" th:object="${microNetwork}" method="post">
+                            <div class="row">
+                                <!-- Alias -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="alias" class="form-label">Alias</label>
+                                    <input type="text" id="alias" th:field="*{alias}" class="form-control" placeholder="Ingrese el alias" required>
+                                </div>
+                                <!-- Latitud -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="lat" class="form-label">Latitud</label>
+                                    <input type="text" id="lat" th:field="*{lat}" class="form-control" placeholder="Ingrese la latitud" required>
+                                </div>
+                            </div>
 
+                            <div class="row">
+                                <!-- Longitud -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="lon" class="form-label">Longitud</label>
+                                    <input type="text" id="lon" th:field="*{lon}" class="form-control" placeholder="Ingrese la longitud" required>
+                                </div>
+                                <!-- Token VRM -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="tokenVRM" class="form-label">Token VRM</label>
+                                    <input type="text" id="tokenVRM" th:field="*{tokenVRM}" class="form-control" placeholder="Ingrese el token VRM">
+                                </div>
+                            </div>
 
+                            <div class="row">
+                                <!-- Token Weather Link -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="tokenWeatherLink" class="form-label">Token Weather Link</label>
+                                    <input type="text" id="tokenWeatherLink" th:field="*{tokenWeatherLink}" class="form-control" placeholder="Ingrese el token Weather Link">
+                                </div>
+                                <!-- Token Spark Meter -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="tokenSparkMeter" class="form-label">Token Spark Meter</label>
+                                    <input type="text" id="tokenSparkMeter" th:field="*{tokenSparkMeter}" class="form-control" placeholder="Ingrese el token Spark Meter">
+                                </div>
+                            </div>
 
+                            <div class="row">
+                                <!-- Site VRM -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="siteVRM" class="form-label">Site VRM</label>
+                                    <input type="text" id="siteVRM" th:field="*{siteVRM}" class="form-control" placeholder="Ingrese el site VRM">
+                                </div>
+                                <!-- Site Weather Link -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="siteWeatherLink" class="form-label">Site Weather Link</label>
+                                    <input type="text" id="siteWeatherLink" th:field="*{siteWeatherLink}" class="form-control" placeholder="Ingrese el site Weather Link">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Site Spark Meter -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="siteSparkMeter" class="form-label">Site Spark Meter</label>
+                                    <input type="text" id="siteSparkMeter" th:field="*{siteSparkMeter}" class="form-control" placeholder="Ingrese el site Spark Meter">
+                                </div>
+                                <!-- Estado -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label">Estado</label>
+                                    <select id="status" th:field="*{status}" class="form-select">
+                                        <option value="">Seleccione estado</option>
+                                        <option value="Activo">Activo</option>
+                                        <option value="Inactivo">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Botón para enviar el formulario -->
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Crear Microred</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+        <!-- END: FORMULARIOOOOOO -->
 
 
         <footer class="footer py-4  ">
@@ -349,50 +440,6 @@
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
-
-<script>
-    $(document).ready(function () {
-        $('#micronets-table').DataTable({
-            "paging": true,         // Habilita la paginación
-            "searching": true,      // Habilita la barra de búsqueda
-            "ordering": true,       // Habilita la ordenación por columnas
-            "info": true,           // Muestra información sobre la tabla
-            "lengthChange": true,   // Permite cambiar el número de registros mostrados
-            "pageLength": 5,        // Número de registros mostrados por página
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
-            }
-        });
-    });
-</script>
-
-
-<script>
-    $(document).ready(function () {
-        $('#usuarios-table').DataTable({
-            "paging": true,         // Habilita la paginación
-            "searching": true,      // Habilita la barra de búsqueda
-            "ordering": true,       // Habilita la ordenación por columnas
-            "info": true,           // Muestra información sobre la tabla
-            "lengthChange": true,   // Permite cambiar el número de registros mostrados
-            "pageLength": 5,        // Número de registros mostrados por página
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
-            }
-        });
-    });
-</script>
-
-
-<script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-        var options = {
-            damping: '0.5'
-        }
-        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-</script>
 
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
