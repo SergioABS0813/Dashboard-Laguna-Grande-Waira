@@ -43,10 +43,16 @@ public class MicroNetwork implements Serializable {
     @Field(value = "status")
     private String status;
 
+    @Field(value = "provincia")
+    private String provincia;
+
+    @Field(value = "departamento")
+    private String departamento;
+
     public MicroNetwork() {
     }
 
-    public MicroNetwork(@NonNull String id, String siteVRM, String siteWeatherLink, String siteSparkMeter, String alias, String lat, String lon, Date timeCreation, Date timeEdition, String status) {
+    public MicroNetwork(@NonNull String id, String siteVRM, String siteWeatherLink, String siteSparkMeter, String alias, String lat, String lon, Date timeCreation, Date timeEdition, String status, String provincia, String departamento) {
         this.id = id;
         this.siteVRM = siteVRM;
         this.siteWeatherLink = siteWeatherLink;
@@ -57,6 +63,8 @@ public class MicroNetwork implements Serializable {
         this.timeCreation = timeCreation;
         this.timeEdition = timeEdition;
         this.status = status;
+        this.provincia = provincia;
+        this.departamento = departamento;
     }
 
     public String getId() {
@@ -137,5 +145,21 @@ public class MicroNetwork implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
     }
 }

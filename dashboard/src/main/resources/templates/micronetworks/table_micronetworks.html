@@ -326,6 +326,7 @@
                                             <td class="align-middle text-center text-sm">
                                                 <span th:if="${microNetwork.getStatus().equals('ACTIVO')}" class="badge badge-sm bg-gradient-success" th:text="${microNetwork.getStatus()}">Online</span>
                                                 <span th:if="${microNetwork.getStatus().equals('INACTIVO')}" class="badge badge-sm bg-gradient-danger" th:text="${microNetwork.getStatus()}">Online</span>
+                                                <span th:if="${microNetwork.getStatus().equals(null)}" class="badge badge-sm bg-gradient-danger" th:text="SEARCHING">Online</span>
                                             </td>
 
                                             <td class="align-middle text-center">
