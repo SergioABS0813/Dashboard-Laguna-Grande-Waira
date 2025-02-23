@@ -1,8 +1,10 @@
 package pe.grande.laguna.dashboard.Controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,7 +43,15 @@ public class MicroNetworksController {
     }
 
     @PostMapping("/micronetworks/create")
-    public String create(@ModelAttribute("microNetwork") MicroNetwork microNetwork) {
+    public String create(@Valid @ModelAttribute("microNetwork") MicroNetwork microNetwork, BindingResult bindingResult) {
+
+
+        // Si existen errores de validación, se retorna a la vista del formulario.
+        if (bindingResult.hasErrors()) {
+            // Los errores se mostrarán en la misma vista
+            return "micronetworks/add_micronetwork";
+        }
+
         //Definir la zona horaria de Perú
         ZoneId limaZone = ZoneId.of("America/Lima");
 

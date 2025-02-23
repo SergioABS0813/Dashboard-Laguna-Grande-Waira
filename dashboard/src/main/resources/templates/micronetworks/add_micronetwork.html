@@ -260,63 +260,143 @@
                         <!-- Objeto microNetwork en el modelo -->
                         <form id="createMicroredForm" th:action="@{/micronetworks/create}" th:object="${microNetwork}" method="post">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('alias')} ? ' is-invalid'">
                                         <label class="form-label" for="alias">Alias</label>
-                                        <input id="alias" type="text" th:field="*{alias}" class="form-control" required>
+                                        <input id="alias" type="text" th:field="*{alias}" class="form-control">
+                                    </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('alias')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{alias}"></span>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('siteVRM')} ? ' is-invalid'">
                                         <label class="form-label">Site VRM</label>
-                                        <input type="text" th:field="*{siteVRM}" class="form-control">
+                                        <input id="siteVRM" type="text" th:field="*{siteVRM}" class="form-control">
+                                    </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('siteVRM')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{siteVRM}"></span>
                                     </div>
                                 </div>
+
                             </div>
                             <!-- Fila 2 -->
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('lat')} ? ' is-invalid'">
                                         <label class="form-label" for="lat">Latitud</label>
-                                        <!-- Asigna id="lat" para que JS pueda acceder -->
                                         <input id="lat" type="text" th:field="*{lat}" class="form-control">
                                     </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('lat')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{lat}"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('siteWeatherLink')} ? ' is-invalid'">
                                         <label class="form-label">Site WeatherLink</label>
                                         <input type="text" th:field="*{siteWeatherLink}" class="form-control">
                                     </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('siteWeatherLink')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{siteWeatherLink}"></span>
+                                    </div>
                                 </div>
+
                             </div>
                             <!-- Fila 3 -->
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('lon')} ? ' is-invalid'">
                                         <label class="form-label" for="lon">Longitud</label>
-                                        <!-- Asigna id="lon" para que JS pueda acceder -->
                                         <input id="lon" type="text" th:field="*{lon}" class="form-control">
                                     </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('lon')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{lon}"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('siteSparkMeter')} ? ' is-invalid'">
                                         <label class="form-label">Site SparkMeter</label>
                                         <input type="text" th:field="*{siteSparkMeter}" class="form-control">
                                     </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('siteSparkMeter')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{siteSparkMeter}"></span>
+                                    </div>
                                 </div>
+
                             </div>
                             <!-- Fila 4 -->
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('provincia')} ? ' is-invalid'">
                                         <label class="form-label">Provincia</label>
                                         <input type="text" th:field="*{provincia}" class="form-control">
                                     </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('provincia')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{provincia}"></span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-outline mb-3">
+
+                                <div class="col-md-6 mb-3">
+                                    <!-- Label flotante (si usas input-group-outline) -->
+                                    <div class="input-group input-group-outline"
+                                         th:classappend="${#fields.hasErrors('departamento')} ? ' is-invalid'">
                                         <label class="form-label">Departamento</label>
                                         <input type="text" th:field="*{departamento}" class="form-control">
+                                    </div>
+                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <div th:if="${#fields.hasErrors('departamento')}" class="text-danger">
+                                        <!-- Ícono de exclamación de Material Icons -->
+                                        <span class="material-symbols-rounded align-middle">error</span>
+                                        <!-- Mensaje de error -->
+                                        <span th:errors="*{departamento}"></span>
                                     </div>
                                 </div>
                             </div>
