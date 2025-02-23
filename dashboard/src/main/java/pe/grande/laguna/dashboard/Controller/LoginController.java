@@ -34,19 +34,10 @@ public class LoginController {
     @GetMapping({"/", "/login", "/login/"})
     public String login(@RequestParam(value = "error", required = false) String error,
                         @RequestParam(value = "logout", required = false) String logout,
-                        Model model,
-                        HttpSession session) {
+                        Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Si el usuario ya está autenticado, agregamos información a la sesión y redirigimos
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
-
-            Optional<User> userOptional = usersRepository.findByEmail(auth.getName());
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                session.setAttribute("user", user); // Guardamos solo el objeto User, no el Optional
-            }
-
             return "redirect:/micronetworks";
         }
 

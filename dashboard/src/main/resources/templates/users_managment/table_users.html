@@ -289,6 +289,7 @@
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Correo</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Rol</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Celular</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nombre</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creación</th>
                                     <th class="text-secondary opacity-7"></th>
@@ -308,15 +309,16 @@
                                         <span th:if="${user.getRole().equals('USER')}" class="badge badge-sm bg-gradient-success" th:text="${user.getRole()}">Role</span>
                                     </td>
                                     <td class="align-middle text-center text-sm">
+                                        <span class="text-secondary text-xs font-weight-bold" th:text="${user.getPhone()}">Online</span>
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
                                         <span class="text-secondary text-xs font-weight-bold" th:text="${user.getName()} + ' ' + ${user.getLastname()}">Online</span>
                                     </td>
                                     <td class="align-middle text-center">
                                         <span class="text-secondary text-xs font-weight-bold" th:text="${#dates.format(user.getCreationTime(), 'dd/MM/yyyy HH:mm')}">Time Creation</span>
                                     </td>
                                     <td class="align-middle">
-                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                            Editar
-                                        </a>
+                                        <a class="btn btn-link text-secondary px-3 mb-0" href="javascript:;"><i class="material-symbols-rounded text-sm me-2">edit</i>Editar</a>
                                     </td>
                                 </tr>
                                 </tbody>

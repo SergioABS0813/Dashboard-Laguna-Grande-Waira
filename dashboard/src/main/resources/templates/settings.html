@@ -13,7 +13,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
 <!DOCTYPE html>
-<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8" />
@@ -23,7 +23,7 @@
     <link rel="icon" type="image/x-icon" th:href="@{/media/favicon.png}">
 
     <title>
-        Ajustes
+        Microredes | Inicio
     </title>
 
     <!-- Fonts -->
@@ -45,21 +45,6 @@
     <!-- jQuery y DataTables JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-    <!-- Leaflet MAP -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
-
-    <!-- AwesomeMarkers Icons -->
-    <link th:href="@{/css/leaflet.awesome-markers.css}" rel="stylesheet" />
-
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     <!-- DataTables Custom Styles -->
     <style>
@@ -98,12 +83,13 @@
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
+
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand px-4 py-3 m-0" th:href="@{/micronetworks}">
             <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
-            <span class="ms-1 text-sm text-dark">Ajustes</span>
+            <span class="ms-1 text-sm text-dark">Usuarios</span>
         </a>
     </div>
     <hr class="horizontal dark mt-0 mb-2">
@@ -286,51 +272,101 @@
 
 
     <div class="container-fluid py-2">
-        <div class="row mb-1">
-            <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card my-4">
-                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                                <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
-                                    <h6 class="text-white text-capitalize ps-3 d-inline-block">Instalaciones</h6>
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
+                            <h6 class="text-white text-capitalize ps-3 d-inline-block">Ajustes</h6>
+                        </div>
 
-                                    <a class="btn btn-outline-light position-absolute end-2 top-50 translate-middle-y"  th:href="@{/micronetworks/create}" type="button">+ Añadir Instalación</a>
+                    </div>
+                    <div class="card-body px-0 pb-2">
+                        <div class="p-4">
+
+                            <form id="SettingsForm" th:action="@{/settings/edit}" th:object="${settings}" method="post">
+                                <!-- Campo oculto para el ID -->
+                                <input type="hidden" th:field="*{id}">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Token VRM</label>
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" th:field="*{tokenVRM}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Token WeatherLink</label>
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" th:field="*{tokenWeatherLink}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Token SparkMeter</label>
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" th:field="*{tokenSparkMeter}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- Fila 2 -->
+                                <div class="row mt-2 p-2">
+
+                                    <div class="col-md-4 align-content-center">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <div class="form-check form-switch ps-0 is-filled">
+                                                <input class="form-check-input ms-auto" type="checkbox" id="switchWhatsapp"
+                                                       th:checked="${settings.alertsWhatsapp}" th:field="*{alertsWhatsapp}">
+                                                <label class="form-check-label text-body ms-3 mb-0" for="switchWhatsapp">
+                                                    Enviar alertas a WhatsApp
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 align-content-center">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <div class="form-check form-switch ps-0 is-filled">
+                                                <input class="form-check-input ms-auto" type="checkbox" id="switchEmail"
+                                                       th:checked="${settings.alertsEmail}" th:field="*{alertsEmail}">
+                                                <label class="form-check-label text-body ms-3 mb-0" for="switchEmail">
+                                                    Enviar alertas por correo
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 align-content-center">
+                                        <div class="input-group input-group-outline mb-3">
+                                            <div class="form-check form-switch ps-0 is-filled">
+                                                <input class="form-check-input ms-auto" type="checkbox" id="switchSMS"
+                                                       th:checked="${settings.alertsSMS}" th:field="*{alertsSMS}">
+                                                <label class="form-check-label text-body ms-3 mb-0" for="switchSMS">
+                                                    Enviar alertas por SMS
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 </div>
 
-                            </div>
-                            <div class="card-body px-0 pb-2">
-                                <div class="table-responsive p-0">
 
-
-
+                                <!-- Botón para enviar -->
+                                <div class="mt-2">
+                                    <p class="text-sm" th:text="'Última Edición: ' + ${#dates.format(settings.getTimeEdition(), 'dd/MM/yyyy HH:mm')}"></p>
                                 </div>
-                            </div>
+
+                                <!-- Botón para enviar -->
+                                <div class="text-center mt-1">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+
                         </div>
                     </div>
                 </div>
             </div>
-
-
-
-            <div class="col-lg-4 col-md-6">
-
-                <div class="card my-4" style="height: 740px;">
-
-
-
-                    <div class="card-body p-0" style="height: 600px;">
-                        <!-- Ajusta el 60px según la altura aproximada del header -->
-                        <div id="map" style="width: 100%; height: 100%; border-radius: 0.5rem !important;">
-                            <!-- Aquí se inyecta el mapa (Leaflet, Google Maps, etc.) -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
         </div>
 
 
@@ -448,42 +484,37 @@
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
-<script th:src="@{/js/core/leaflet.awesome-markers.min.js}"></script>
 
 
-<script th:inline="javascript">
+<script>
+    $(document).ready(function () {
+        $('#users-table').DataTable({
+            "paging": true,         // Habilita la paginación
+            "searching": true,      // Habilita la barra de búsqueda
+            "ordering": true,       // Habilita la ordenación por columnas
+            "info": true,           // Muestra información sobre la tabla
+            "lengthChange": true,   // Permite cambiar el número de registros mostrados
+            "pageLength": 5,        // Número de registros mostrados por página
+            "scrollResize": true,
+            "scrollY": 540,
+            "scrollCollapse": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
+            },
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var pageInfo = api.page.info();
 
-    document.addEventListener("DOMContentLoaded", function() {
-
-        var mapMarkersData = /*[[${mapMarkersData}]]*/ [];
-
-        var map = L.map('map').setView([-9.189967, -75.015152], 6);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 14,
-            minZoom: 6,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        // Recorremos el array y agregamos marcadores con sus alias
-        mapMarkersData.forEach(function(marker) {
-            L.marker([marker.lat, marker.lon])
-                .addTo(map)
-                .bindPopup(marker.alias);
+                // Oculta la paginación si no es necesaria
+                if (pageInfo.pages <= 1) {
+                    $('.dataTables_paginate').hide();
+                } else {
+                    $('.dataTables_paginate').show();
+                }
+            }
         });
-
-        // Creates a red marker with the coffee icon
-        var redMarker = L.AwesomeMarkers.icon({
-            icon: 'coffee',
-            markerColor: 'red'
-        });
-
-        L.marker([-12.7464,77.88428], {icon: redMarker}).addTo(map);
-
     });
-
 </script>
-
 
 
 <script>

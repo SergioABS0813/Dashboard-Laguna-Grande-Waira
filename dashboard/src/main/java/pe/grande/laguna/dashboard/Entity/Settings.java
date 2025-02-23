@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @Document(collection = "settings")
@@ -27,15 +29,29 @@ public class Settings {
     @Field(value = "tokenSparkMeter")
     private String tokenSparkMeter;
 
+    @Field(value = "alertsEmail")
+    private boolean alertsEmail;
+    @Field(value = "alertsSMS")
+    private boolean alertsSMS;
+    @Field(value = "alertsWhatsapp")
+    private boolean alertsWhatsapp;
+
+    @Field(value = "timeEdition")
+    private Date timeEdition;
+
     public Settings() {
     }
 
-    public Settings(@NonNull String id, String adminId, String tokenVRM, String tokenWeatherLink, String tokenSparkMeter) {
+    public Settings(@NonNull String id, String adminId, String tokenVRM, String tokenWeatherLink, String tokenSparkMeter, boolean alertsEmail, boolean alertsSMS, boolean alertsWhatsapp, Date timeEdition) {
         this.id = id;
         this.adminId = adminId;
         this.tokenVRM = tokenVRM;
         this.tokenWeatherLink = tokenWeatherLink;
         this.tokenSparkMeter = tokenSparkMeter;
+        this.alertsEmail = alertsEmail;
+        this.alertsSMS = alertsSMS;
+        this.alertsWhatsapp = alertsWhatsapp;
+        this.timeEdition = timeEdition;
     }
 
     public @NonNull String getId() {
@@ -76,5 +92,37 @@ public class Settings {
 
     public void setTokenSparkMeter(String tokenSparkMeter) {
         this.tokenSparkMeter = tokenSparkMeter;
+    }
+
+    public boolean isAlertsEmail() {
+        return alertsEmail;
+    }
+
+    public void setAlertsEmail(boolean alertsEmail) {
+        this.alertsEmail = alertsEmail;
+    }
+
+    public boolean isAlertsSMS() {
+        return alertsSMS;
+    }
+
+    public void setAlertsSMS(boolean alertsSMS) {
+        this.alertsSMS = alertsSMS;
+    }
+
+    public boolean isAlertsWhatsapp() {
+        return alertsWhatsapp;
+    }
+
+    public void setAlertsWhatsapp(boolean alertsWhatsapp) {
+        this.alertsWhatsapp = alertsWhatsapp;
+    }
+
+    public Date getTimeEdition() {
+        return timeEdition;
+    }
+
+    public void setTimeEdition(Date timeEdition) {
+        this.timeEdition = timeEdition;
     }
 }
