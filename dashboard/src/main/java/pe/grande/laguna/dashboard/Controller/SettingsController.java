@@ -62,8 +62,10 @@ public class SettingsController {
                 .orElseThrow(() -> new RuntimeException("No existe Settings con ese ID"));
 
         existing.setTokenVRM(formSettings.getTokenVRM());
-        existing.setTokenWeatherLink(formSettings.getTokenWeatherLink());
-        existing.setTokenSparkMeter(formSettings.getTokenSparkMeter());
+        existing.setKeyWeatherLink(formSettings.getKeyWeatherLink());
+        existing.setSecretWeatherLink(formSettings.getSecretWeatherLink());
+        existing.setKeySparkMeter(formSettings.getKeySparkMeter());
+        existing.setSecretSparkMeter(formSettings.getSecretSparkMeter());
         existing.setAlertsEmail(formSettings.isAlertsEmail());
         existing.setAlertsWhatsapp(formSettings.isAlertsWhatsapp());
         existing.setAlertsSMS(formSettings.isAlertsSMS());

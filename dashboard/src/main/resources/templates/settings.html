@@ -281,13 +281,29 @@
                         </div>
 
                     </div>
-                    <div class="card-body px-0 pb-2">
-                        <div class="p-4">
+                    <div class="card-body px-0 pb-1">
+                        <div class="px-4 py-2">
 
                             <form id="SettingsForm" th:action="@{/settings/edit}" th:object="${settings}" method="post">
                                 <!-- Campo oculto para el ID -->
                                 <input type="hidden" th:field="*{id}">
+
+                                <!-- Fila 1 -->
                                 <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Key WeatherLink</label>
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" th:field="*{keyWeatherLink}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Key SparkMeter</label>
+                                        <div class="input-group input-group-outline mb-3">
+                                            <input type="text" th:field="*{keySparkMeter}" class="form-control">
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-4">
                                         <label class="form-label">Token VRM</label>
                                         <div class="input-group input-group-outline mb-3">
@@ -295,22 +311,30 @@
                                         </div>
                                     </div>
 
+                                </div>
+
+                                <!-- Fila 2 -->
+                                <div class="row">
                                     <div class="col-md-4">
-                                        <label class="form-label">Token WeatherLink</label>
+                                        <label class="form-label">Secret WeatherLink</label>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{tokenWeatherLink}" class="form-control">
+                                            <input type="text" th:field="*{secretWeatherLink}" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="col-md-4">
-                                        <label class="form-label">Token SparkMeter</label>
+                                        <label class="form-label">Secret SparkMeter</label>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{tokenSparkMeter}" class="form-control">
+                                            <input type="text" th:field="*{secretSparkMeter}" class="form-control">
                                         </div>
                                     </div>
+
 
                                 </div>
-                                <!-- Fila 2 -->
+
+                                <hr style="background-image: linear-gradient(0deg,transparent,rgba(1,1,2,.8),transparent)" class="horizontal my-3">
+
+                                <!-- Fila 3 -->
                                 <div class="row mt-2 p-2">
 
                                     <div class="col-md-4 align-content-center">

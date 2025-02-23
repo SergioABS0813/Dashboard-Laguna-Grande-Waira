@@ -24,10 +24,16 @@ public class Settings {
 
     @Field(value = "tokenVRM")
     private String tokenVRM;
-    @Field(value = "tokenWeatherLink")
-    private String tokenWeatherLink;
-    @Field(value = "tokenSparkMeter")
-    private String tokenSparkMeter;
+
+    @Field(value = "keyWeatherLink")
+    private String keyWeatherLink;
+    @Field(value = "secretWeatherLink")
+    private String secretWeatherLink;
+
+    @Field(value = "keySparkMeter")
+    private String keySparkMeter;
+    @Field(value = "secretSparkMeter")
+    private String secretSparkMeter;
 
     @Field(value = "alertsEmail")
     private boolean alertsEmail;
@@ -42,12 +48,14 @@ public class Settings {
     public Settings() {
     }
 
-    public Settings(@NonNull String id, String adminId, String tokenVRM, String tokenWeatherLink, String tokenSparkMeter, boolean alertsEmail, boolean alertsSMS, boolean alertsWhatsapp, Date timeEdition) {
+    public Settings(@NonNull String id, String adminId, String tokenVRM, String keyWeatherLink, String secretWeatherLink, String keySparkMeter, String secretSparkMeter, boolean alertsEmail, boolean alertsSMS, boolean alertsWhatsapp, Date timeEdition) {
         this.id = id;
         this.adminId = adminId;
         this.tokenVRM = tokenVRM;
-        this.tokenWeatherLink = tokenWeatherLink;
-        this.tokenSparkMeter = tokenSparkMeter;
+        this.keyWeatherLink = keyWeatherLink;
+        this.secretWeatherLink = secretWeatherLink;
+        this.keySparkMeter = keySparkMeter;
+        this.secretSparkMeter = secretSparkMeter;
         this.alertsEmail = alertsEmail;
         this.alertsSMS = alertsSMS;
         this.alertsWhatsapp = alertsWhatsapp;
@@ -78,20 +86,36 @@ public class Settings {
         this.tokenVRM = tokenVRM;
     }
 
-    public String getTokenWeatherLink() {
-        return tokenWeatherLink;
+    public String getKeyWeatherLink() {
+        return keyWeatherLink;
     }
 
-    public void setTokenWeatherLink(String tokenWeatherLink) {
-        this.tokenWeatherLink = tokenWeatherLink;
+    public void setKeyWeatherLink(String keyWeatherLink) {
+        this.keyWeatherLink = keyWeatherLink;
     }
 
-    public String getTokenSparkMeter() {
-        return tokenSparkMeter;
+    public String getSecretWeatherLink() {
+        return secretWeatherLink;
     }
 
-    public void setTokenSparkMeter(String tokenSparkMeter) {
-        this.tokenSparkMeter = tokenSparkMeter;
+    public void setSecretWeatherLink(String secretWeatherLink) {
+        this.secretWeatherLink = secretWeatherLink;
+    }
+
+    public String getKeySparkMeter() {
+        return keySparkMeter;
+    }
+
+    public void setKeySparkMeter(String keySparkMeter) {
+        this.keySparkMeter = keySparkMeter;
+    }
+
+    public String getSecretSparkMeter() {
+        return secretSparkMeter;
+    }
+
+    public void setSecretSparkMeter(String secretSparkMeter) {
+        this.secretSparkMeter = secretSparkMeter;
     }
 
     public boolean isAlertsEmail() {
