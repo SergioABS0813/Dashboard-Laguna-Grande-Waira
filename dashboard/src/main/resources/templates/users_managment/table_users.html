@@ -23,7 +23,7 @@
     <link rel="icon" type="image/x-icon" th:href="@{/media/favicon.png}">
 
     <title>
-        Microredes | Inicio
+        Usuarios | Inicio
     </title>
 
     <!-- Fonts -->
@@ -46,8 +46,22 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
+    <!-- SweetAlert2 CSS (opcional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- DataTables Custom Styles -->
     <style>
+        .swal2-container {
+            z-index: 9999 !important; /* Se asegura que esté sobre todo */
+        }
+
+        .swal2-backdrop-show {
+            background: rgba(0, 0, 0, 0.7) !important; /* Asegura opacidad */
+        }
+
         .dataTables_wrapper .dataTables_scrollBody table.dataTable tbody td {
             white-space: nowrap;      /* No permitir salto de línea */
             overflow: hidden;         /* Ocultar texto sobrante */
@@ -284,6 +298,11 @@
                     </div>
                     <div class="card-body px-0 pb-2">
                         <div class="table-responsive p-0">
+                            <div th:if="${successMessageDelete}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                <span th:text="${successMessageDelete}"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+
                             <table id="users-table" class="table align-items-center mb-0">
                                 <thead>
                                 <tr>
@@ -292,6 +311,7 @@
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Celular</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nombre</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creación</th>
+                                    <th class="text-secondary opacity-7"></th>
                                     <th class="text-secondary opacity-7"></th>
                                 </tr>
                                 </thead>
@@ -319,6 +339,12 @@
                                     </td>
                                     <td class="align-middle">
                                         <a class="btn btn-link text-secondary px-3 mb-0" href="javascript:;"><i class="material-symbols-rounded text-sm me-2">edit</i>Editar</a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a class="btn btn-link text-secondary px-3 mb-0 delete-user"
+                                           th:href="@{/user_managment/delete/{id}(id=${user.id})}">
+                                            <i class="material-symbols-rounded text-sm me-2">delete</i>Eliminar
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -442,6 +468,7 @@
 <script th:src="@{/js/core/popper.min.js}"></script>
 <script th:src="@{/js/core/bootstrap.min.js}"></script>
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
+<script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>delete
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
@@ -486,9 +513,52 @@
         Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
 </script>
+    <!-- Start: Alerta para eliminar usuario -->
 
-<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            // Seleccionar todos los enlaces de eliminación
+            var deleteLinks = document.querySelectorAll(".delete-user");
+
+            deleteLinks.forEach(function(link) {
+                link.addEventListener("click", function(event) {
+                    // Prevenir la acción inmediata
+                    event.preventDefault();
+
+                    // Guardar la URL a la que se redirigiría
+                    var url = this.getAttribute("href");
+
+                    // Mostrar alerta de confirmación
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "Esta acción eliminará al usuario permanentemente.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        allowOutsideClick: false, // Bloquea clics fuera de la alerta
+                        backdrop: 'rgba(0,0,0,0.6)' // Fondo más oscuro
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = url;
+                        }
+                    });
+
+                });
+            });
+        });
+    </script>
+
+
+
+    <!-- End: Alerta para eliminar usuario -->
+
+
+    <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
+
 
 </body>
 
