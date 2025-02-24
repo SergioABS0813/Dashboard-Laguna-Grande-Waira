@@ -1,10 +1,13 @@
 package pe.grande.laguna.dashboard.Controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
 import pe.grande.laguna.dashboard.Repository.MicroNetworkRepository;
@@ -34,6 +37,8 @@ public class MicroNetworksController {
         return "micronetworks/table_micronetworks";
     }
 
+    /* ********** START: Crear micronetworks ********** */
+
     @GetMapping("/micronetworks/create")
     public String add(Model model) {
         model.addAttribute("microNetwork", new MicroNetwork());
@@ -41,7 +46,15 @@ public class MicroNetworksController {
     }
 
     @PostMapping("/micronetworks/create")
-    public String create(@ModelAttribute("microNetwork") MicroNetwork microNetwork) {
+    public String create(@Valid @ModelAttribute("microNetwork") MicroNetwork microNetwork, BindingResult bindingResult) {
+
+
+        // Si existen errores de validación, se retorna a la vista del formulario.
+        if (bindingResult.hasErrors()) {
+            // Los errores se mostrarán en la misma vista
+            return "micronetworks/add_micronetwork";
+        }
+
         //Definir la zona horaria de Perú
         ZoneId limaZone = ZoneId.of("America/Lima");
 
@@ -64,6 +77,27 @@ public class MicroNetworksController {
 
         return "redirect:/micronetworks";
     }
+
+    /* ********** END: Crear micronetworks ********** */
+
+    /* ********** START: Editar micronetworks ********** */
+
+    @GetMapping("/micronetworks/edit/{id}")
+    public String editMicroNetwork(@PathVariable("id") String id, Model model) {
+        // Buscamos la microred por ID en la base de datos
+        MicroNetwork microNetwork = microNetworkRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("MicroNetwork no encontrada con id: " + id));
+
+        // Agregamos al modelo para que Thymeleaf rellene el formulario
+        model.addAttribute("microNetwork", microNetwork);
+
+        // Retornar la vista del formulario
+        return "micronetworks/edit_micronetwork";
+    }
+
+
+
+
 
 
 

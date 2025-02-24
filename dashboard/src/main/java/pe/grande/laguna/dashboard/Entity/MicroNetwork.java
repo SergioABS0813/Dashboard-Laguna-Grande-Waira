@@ -1,5 +1,7 @@
 package pe.grande.laguna.dashboard.Entity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -21,17 +23,27 @@ public class MicroNetwork implements Serializable {
     @NonNull
     private String id;
 
+    @NotBlank(message = "El site de VRM es obligatorio")
     @Field(value = "siteVRM")
     private String siteVRM;
+
+    @NotBlank(message = "El site de Weather Link es obligatorio")
     @Field(value = "siteWeatherLink")
     private String siteWeatherLink;
+
+    @NotBlank(message = "El site de Spark Meter es obligatorio")
     @Field(value = "siteSparkMeter")
     private String siteSparkMeter;
 
+    @NotBlank(message = "El alias es obligatorio")
     @Field(value = "alias")
     private String alias;
+
+    @Pattern(regexp = "^-?[0-9]{1,3}(\\.[0-9]+)?$", message = "La latitud debe ser un número válido. Por favor, ingrese un valor")
     @Field(value = "lat")
     private String lat;
+
+    @Pattern(regexp = "^-?[0-9]{1,3}(\\.[0-9]+)?$", message = "La longitud debe ser un número válido. Por favor, ingrese un valor")
     @Field(value = "lon")
     private String lon;
 
@@ -43,9 +55,11 @@ public class MicroNetwork implements Serializable {
     @Field(value = "status")
     private String status;
 
+    @NotBlank(message = "La provincia es obligatoria.")
     @Field(value = "provincia")
     private String provincia;
 
+    @NotBlank(message = "El departamento es obligatorio.")
     @Field(value = "departamento")
     private String departamento;
 
