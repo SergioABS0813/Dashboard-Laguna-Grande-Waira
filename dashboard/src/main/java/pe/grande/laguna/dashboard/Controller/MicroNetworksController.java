@@ -2,6 +2,8 @@ package pe.grande.laguna.dashboard.Controller;
 
 
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,7 +12,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
+import pe.grande.laguna.dashboard.Entity.Settings;
+import pe.grande.laguna.dashboard.Entity.User;
 import pe.grande.laguna.dashboard.Repository.MicroNetworkRepository;
+import pe.grande.laguna.dashboard.Repository.SettingsRepository;
+import pe.grande.laguna.dashboard.Repository.UsersRepository;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -22,15 +28,38 @@ import java.util.Date;
 public class MicroNetworksController {
 
     final MicroNetworkRepository microNetworkRepository;
+    final SettingsRepository settingsRepository;
+    final UsersRepository usersRepository;
 
-    public MicroNetworksController(MicroNetworkRepository microNetworkRepository) {
+    public MicroNetworksController(MicroNetworkRepository microNetworkRepository, SettingsRepository settingsRepository, UsersRepository usersRepository) {
         this.microNetworkRepository = microNetworkRepository;
+        this.settingsRepository = settingsRepository;
+        this.usersRepository = usersRepository;
     }
 
     @GetMapping("/micronetworks")
     public String table(Model model) {
 
+        System.out.println("Comenzando micronetworks");
+
+        Settings userSettings = new Settings();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal()) && auth.getAuthorities().stream()
+                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()))) {
+
+            org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+            String email = securityUser.getUsername();
+
+            User userEntity = usersRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            if (!userEntity.getRole().equals("ROLE_ADMIN")) {
+                userSettings = settingsRepository.findByAdminId(userEntity.getId());
+            }
+        }
+
         ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+        model.addAttribute("settings", userSettings);
         model.addAttribute("microNetworkList", microNetworkList);
         model.addAttribute("mapMarkersData", microNetworkList);
 
@@ -41,13 +70,13 @@ public class MicroNetworksController {
 
     @GetMapping("/micronetworks/create")
     public String add(Model model) {
+
         model.addAttribute("microNetwork", new MicroNetwork());
         return "micronetworks/add_micronetwork";
     }
 
     @PostMapping("/micronetworks/create")
     public String create(@Valid @ModelAttribute("microNetwork") MicroNetwork microNetwork, BindingResult bindingResult) {
-
 
         // Si existen errores de validación, se retorna a la vista del formulario.
         if (bindingResult.hasErrors()) {
