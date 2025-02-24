@@ -301,6 +301,18 @@
 
                             </div>
                             <div class="card-body px-0 pb-2">
+                                <div th:if="${successMessageEdit}" class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <span th:text="${successMessageEdit}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+
+                                <div th:if="${successMessageCreate}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <span th:text="${successMessageCreate}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+
                                 <div class="table-responsive p-0">
                                     <table id="micronets-table" class="table align-items-center mb-0">
                                         <thead>
