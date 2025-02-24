@@ -176,6 +176,30 @@ public class MicroNetworksController {
         return "redirect:/micronetworks";
     }
 
+    /* ********** END: Editar micronetworks ********** */
+
+
+    /* ********** START: Eliminar micronetworks ********** */
+
+    @GetMapping("/micronetworks/delete/{id}")
+    public String deleteMicroNetwork(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+        // Buscar la microred por ID, o lanzar excepción si no existe
+        MicroNetwork microNetwork = microNetworkRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No se encontró la microred con ID: " + id));
+
+        // Eliminar la microred
+        microNetworkRepository.delete(microNetwork);
+
+        // Agregar un mensaje flash de éxito
+        redirectAttributes.addFlashAttribute("successMessageDelete", "Microred eliminada correctamente");
+
+        // Redirigir a la tabla de microredes
+        return "redirect:/micronetworks";
+    }
+
+    /* ********** END: Eliminar micronetworks ********** */
+
+
 
 
 

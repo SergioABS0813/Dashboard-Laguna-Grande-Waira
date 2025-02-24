@@ -301,16 +301,24 @@
 
                             </div>
                             <div class="card-body px-0 pb-2">
+                                <!-- Flash attribute de Edit -->
                                 <div th:if="${successMessageEdit}" class="alert alert-info alert-dismissible fade show" role="alert">
                                     <span th:text="${successMessageEdit}"></span>
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
 
-
+                                <!-- Flash attribute de Create -->
                                 <div th:if="${successMessageCreate}" class="alert alert-success alert-dismissible fade show" role="alert">
                                     <span th:text="${successMessageCreate}"></span>
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
+
+                                <!-- Flash attribute de Delete -->
+                                <div th:if="${successMessageDelete}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                    <span th:text="${successMessageDelete}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
 
 
                                 <div class="table-responsive p-0">
@@ -323,6 +331,7 @@
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Longitud</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creación</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Última Edición</th>
+                                            <th class="text-secondary opacity-7"></th>
                                             <th class="text-secondary opacity-7"></th>
                                         </tr>
                                         </thead>
@@ -357,6 +366,12 @@
                                                 <a class="btn btn-link text-secondary px-3 mb-0"
                                                    th:href="@{/micronetworks/edit/{id}(id=${microNetwork.id})}">
                                                     <i class="material-symbols-rounded text-sm me-2">edit</i>Editar
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a class="btn btn-link text-secondary px-3 mb-0"
+                                                   th:href="@{/micronetworks/delete/{id}(id=${microNetwork.id})}">
+                                                    <i class="material-symbols-rounded text-sm me-2">delete</i>Eliminar
                                                 </a>
                                             </td>
 
