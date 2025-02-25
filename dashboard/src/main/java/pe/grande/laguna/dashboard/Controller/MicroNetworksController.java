@@ -90,15 +90,15 @@ public class MicroNetworksController {
 
         if (!weatherOk) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "El token/key de WeatherLink es inválido. Corrige los valores en Ajustes.");
+                    "El token/key de WeatherLink es inválido. Por favor, verifique los valores en Ajustes.");
             return "redirect:/micronetworks";
         } else if (!sparkOk) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "El token/key de Sparkmeter es inválido. Corrige los valores en Ajustes.");
+                    "El token/key de Sparkmeter es inválido. Por favor, verifique los valores en Ajustes.");
             return "redirect:/micronetworks";
         } else if (!vrmOk) {
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "El token de VRM es inválido. Corrige los valores en Ajustes.");
+                    "El token de VRM es inválido. Por favor, verifique el valor en Ajustes.");
             return "redirect:/micronetworks";
 
         }
