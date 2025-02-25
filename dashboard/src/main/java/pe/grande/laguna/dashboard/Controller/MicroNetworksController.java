@@ -46,10 +46,8 @@ public class MicroNetworksController {
 
         System.out.println("Comenzando micronetworks");
 
-        Settings userSettings = new Settings();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal()) && auth.getAuthorities().stream()
-                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()))) {
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
 
             org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
             String email = securityUser.getUsername();
@@ -57,11 +55,24 @@ public class MicroNetworksController {
             User userEntity = usersRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+            boolean isAdmin = userEntity.getRole().equals("ADMIN");
+            System.out.println("isAdmin: " + isAdmin);
+
+            if (isAdmin) {
+
+                ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+                model.addAttribute("microNetworkList", microNetworkList);
+                model.addAttribute("mapMarkersData", microNetworkList);
+
+            } else {
+
+                ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+                model.addAttribute("microNetworkList", microNetworkList);
+                model.addAttribute("mapMarkersData", microNetworkList);
+            }
         }
 
-        ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
-        model.addAttribute("microNetworkList", microNetworkList);
-        model.addAttribute("mapMarkersData", microNetworkList);
+
 
         return "micronetworks/table_micronetworks";
     }
