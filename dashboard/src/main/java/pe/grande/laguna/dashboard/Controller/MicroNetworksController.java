@@ -249,6 +249,11 @@ public class MicroNetworksController {
 
     /* ********** END: View Micronetworks ********** */
 
+    @GetMapping("loader")
+    public String loader(){
+        return "loaderPage";
+    }
+
 
 
 

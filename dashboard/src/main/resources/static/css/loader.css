@@ -1,0 +1,56 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #120212;
+
+}
+.loader-container{
+    position: relative;
+}
+.loader-container .loader{
+    width: 100px;
+    height: 100px;
+    border: solid 5px #064555;
+    border-top: solid 5px #7cd6ec;
+    border-radius: 50%;
+    animation: loader .8s linear infinite;
+}
+
+@keyframes loader {
+    0% {
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+    
+}
+
+.loader-container .message{
+    position: absolute;
+    color: #7cd6ec;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: message 1s alternate infinite ease-in-out;
+}
+
+@keyframes message {
+    0% {
+        opacity: .2;
+    }
+
+    100%{
+        opacity: 1;
+    }
+
+}
