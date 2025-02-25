@@ -136,7 +136,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark" th:href="@{/dashboard}">
+                <a class="nav-link text-dark" th:href="@{/dashboard/id}">
                     <i class="material-symbols-rounded opacity-5">dashboard</i>
                     <span class="nav-link-text ms-1">Dashboard</span>
                 </a>
@@ -396,7 +396,7 @@
                                             </td>
                                             <td class="align-middle">
                                                 <a class="btn btn-link text-secondary px-3 mb-0"
-                                                   th:href="@{/micronetworks/view/{id}(id=${microNetwork.id})}">
+                                                   th:href="@{/dashboard/{id}(id=${microNetwork.id})}">
                                                     <i class="material-symbols-rounded text-sm me-2">visibility</i>Ver
                                                 </a>
                                             </td>

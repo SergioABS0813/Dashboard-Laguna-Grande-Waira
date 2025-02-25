@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
@@ -36,8 +37,9 @@ public class DashboardController {
         this.VRMService = VRMService;
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model, @RequestParam(name = "instalation", required = false, defaultValue = "0") int instalation){
+
+    @GetMapping({"/dashboard/{id}"})
+    public String dashboard(@PathVariable("id") String id, Model model){
 
         Optional<Settings> OptionalSettings = settingsRepository.findAll().stream().findFirst();
         if (OptionalSettings.isPresent()) {
@@ -55,36 +57,45 @@ public class DashboardController {
 
             User userEntity = usersRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            if (userEntity != null) {
 
-                ArrayList<String> microNetworksIds = userEntity.getMicronetworkList();
+            boolean isAdmin = userEntity.getRole().equals("ADMIN");
+            System.out.println("isAdmin: " + isAdmin);
 
-                ArrayList<MicroNetwork> microNetworkList = new ArrayList<>();
-                for (String microNetworkId : microNetworksIds) {
+            Map<String, MicroNetwork> microNetworkMap = new HashMap<>();
 
-                    Optional<MicroNetwork> microNetworkOptional = microNetworkRepository.findById(microNetworkId);
-                    microNetworkOptional.ifPresent(microNetworkList::add);
-                }
+            if (isAdmin) {
+                ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
 
-                if (instalation >= 0 && instalation < microNetworkList.size()) {
-
-                    System.out.println("Instalacion Elegida: " + instalation);
-                    model.addAttribute("selectedMicroNetwork", microNetworkList.get(instalation));
-                    model.addAttribute("microNetworkList", microNetworkList);
-
-
-
-
-
-
-                } else {
-                    model.addAttribute("selectedMicroNetwork", null);
+                for (MicroNetwork network : microNetworkList) {
+                    microNetworkMap.put(network.getId(), network);
                 }
 
             } else {
-                model.addAttribute("microNetworkList", null);
-                model.addAttribute("selectedMicroNetwork", null);
+
+                ArrayList<String> microNetworksIds = userEntity.getMicronetworkList();
+                System.out.println(microNetworksIds.toString());
+
+                for (String microNetworkId : microNetworksIds) {
+                    Optional<MicroNetwork> microNetworkOptional = microNetworkRepository.findById(microNetworkId);
+                    microNetworkOptional.ifPresent(microNetwork -> microNetworkMap.put(microNetworkId, microNetwork));
+                }
             }
+
+            System.out.println("Selected id: " + id);
+            MicroNetwork selectedNetwork = microNetworkMap.get(id);
+
+            System.out.println(microNetworkMap.get(id));
+
+            if (selectedNetwork != null) {
+                model.addAttribute("selectedMicroNetwork", selectedNetwork);
+                System.out.println("Selected MicroNetwork: " + selectedNetwork.getId());
+            } else {
+                model.addAttribute("selectedMicroNetwork", new ArrayList<>(microNetworkMap.values()).get(0));
+                System.out.println("Selected MicroNetwork: " + new ArrayList<>(microNetworkMap.values()).get(0).getId());
+            }
+
+            model.addAttribute("microNetworkList", new ArrayList<>(microNetworkMap.values()));
+
         }
 
         return "dashboard";

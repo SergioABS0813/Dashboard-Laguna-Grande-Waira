@@ -13,22 +13,23 @@ public class VRMService {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    public ResponseEntity<Map> getInstallations(String token) {
+    public ResponseEntity<Map> getInstallations(String tokenVRM) {
         String url = VRM_BASE_URL + "/installations";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+        headers.add("x-authorization", "Token " + tokenVRM);
+
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
         return restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
     }
 
-    public ResponseEntity<Map> getInstallationData(String token, String siteId) {
+    public ResponseEntity<Map> getInstallationData(String tokenVRM, String siteId) {
         String url = VRM_BASE_URL + "/installations/" + siteId + "/stats";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+        headers.add("x-authorization", "Token " + tokenVRM);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);

@@ -248,33 +248,5 @@ public class MicroNetworksController {
 
     /* ********** END: Eliminar micronetworks ********** */
 
-    /* ********** START: View Micronetworks ********** */
-
-    @GetMapping("/micronetworks/view/{id}")
-    public String viewMicronetwork(@PathVariable("id") String id, Model model){
-        // Buscar la microred por ID, o lanzar excepción si no existe
-        MicroNetwork microNetwork = microNetworkRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró la microred con ID: " + id));
-
-        //mandamos el micronetwork a la vista
-        model.addAttribute("microNetwork", microNetwork);
-        return "dashboard";
-
-    }
-
-
-
-
-
-    /* ********** END: View Micronetworks ********** */
-
-
-
-
-
-
-
-
-
 
 }

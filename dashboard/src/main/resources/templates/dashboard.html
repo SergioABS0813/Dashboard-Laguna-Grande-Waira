@@ -27,6 +27,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         Dashboard | Inicio
     </title>
 
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
     <!-- Fonts -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
     <!-- Nucleo Icons -->
@@ -237,6 +239,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <!-- End Navbar -->
 
 
+    <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
+    <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 400px;"></div>
 
 
 
@@ -841,6 +845,55 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
+
+
+<script>
+    let chart;
+
+    // Función para inicializar la gráfica con Highcharts
+    function createChart() {
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Serie de Datos'
+            },
+            xAxis: {
+                categories: []  // Etiquetas vacías, se actualizarán dinámicamente
+            },
+            yAxis: {
+                title: {
+                    text: 'Valores'
+                }
+            },
+            series: [{
+                name: 'Datos',
+                data: []  // Datos vacíos, se actualizarán dinámicamente
+            }]
+        });
+    }
+
+    // Función para actualizar la gráfica usando fetch
+    function actualizarGrafica() {
+        const siteId = document.getElementById('container').dataset.siteId;
+        fetch(`/api/graph-data?siteId=${siteId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Se espera que data contenga "labels" y "data"
+                chart.xAxis[0].setCategories(data.labels);
+                chart.series[0].setData(data.data);
+            })
+            .catch(error => console.error('Error al actualizar la gráfica:', error));
+    }
+
+    // Inicializa la gráfica al cargar la página
+    createChart();
+    // Realiza una actualización inicial
+    actualizarGrafica();
+    // Actualiza la gráfica cada 1 minuto (60000 ms)
+    setInterval(actualizarGrafica, 60000);
+</script>
 
 <script>
     var ctx = document.getElementById("chart-bars").getContext("2d");
