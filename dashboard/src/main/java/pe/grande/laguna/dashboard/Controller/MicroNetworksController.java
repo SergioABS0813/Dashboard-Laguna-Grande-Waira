@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 public class MicroNetworksController {
@@ -46,10 +47,8 @@ public class MicroNetworksController {
 
         System.out.println("Comenzando micronetworks");
 
-        Settings userSettings = new Settings();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal()) && auth.getAuthorities().stream()
-                .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()))) {
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
 
             org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
             String email = securityUser.getUsername();
@@ -57,11 +56,31 @@ public class MicroNetworksController {
             User userEntity = usersRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        }
+            boolean isAdmin = userEntity.getRole().equals("ADMIN");
+            System.out.println("isAdmin: " + isAdmin);
 
-        ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
-        model.addAttribute("microNetworkList", microNetworkList);
-        model.addAttribute("mapMarkersData", microNetworkList);
+            if (isAdmin) {
+
+                ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+                model.addAttribute("microNetworkList", microNetworkList);
+                model.addAttribute("mapMarkersData", microNetworkList);
+
+            } else {
+
+                ArrayList<String> microNetworksIds = userEntity.getMicronetworkList();
+
+                ArrayList<MicroNetwork> microNetworkList = new ArrayList<>();
+                for (String microNetworkId : microNetworksIds) {
+
+                    Optional<MicroNetwork> microNetworkOptional = microNetworkRepository.findById(microNetworkId);
+                    microNetworkOptional.ifPresent(microNetworkList::add);
+                }
+
+                model.addAttribute("microNetworkList", microNetworkList);
+                model.addAttribute("mapMarkersData", microNetworkList);
+            }
+            model.addAttribute("isAdmin", isAdmin);
+        }
 
         return "micronetworks/table_micronetworks";
     }
