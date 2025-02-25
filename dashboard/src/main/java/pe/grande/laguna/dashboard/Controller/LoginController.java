@@ -53,7 +53,11 @@ public class LoginController {
         return "login";  // Devuelve la vista de login
     }
 
-
+    @GetMapping("/logout")
+    public String logout(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("logoutMessage", "Se cerró sesión exitosamente");
+        return "redirect:/login?logout";
+    }
 
 
 }
