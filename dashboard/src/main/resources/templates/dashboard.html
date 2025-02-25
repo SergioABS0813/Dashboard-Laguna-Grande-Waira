@@ -238,6 +238,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     </nav>
     <!-- End Navbar -->
 
+    <div id="container-siteId" th:text="${selectedMicroNetwork.getSiteVRM()}"></div>
 
     <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
     <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 400px;"></div>
@@ -847,49 +848,64 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
 
-<script>
+<script th:inline="javascript">
     let chart;
 
-    // Función para inicializar la gráfica con Highcharts
+    // Función para inicializar la gráfica con dos series: "Pdc" y "total_solar_yield"
     function createChart() {
         chart = Highcharts.chart('container', {
             chart: {
                 type: 'line'
             },
             title: {
-                text: 'Serie de Datos'
+                text: 'Datos de la Instalación'
             },
             xAxis: {
-                categories: []  // Etiquetas vacías, se actualizarán dinámicamente
-            },
-            yAxis: {
+                type: 'datetime',
                 title: {
-                    text: 'Valores'
+                    text: 'Tiempo'
                 }
             },
+            yAxis: [{
+                title: {
+                    text: 'Pdc'
+                }
+            }, {
+                title: {
+                    text: 'Total Solar Yield'
+                },
+                opposite: true
+            }],
             series: [{
-                name: 'Datos',
-                data: []  // Datos vacíos, se actualizarán dinámicamente
+                name: 'Pdc',
+                data: []  // Datos que se actualizarán dinámicamente
+            }, {
+                name: 'Total Solar Yield',
+                data: [], // Datos que se actualizarán dinámicamente
+                yAxis: 1
             }]
         });
     }
 
-    // Función para actualizar la gráfica usando fetch
+       // Función para actualizar la gráfica consultando el endpoint /api/graph-data
     function actualizarGrafica() {
-        const siteId = document.getElementById('container').dataset.siteId;
-        fetch(`/api/graph-data?siteId=${siteId}`)
+        var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
+        fetch(`/api/graph-data?siteId=${VRMSite}`)
             .then(response => response.json())
             .then(data => {
-                // Se espera que data contenga "labels" y "data"
-                chart.xAxis[0].setCategories(data.labels);
-                chart.series[0].setData(data.data);
+                // Se espera que data contenga las series "Pdc" y "total_solar_yield"
+                if(data.Pdc && Array.isArray(data.Pdc)) {
+                    chart.series[0].setData(data.Pdc);
+                }
+                if(data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
+                    chart.series[1].setData(data.total_solar_yield);
+                }
             })
             .catch(error => console.error('Error al actualizar la gráfica:', error));
     }
 
-    // Inicializa la gráfica al cargar la página
+    // Inicializa la gráfica y realiza la primera actualización
     createChart();
-    // Realiza una actualización inicial
     actualizarGrafica();
     // Actualiza la gráfica cada 1 minuto (60000 ms)
     setInterval(actualizarGrafica, 60000);

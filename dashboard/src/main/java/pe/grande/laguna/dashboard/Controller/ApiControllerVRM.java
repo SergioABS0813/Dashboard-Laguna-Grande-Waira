@@ -60,11 +60,23 @@ public class ApiControllerVRM {
      * Se asume que la respuesta contiene, por ejemplo, "timestamps" y "values" que se usarán
      * como etiquetas y datos respectivamente.
      */
+
     private Map<String, Object> procesarDatosParaGraficas(Map installationData) {
         Map<String, Object> graphData = new HashMap<>();
-        graphData.put("labels", installationData.get("timestamps"));
-        graphData.put("data", installationData.get("values"));
+        if (installationData != null && installationData.containsKey("records")) {
+            Map records = (Map) installationData.get("records");
+            // Extraer la serie "Pdc" si existe
+            if (records.containsKey("Pdc")) {
+                graphData.put("Pdc", records.get("Pdc"));
+            }
+            // Extraer la serie "total_solar_yield" si existe
+            if (records.containsKey("total_solar_yield")) {
+                graphData.put("total_solar_yield", records.get("total_solar_yield"));
+            }
+            // Puedes agregar aquí otras series, por ejemplo "total_consumption", "bv", etc.
+        }
         return graphData;
     }
+
 }
 
