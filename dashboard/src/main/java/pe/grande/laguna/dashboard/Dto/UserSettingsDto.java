@@ -1,11 +1,15 @@
 package pe.grande.laguna.dashboard.Dto;
 
+import jakarta.validation.Valid;
 import pe.grande.laguna.dashboard.Entity.Settings;
 import pe.grande.laguna.dashboard.Entity.User;
 
 public class UserSettingsDto {
 
+    @Valid
     private User user;
+
+    @Valid
     private Settings settings;
 
     // Constructor vacío

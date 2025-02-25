@@ -65,7 +65,7 @@ public class SettingsController {
     @PostMapping("/settings/edit")
     public String editSettings(@Valid @ModelAttribute("userSettingsDto") UserSettingsDto userSettingsDto,
                                BindingResult bindingResult,
-                               RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes, Model model) {
 
         if (bindingResult.hasErrors()) {
 
@@ -78,7 +78,7 @@ public class SettingsController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
 
-                return "redirect:/settings"; //Nos manda sí o sí a settings nuevamente
+                return "/settings"; //Nos manda sí o sí a settings nuevamente
             }
             return "redirect:/login";
 
