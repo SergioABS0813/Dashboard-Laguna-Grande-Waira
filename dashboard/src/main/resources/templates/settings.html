@@ -290,30 +290,30 @@
                     <div class="card-body px-0 pb-1">
                         <div class="px-4 py-2">
 
-                            <form id="settingsForm" th:action="@{/settings/edit}" th:object="${settings}" method="post">
+                            <form id="settingsForm" th:action="@{/settings/edit}" th:object="${userSettingsDto}" method="post">
                                 <!-- Campo oculto para el ID -->
-                                <input type="hidden" th:field="*{id}">
+                                <input type="hidden" th:field="*{settings.id}">
 
                                 <!-- Fila 1 -->
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label class="form-label">Key WeatherLink</label>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{keyWeatherLink}" class="form-control">
+                                            <input type="text" th:field="*{settings.keyWeatherLink}" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="col-md-4">
                                         <label class="form-label">Key SparkMeter</label>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{keySparkMeter}" class="form-control">
+                                            <input type="text" th:field="*{settings.keySparkMeter}" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="col-md-4">
                                         <label class="form-label">Token VRM</label>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{tokenVRM}" class="form-control">
+                                            <input type="text" th:field="*{settings.tokenVRM}" class="form-control">
                                         </div>
                                     </div>
 
@@ -324,14 +324,14 @@
                                     <div class="col-md-4">
                                         <label class="form-label">Secret WeatherLink</label>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{secretWeatherLink}" class="form-control">
+                                            <input type="text" th:field="*{settings.secretWeatherLink}" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="col-md-4">
                                         <label class="form-label">Secret SparkMeter</label>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{secretSparkMeter}" class="form-control">
+                                            <input type="text" th:field="*{settings.secretSparkMeter}" class="form-control">
                                         </div>
                                     </div>
 
@@ -347,7 +347,7 @@
                                         <div class="input-group input-group-outline mb-3">
                                             <div class="form-check form-switch ps-0 is-filled">
                                                 <input class="form-check-input ms-auto" type="checkbox" id="switchWhatsapp"
-                                                       th:checked="${settings.alertsWhatsapp}" th:field="*{alertsWhatsapp}">
+                                                       th:checked="${userSettingsDto.user.alertsWhatsapp}" th:field="*{user.alertsWhatsapp}">
                                                 <label class="form-check-label text-body ms-3 mb-0" for="switchWhatsapp">
                                                     Enviar alertas a WhatsApp
                                                 </label>
@@ -359,7 +359,7 @@
                                         <div class="input-group input-group-outline mb-3">
                                             <div class="form-check form-switch ps-0 is-filled">
                                                 <input class="form-check-input ms-auto" type="checkbox" id="switchEmail"
-                                                       th:checked="${settings.alertsEmail}" th:field="*{alertsEmail}">
+                                                       th:checked="${userSettingsDto.user.alertsEmail}" th:field="*{user.alertsEmail}">
                                                 <label class="form-check-label text-body ms-3 mb-0" for="switchEmail">
                                                     Enviar alertas por correo
                                                 </label>
@@ -371,7 +371,7 @@
                                         <div class="input-group input-group-outline mb-3">
                                             <div class="form-check form-switch ps-0 is-filled">
                                                 <input class="form-check-input ms-auto" type="checkbox" id="switchSMS"
-                                                       th:checked="${settings.alertsSMS}" th:field="*{alertsSMS}">
+                                                       th:checked="${userSettingsDto.user.alertsSMS}" th:field="*{user.alertsSMS}">
                                                 <label class="form-check-label text-body ms-3 mb-0" for="switchSMS">
                                                     Enviar alertas por SMS
                                                 </label>
@@ -384,7 +384,7 @@
 
                                 <!-- Botón para enviar -->
                                 <div class="mt-2">
-                                    <p class="text-sm" th:text="'Última Edición: ' + ${#dates.format(settings.getTimeEdition(), 'dd/MM/yyyy HH:mm')}"></p>
+                                    <p class="text-sm" th:text="'Última Edición: ' + ${#dates.format(userSettingsDto.settings.timeEdition, 'dd/MM/yyyy HH:mm')}"></p>
                                 </div>
 
                                 <!-- Botón para enviar -->

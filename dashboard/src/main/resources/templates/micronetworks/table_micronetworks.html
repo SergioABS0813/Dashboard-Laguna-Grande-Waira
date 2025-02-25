@@ -333,7 +333,12 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
 
+                                <!-- Flash attribute de Error de ingreso a crear nueva instalación -->
 
+                                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                    <span th:text="${errorMessage}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
 
                                 <div class="table-responsive p-0">
                                     <table id="micronets-table" class="table align-items-center mb-0">

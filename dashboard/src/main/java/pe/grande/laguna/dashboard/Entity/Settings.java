@@ -27,20 +27,15 @@ public class Settings {
 
     @Field(value = "keyWeatherLink")
     private String keyWeatherLink;
+
     @Field(value = "secretWeatherLink")
     private String secretWeatherLink;
 
     @Field(value = "keySparkMeter")
     private String keySparkMeter;
+
     @Field(value = "secretSparkMeter")
     private String secretSparkMeter;
-
-    @Field(value = "alertsEmail")
-    private boolean alertsEmail;
-    @Field(value = "alertsSMS")
-    private boolean alertsSMS;
-    @Field(value = "alertsWhatsapp")
-    private boolean alertsWhatsapp;
 
     @Field(value = "timeEdition")
     private Date timeEdition;
@@ -48,7 +43,7 @@ public class Settings {
     public Settings() {
     }
 
-    public Settings(@NonNull String id, String adminId, String tokenVRM, String keyWeatherLink, String secretWeatherLink, String keySparkMeter, String secretSparkMeter, boolean alertsEmail, boolean alertsSMS, boolean alertsWhatsapp, Date timeEdition) {
+    public Settings(@NonNull String id, String adminId, String tokenVRM, String keyWeatherLink, String secretWeatherLink, String keySparkMeter, String secretSparkMeter, Date timeEdition) {
         this.id = id;
         this.adminId = adminId;
         this.tokenVRM = tokenVRM;
@@ -56,9 +51,6 @@ public class Settings {
         this.secretWeatherLink = secretWeatherLink;
         this.keySparkMeter = keySparkMeter;
         this.secretSparkMeter = secretSparkMeter;
-        this.alertsEmail = alertsEmail;
-        this.alertsSMS = alertsSMS;
-        this.alertsWhatsapp = alertsWhatsapp;
         this.timeEdition = timeEdition;
     }
 
@@ -116,30 +108,6 @@ public class Settings {
 
     public void setSecretSparkMeter(String secretSparkMeter) {
         this.secretSparkMeter = secretSparkMeter;
-    }
-
-    public boolean isAlertsEmail() {
-        return alertsEmail;
-    }
-
-    public void setAlertsEmail(boolean alertsEmail) {
-        this.alertsEmail = alertsEmail;
-    }
-
-    public boolean isAlertsSMS() {
-        return alertsSMS;
-    }
-
-    public void setAlertsSMS(boolean alertsSMS) {
-        this.alertsSMS = alertsSMS;
-    }
-
-    public boolean isAlertsWhatsapp() {
-        return alertsWhatsapp;
-    }
-
-    public void setAlertsWhatsapp(boolean alertsWhatsapp) {
-        this.alertsWhatsapp = alertsWhatsapp;
     }
 
     public Date getTimeEdition() {

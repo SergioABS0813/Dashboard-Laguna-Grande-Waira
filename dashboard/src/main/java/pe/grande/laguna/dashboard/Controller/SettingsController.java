@@ -1,13 +1,17 @@
 package pe.grande.laguna.dashboard.Controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pe.grande.laguna.dashboard.Dto.UserSettingsDto;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
 import pe.grande.laguna.dashboard.Entity.Settings;
 import pe.grande.laguna.dashboard.Entity.User;
@@ -35,40 +39,41 @@ public class SettingsController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-            // El principal es una instancia de org.springframework.security.core.userdetails.User
             org.springframework.security.core.userdetails.User securityUser =
                     (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-
-            // Suponiendo que el username es el email:
             String email = securityUser.getUsername();
 
-            // Busca en la base de datos tu entidad User por email
             User userEntity = usersRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
             Settings userSettings = settingsRepository.findByAdminId(userEntity.getId());
-            model.addAttribute("settings", userSettings);
+
+            // Crear el DTO que agrupa User y Settings
+            UserSettingsDto userSettingsDto = new UserSettingsDto(userEntity, userSettings);
+            model.addAttribute("userSettingsDto", userSettingsDto);
 
             return "settings";
         }
-
         return "redirect:/login";
     }
 
+
     @PostMapping("/settings/edit")
-    public String edit(@ModelAttribute("settings") Settings formSettings) {
+    public String editSettings(@Valid @ModelAttribute("userSettingsDto") UserSettingsDto userSettingsDto,
+                               BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes) {
 
-        Settings existing = settingsRepository.findById(formSettings.getId())
-                .orElseThrow(() -> new RuntimeException("No existe Settings con ese ID"));
+        if (bindingResult.hasErrors()) {
+            return "settings"; // o la vista correspondiente
+        }
 
-        existing.setTokenVRM(formSettings.getTokenVRM());
-        existing.setKeyWeatherLink(formSettings.getKeyWeatherLink());
-        existing.setSecretWeatherLink(formSettings.getSecretWeatherLink());
-        existing.setKeySparkMeter(formSettings.getKeySparkMeter());
-        existing.setSecretSparkMeter(formSettings.getSecretSparkMeter());
-        existing.setAlertsEmail(formSettings.isAlertsEmail());
-        existing.setAlertsWhatsapp(formSettings.isAlertsWhatsapp());
-        existing.setAlertsSMS(formSettings.isAlertsSMS());
+        // Extraer y actualizar User
+        User updatedUser = userSettingsDto.getUser();
+        // Aquí puedes aplicar lógicas de actualización, e.g.:
+        usersRepository.save(updatedUser);
+
+        // Extraer y actualizar Settings
+        Settings updatedSettings = userSettingsDto.getSettings();
 
         //Definir la zona horaria de Perú
         ZoneId limaZone = ZoneId.of("America/Lima");
@@ -80,11 +85,12 @@ public class SettingsController {
         Instant instant = localNow.atZone(limaZone).toInstant();
         Date peruDate = Date.from(instant);
 
-        existing.setTimeEdition(peruDate);
+        updatedSettings.setTimeEdition(peruDate);
+        settingsRepository.save(updatedSettings);
 
-        settingsRepository.save(existing);
-
+        redirectAttributes.addFlashAttribute("successMessage", "Datos actualizados correctamente");
         return "redirect:/settings";
     }
+
 
 }

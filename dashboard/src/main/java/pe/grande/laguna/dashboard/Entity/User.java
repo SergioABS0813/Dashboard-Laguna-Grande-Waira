@@ -46,9 +46,20 @@ public class User implements Serializable {
     @Field(value = "micronetworkList")
     private ArrayList<String> micronetworkList = new ArrayList<>();
 
+    @Field(value = "alertsEmail")
+    private boolean alertsEmail;
+
+    @Field(value = "alertsSMS")
+    private boolean alertsSMS;
+
+    @Field(value = "alertsWhatsapp")
+    private boolean alertsWhatsapp;
+
+
+
     public User() {}
 
-    public User(@NonNull String id, String email, String password, String role, boolean active, String phone, String name, String lastname, Date creationTime, ArrayList<String> micronetworkList) {
+    public User(@NonNull String id, String email, String password, String role, boolean active, String phone, String name, String lastname, Date creationTime, ArrayList<String> micronetworkList, boolean alertsEmail, boolean alertsSMS, boolean alertsWhatsapp) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -59,6 +70,9 @@ public class User implements Serializable {
         this.lastname = lastname;
         this.creationTime = creationTime;
         this.micronetworkList = micronetworkList;
+        this.alertsEmail = alertsEmail;
+        this.alertsSMS = alertsSMS;
+        this.alertsWhatsapp = alertsWhatsapp;
     }
 
     public String getId() {
@@ -139,5 +153,29 @@ public class User implements Serializable {
 
     public void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
+    }
+
+    public boolean isAlertsEmail() {
+        return alertsEmail;
+    }
+
+    public void setAlertsEmail(boolean alertsEmail) {
+        this.alertsEmail = alertsEmail;
+    }
+
+    public boolean isAlertsSMS() {
+        return alertsSMS;
+    }
+
+    public void setAlertsSMS(boolean alertsSMS) {
+        this.alertsSMS = alertsSMS;
+    }
+
+    public boolean isAlertsWhatsapp() {
+        return alertsWhatsapp;
+    }
+
+    public void setAlertsWhatsapp(boolean alertsWhatsapp) {
+        this.alertsWhatsapp = alertsWhatsapp;
     }
 }

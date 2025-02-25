@@ -18,6 +18,7 @@ import pe.grande.laguna.dashboard.Entity.User;
 import pe.grande.laguna.dashboard.Repository.MicroNetworkRepository;
 import pe.grande.laguna.dashboard.Repository.SettingsRepository;
 import pe.grande.laguna.dashboard.Repository.UsersRepository;
+import pe.grande.laguna.dashboard.Service.TokenValidationService;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -31,11 +32,13 @@ public class MicroNetworksController {
     final MicroNetworkRepository microNetworkRepository;
     final SettingsRepository settingsRepository;
     final UsersRepository usersRepository;
+    private final TokenValidationService tokenValidationService;
 
-    public MicroNetworksController(MicroNetworkRepository microNetworkRepository, SettingsRepository settingsRepository, UsersRepository usersRepository) {
+    public MicroNetworksController(MicroNetworkRepository microNetworkRepository, SettingsRepository settingsRepository, UsersRepository usersRepository, TokenValidationService tokenValidationService) {
         this.microNetworkRepository = microNetworkRepository;
         this.settingsRepository = settingsRepository;
         this.usersRepository = usersRepository;
+        this.tokenValidationService = tokenValidationService;
     }
 
     @GetMapping("/micronetworks")
@@ -70,7 +73,39 @@ public class MicroNetworksController {
     /* ********** START: Crear micronetworks ********** */
 
     @GetMapping("/micronetworks/create")
-    public String add(Model model) {
+    public String add(Model model, RedirectAttributes redirectAttributes) {
+
+        Settings settings = settingsRepository.findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No hay Settings en la BD"));
+
+        //Validamos
+
+        boolean weatherOk = tokenValidationService.validateWeatherLink(
+                settings.getKeyWeatherLink(),
+                settings.getSecretWeatherLink()
+        );
+        boolean sparkOk = tokenValidationService.validateSparkMeter(
+                settings.getKeySparkMeter(),
+                settings.getSecretSparkMeter()
+        );
+        boolean vrmOk = tokenValidationService.validateVRM(settings.getTokenVRM());
+
+        if (!weatherOk) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "El token/key de WeatherLink es inválido. Corrige los valores en Ajustes.");
+            return "redirect:/micronetworks";
+        } else if (!sparkOk) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "El token/key de Sparkmeter es inválido. Corrige los valores en Ajustes.");
+            return "redirect:/micronetworks";
+        } else if (!vrmOk) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "El token de VRM es inválido. Corrige los valores en Ajustes.");
+            return "redirect:/micronetworks";
+
+        }
 
         model.addAttribute("microNetwork", new MicroNetwork());
         return "micronetworks/add_micronetwork";
