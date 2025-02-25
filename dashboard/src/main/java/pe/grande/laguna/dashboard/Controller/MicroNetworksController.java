@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
 import pe.grande.laguna.dashboard.Entity.Settings;
 import pe.grande.laguna.dashboard.Entity.User;
@@ -78,7 +79,7 @@ public class MicroNetworksController {
     }
 
     @PostMapping("/micronetworks/create")
-    public String create(@Valid @ModelAttribute("microNetwork") MicroNetwork microNetwork, BindingResult bindingResult) {
+    public String create(@Valid @ModelAttribute("microNetwork") MicroNetwork microNetwork, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         // Si existen errores de validación, se retorna a la vista del formulario.
         if (bindingResult.hasErrors()) {
@@ -106,6 +107,9 @@ public class MicroNetworksController {
         // Guardamos en DB :D
         microNetworkRepository.save(microNetwork);
 
+        // Flash Attribute
+        redirectAttributes.addFlashAttribute("successMessageCreate", "Microred creada correctamente");
+
         return "redirect:/micronetworks";
     }
 
@@ -125,6 +129,99 @@ public class MicroNetworksController {
         // Retornar la vista del formulario
         return "micronetworks/edit_micronetwork";
     }
+
+    @PostMapping("/micronetworks/edit")
+    public String updateMicroNetwork(
+            @Valid @ModelAttribute("microNetwork") MicroNetwork microNetwork,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes
+    ) {
+        // Analizamos si hay errores primero
+        if (bindingResult.hasErrors()) {
+            // Si hay errores, regresamos al formulario de edición
+            return "micronetworks/edit_micronetwork";
+        }
+
+        // Buscar la microred original en la BD
+        MicroNetwork existing = microNetworkRepository.findById(microNetwork.getId())
+                .orElseThrow(() -> new RuntimeException("No se encontró la microred con ID: " + microNetwork.getId()));
+
+        // Actualizar los campos que permites modificar
+        existing.setAlias(microNetwork.getAlias());
+        existing.setLat(microNetwork.getLat());
+        existing.setLon(microNetwork.getLon());
+        existing.setSiteVRM(microNetwork.getSiteVRM());
+        existing.setSiteWeatherLink(microNetwork.getSiteWeatherLink());
+        existing.setSiteSparkMeter(microNetwork.getSiteSparkMeter());
+        existing.setStatus(microNetwork.getStatus());
+
+        //Definir la zona horaria de Perú
+        ZoneId limaZone = ZoneId.of("America/Lima");
+
+        //Obtener la fecha/hora actual en esa zona
+        LocalDateTime localNow = LocalDateTime.now(limaZone);
+
+        // Convertir LocalDateTime -> Instant -> Date
+        Instant instant = localNow.atZone(limaZone).toInstant();
+        Date peruDate = Date.from(instant);
+
+        existing.setTimeEdition(peruDate); // Actualizamos la fecha de edición
+
+        // Guardar cambios
+        microNetworkRepository.save(existing);
+
+        // Flash Attribute
+        redirectAttributes.addFlashAttribute("successMessageEdit", "Microred editada correctamente");
+
+        // Redirigir a la tabla de microredes
+        return "redirect:/micronetworks";
+    }
+
+    /* ********** END: Editar micronetworks ********** */
+
+
+    /* ********** START: Eliminar micronetworks ********** */
+
+    @GetMapping("/micronetworks/delete/{id}")
+    public String deleteMicroNetwork(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+        // Buscar la microred por ID, o lanzar excepción si no existe
+        MicroNetwork microNetwork = microNetworkRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No se encontró la microred con ID: " + id));
+
+        // Eliminar la microred
+        microNetworkRepository.delete(microNetwork);
+
+        // Agregar un mensaje flash de éxito
+        redirectAttributes.addFlashAttribute("successMessageDelete", "Microred eliminada correctamente");
+
+        // Redirigir a la tabla de microredes
+        return "redirect:/micronetworks";
+    }
+
+    /* ********** END: Eliminar micronetworks ********** */
+
+    /* ********** START: View Micronetworks ********** */
+
+    @GetMapping("/micronetworks/view/{id}")
+    public String viewMicronetwork(@PathVariable("id") String id, Model model){
+        // Buscar la microred por ID, o lanzar excepción si no existe
+        MicroNetwork microNetwork = microNetworkRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No se encontró la microred con ID: " + id));
+
+        //mandamos el micronetwork a la vista
+        model.addAttribute("microNetwork", microNetwork);
+        return "dashboard";
+
+    }
+
+
+
+
+
+    /* ********** END: View Micronetworks ********** */
+
+
+
 
 
 

@@ -61,8 +61,22 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
+    <!-- SweetAlert2 CSS (opcional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- DataTables Custom Styles -->
     <style>
+        .swal2-container {
+            z-index: 9999 !important; /* Se asegura que esté sobre todo */
+        }
+
+        .swal2-backdrop-show {
+            background: rgba(0, 0, 0, 0.7) !important; /* Asegura opacidad */
+        }
+
         .dataTables_wrapper .dataTables_scrollBody table.dataTable tbody td {
             white-space: nowrap;      /* No permitir salto de línea */
             overflow: hidden;         /* Ocultar texto sobrante */
@@ -301,6 +315,26 @@
 
                             </div>
                             <div class="card-body px-0 pb-2">
+                                <!-- Flash attribute de Edit -->
+                                <div th:if="${successMessageEdit}" class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <span th:text="${successMessageEdit}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <!-- Flash attribute de Create -->
+                                <div th:if="${successMessageCreate}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <span th:text="${successMessageCreate}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <!-- Flash attribute de Delete -->
+                                <div th:if="${successMessageDelete}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                    <span th:text="${successMessageDelete}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+
+
                                 <div class="table-responsive p-0">
                                     <table id="micronets-table" class="table align-items-center mb-0">
                                         <thead>
@@ -311,6 +345,8 @@
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Longitud</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creación</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Última Edición</th>
+                                            <th class="text-secondary opacity-7"></th>
+                                            <th class="text-secondary opacity-7"></th>
                                             <th class="text-secondary opacity-7"></th>
                                         </tr>
                                         </thead>
@@ -347,6 +383,19 @@
                                                     <i class="material-symbols-rounded text-sm me-2">edit</i>Editar
                                                 </a>
                                             </td>
+                                            <td class="align-middle">
+                                                <a class="btn btn-link text-secondary px-3 mb-0 delete-micronetwork"
+                                                   th:href="@{/micronetworks/delete/{id}(id=${microNetwork.id})}">
+                                                    <i class="material-symbols-rounded text-sm me-2">delete</i>Eliminar
+                                                </a>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a class="btn btn-link text-secondary px-3 mb-0"
+                                                   th:href="@{/micronetworks/view/{id}(id=${microNetwork.id})}">
+                                                    <i class="material-symbols-rounded text-sm me-2">visibility</i>Ver
+                                                </a>
+                                            </td>
+
 
                                         </tr>
                                         </tbody>
@@ -561,6 +610,48 @@
 
 
 </script>
+
+    <!-- Start: Alerta para eliminar usuario -->
+
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            // Seleccionar todos los enlaces de eliminación
+            var deleteLinks = document.querySelectorAll(".delete-micronetwork");
+
+            deleteLinks.forEach(function(link) {
+                link.addEventListener("click", function(event) {
+                    // Prevenir la acción inmediata
+                    event.preventDefault();
+
+                    // Guardar la URL a la que se redirigiría
+                    var url = this.getAttribute("href");
+
+                    // Mostrar alerta de confirmación
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "Esta acción eliminará la instalación permanentemente.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        allowOutsideClick: false, // Bloquea clics fuera de la alerta
+                        backdrop: 'rgba(0,0,0,0.6)' // Fondo más oscuro
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = url;
+                        }
+                    });
+
+                });
+            });
+        });
+    </script>
+
+
+
+    <!-- End: Alerta para eliminar usuario -->
 
 
 
