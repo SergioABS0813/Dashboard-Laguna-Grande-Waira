@@ -9,19 +9,9 @@ import java.util.Map;
 @Service
 public class VRMService {
 
-    private static final String VRM_AUTH_URL = "https://vrmapi.victronenergy.com/v2/auth/login";
     private static final String VRM_BASE_URL = "https://vrmapi.victronenergy.com/v2";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public ResponseEntity<Map<String, Object>> login(Map<String, Object> credentials) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(credentials, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(VRM_AUTH_URL, request, Map.class);
-
-        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
-    }
 
     public ResponseEntity<Map> getInstallations(String token) {
         String url = VRM_BASE_URL + "/installations";
