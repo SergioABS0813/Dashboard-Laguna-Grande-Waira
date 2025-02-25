@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/public/**", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/", "/login").permitAll()
                         // Rutas protegidas por rol
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/settings/**").hasAuthority("ROLE_ADMIN")
                         // Todas las demás requieren autenticación
                         .anyRequest().authenticated()
                 )
