@@ -79,9 +79,8 @@ public class MicroNetworksController {
                 model.addAttribute("microNetworkList", microNetworkList);
                 model.addAttribute("mapMarkersData", microNetworkList);
             }
+            model.addAttribute("isAdmin", isAdmin);
         }
-
-
 
         return "micronetworks/table_micronetworks";
     }
