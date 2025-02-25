@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 public class MicroNetworksController {
@@ -66,7 +67,15 @@ public class MicroNetworksController {
 
             } else {
 
-                ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+                ArrayList<String> microNetworksIds = userEntity.getMicronetworkList();
+
+                ArrayList<MicroNetwork> microNetworkList = new ArrayList<>();
+                for (String microNetworkId : microNetworksIds) {
+
+                    Optional<MicroNetwork> microNetworkOptional = microNetworkRepository.findById(microNetworkId);
+                    microNetworkOptional.ifPresent(microNetworkList::add);
+                }
+
                 model.addAttribute("microNetworkList", microNetworkList);
                 model.addAttribute("mapMarkersData", microNetworkList);
             }
