@@ -22,6 +22,7 @@
     <!-- CSS Files -->
     <link id="pagestyle" th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <link th:href="@{/css/loader.css}" rel="stylesheet" />
 
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -50,7 +51,12 @@
 
 </head>
 
-<body class="g-sidenav-show  bg-gray-100">
+<body class="g-sidenav-show  bg-gray-100 hidden">
+    <!-- LOADER -->
+    <div class="centrado" id="onload">
+        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+    </div>
+
 <!-- Extra details for Live View on GitHub Pages -->
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKDMSK6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -655,7 +661,9 @@
 
 
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-<script th:src="@{/js/core/material-dashboard.min.js}"></script>
+    <script th:src="@{/js/core/material-dashboard.min.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script th:src="@{/js/plugins/loader.js}"></script>
 
 </body>
 
