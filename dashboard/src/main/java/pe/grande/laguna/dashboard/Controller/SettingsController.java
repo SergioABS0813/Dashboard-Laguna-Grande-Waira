@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 public class SettingsController {
@@ -46,7 +47,10 @@ public class SettingsController {
             User userEntity = usersRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            Settings userSettings = settingsRepository.findByAdminId(userEntity.getId());
+            Optional optuserSettings = settingsRepository.findById("67baa0ad113e5fa280a2aafa");
+            Settings userSettings = (Settings) optuserSettings.get();
+
+
 
             // Crear el DTO que agrupa User y Settings
             UserSettingsDto userSettingsDto = new UserSettingsDto(userEntity, userSettings);
@@ -69,6 +73,9 @@ public class SettingsController {
 
         // Extraer y actualizar User
         User updatedUser = userSettingsDto.getUser();
+        System.out.println(updatedUser.isAlertsEmail());
+        System.out.println(updatedUser.isAlertsSMS());
+        System.out.println(updatedUser.isAlertsWhatsapp());
         // Aquí puedes aplicar lógicas de actualización, e.g.:
         usersRepository.save(updatedUser);
 

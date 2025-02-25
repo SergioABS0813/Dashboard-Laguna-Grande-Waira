@@ -57,15 +57,9 @@ public class MicroNetworksController {
             User userEntity = usersRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            if (!userEntity.getRole().equals("ROLE_ADMIN")) {
-                userSettings = settingsRepository.findByAdminId(userEntity.getId());
-            }
         }
 
-        Boolean settingsConfigured = userSettings.getTokenVRM() != null;
-
         ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
-        model.addAttribute("settings", userSettings);
         model.addAttribute("microNetworkList", microNetworkList);
         model.addAttribute("mapMarkersData", microNetworkList);
 

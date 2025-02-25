@@ -293,6 +293,16 @@
                             <form id="settingsForm" th:action="@{/settings/edit}" th:object="${userSettingsDto}" method="post">
                                 <!-- Campo oculto para el ID -->
                                 <input type="hidden" th:field="*{settings.id}">
+                                <input type="hidden" th:field="*{user.id}">
+                                <input type="hidden" th:field="*{user.email}">
+                                <input type="hidden" th:field="*{user.password}">
+                                <input type="hidden" th:field="*{user.role}">
+                                <input type="hidden" th:field="*{user.active}">
+                                <input type="hidden" th:field="*{user.phone}">
+                                <input type="hidden" th:field="*{user.name}">
+                                <input type="hidden" th:field="*{user.lastname}">
+                                <input type="hidden" th:field="*{user.creationTime}">
+                                <input type="hidden" th:field="*{user.micronetworkList}">
 
                                 <!-- Fila 1 -->
                                 <div class="row">
