@@ -1,6 +1,7 @@
 package pe.grande.laguna.dashboard.Entity;
 
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -22,18 +23,24 @@ public class Settings {
     @Field(value = "adminId")
     private String adminId;
 
+    @NotBlank(message = "El token de VRM es obligatorio")
     @Field(value = "tokenVRM")
     private String tokenVRM;
 
+    @NotBlank(message = "El key de WeatherLink es obligatorio")
     @Field(value = "keyWeatherLink")
     private String keyWeatherLink;
 
+
+    @NotBlank(message = "El secret de WeatherLink es obligatorio")
     @Field(value = "secretWeatherLink")
     private String secretWeatherLink;
 
+    @NotBlank(message = "El key de Sparkmeter es obligatorio")
     @Field(value = "keySparkMeter")
     private String keySparkMeter;
 
+    @NotBlank(message = "El secret de Sparkmeter es obligatorio")
     @Field(value = "secretSparkMeter")
     private String secretSparkMeter;
 

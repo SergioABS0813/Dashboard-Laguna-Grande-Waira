@@ -301,29 +301,49 @@
                                 <input type="hidden" th:field="*{user.phone}">
                                 <input type="hidden" th:field="*{user.name}">
                                 <input type="hidden" th:field="*{user.lastname}">
-                                <input type="hidden" th:field="*{user.creationTime}">
                                 <input type="hidden" th:field="*{user.micronetworkList}">
 
                                 <!-- Fila 1 -->
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <!-- Key WeatherLink -->
+                                    <div class="col-md-4 mb-3">
                                         <label class="form-label">Key WeatherLink</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{settings.keyWeatherLink}" class="form-control">
+                                        <div class="input-group input-group-outline"
+                                             th:classappend="${#fields.hasErrors('settings.keyWeatherLink')} ? ' is-invalid'">
+                                            <input type="text" th:field="*{settings.keyWeatherLink}" class="form-control" />
+                                        </div>
+                                        <!-- Mensaje de error debajo -->
+                                        <div th:if="${#fields.hasErrors('settings.keyWeatherLink')}" class="text-danger">
+                                            <span class="material-symbols-rounded align-middle">error</span>
+                                            <span th:errors="*{settings.keyWeatherLink}"></span>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <!-- Key SparkMeter -->
+                                    <div class="col-md-4 mb-3">
                                         <label class="form-label">Key SparkMeter</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{settings.keySparkMeter}" class="form-control">
+                                        <div class="input-group input-group-outline"
+                                             th:classappend="${#fields.hasErrors('settings.keySparkMeter')} ? ' is-invalid'">
+                                            <input type="text" th:field="*{settings.keySparkMeter}" class="form-control" />
+                                        </div>
+                                        <!-- Mensaje de error debajo -->
+                                        <div th:if="${#fields.hasErrors('settings.keySparkMeter')}" class="text-danger">
+                                            <span class="material-symbols-rounded align-middle">error</span>
+                                            <span th:errors="*{settings.keySparkMeter}"></span>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <!-- Token VRM -->
+                                    <div class="col-md-4 mb-3">
                                         <label class="form-label">Token VRM</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{settings.tokenVRM}" class="form-control">
+                                        <div class="input-group input-group-outline"
+                                             th:classappend="${#fields.hasErrors('settings.tokenVRM')} ? ' is-invalid'">
+                                            <input type="text" th:field="*{settings.tokenVRM}" class="form-control" />
+                                        </div>
+                                        <!-- Mensaje de error debajo -->
+                                        <div th:if="${#fields.hasErrors('settings.tokenVRM')}" class="text-danger">
+                                            <span class="material-symbols-rounded align-middle">error</span>
+                                            <span th:errors="*{settings.tokenVRM}"></span>
                                         </div>
                                     </div>
 
@@ -331,17 +351,31 @@
 
                                 <!-- Fila 2 -->
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <!-- Secret WeatherLink -->
+                                    <div class="col-md-4 mb-3">
                                         <label class="form-label">Secret WeatherLink</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{settings.secretWeatherLink}" class="form-control">
+                                        <div class="input-group input-group-outline"
+                                             th:classappend="${#fields.hasErrors('settings.secretWeatherLink')} ? ' is-invalid'">
+                                            <input type="text" th:field="*{settings.secretWeatherLink}" class="form-control" />
+                                        </div>
+                                        <!-- Mensaje de error debajo -->
+                                        <div th:if="${#fields.hasErrors('settings.secretWeatherLink')}" class="text-danger">
+                                            <span class="material-symbols-rounded align-middle">error</span>
+                                            <span th:errors="*{settings.secretWeatherLink}"></span>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <!-- Secret SparkMeter -->
+                                    <div class="col-md-4 mb-3">
                                         <label class="form-label">Secret SparkMeter</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="text" th:field="*{settings.secretSparkMeter}" class="form-control">
+                                        <div class="input-group input-group-outline"
+                                             th:classappend="${#fields.hasErrors('settings.secretSparkMeter')} ? ' is-invalid'">
+                                            <input type="text" th:field="*{settings.secretSparkMeter}" class="form-control" />
+                                        </div>
+                                        <!-- Mensaje de error debajo -->
+                                        <div th:if="${#fields.hasErrors('settings.secretSparkMeter')}" class="text-danger">
+                                            <span class="material-symbols-rounded align-middle">error</span>
+                                            <span th:errors="*{settings.secretSparkMeter}"></span>
                                         </div>
                                     </div>
 

@@ -68,7 +68,20 @@ public class SettingsController {
                                RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            return "settings"; // o la vista correspondiente
+
+            System.out.println("Error encontrado:");
+            // Imprime todos los errores en consola
+            bindingResult.getAllErrors().forEach(error -> {
+                System.out.println("Error en validación: " + error);
+            });
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+
+                return "redirect:/settings"; //Nos manda sí o sí a settings nuevamente
+            }
+            return "redirect:/login";
+
         }
 
         // Extraer y actualizar User
