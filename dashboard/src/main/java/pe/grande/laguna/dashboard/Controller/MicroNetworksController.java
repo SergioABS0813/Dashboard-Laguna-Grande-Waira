@@ -58,6 +58,8 @@ public class MicroNetworksController {
             }
         }
 
+        Boolean settingsConfigured = userSettings.getTokenVRM() != null;
+
         ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
         model.addAttribute("settings", userSettings);
         model.addAttribute("microNetworkList", microNetworkList);
