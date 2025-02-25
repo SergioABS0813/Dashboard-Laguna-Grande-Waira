@@ -37,6 +37,7 @@ public class LoginController {
                         Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+
         if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
             return "redirect:/micronetworks";
         }

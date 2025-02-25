@@ -40,21 +40,22 @@ public class SettingsController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-            org.springframework.security.core.userdetails.User securityUser =
-                    (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+
+            org.springframework.security.core.userdetails.User securityUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
             String email = securityUser.getUsername();
 
-            User userEntity = usersRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            User userEntity = usersRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            Optional optuserSettings = settingsRepository.findById("67baa0ad113e5fa280a2aafa");
-            Settings userSettings = (Settings) optuserSettings.get();
-
-
-
-            // Crear el DTO que agrupa User y Settings
-            UserSettingsDto userSettingsDto = new UserSettingsDto(userEntity, userSettings);
-            model.addAttribute("userSettingsDto", userSettingsDto);
+            Optional<Settings> OptionalSettings = settingsRepository.findAll().stream().findFirst();
+            if (OptionalSettings.isPresent()) {
+                Settings userSettings = OptionalSettings.get();
+                // Crear el DTO que agrupa User y Settings
+                UserSettingsDto userSettingsDto = new UserSettingsDto(userEntity, userSettings);
+                model.addAttribute("userSettingsDto", userSettingsDto);
+            } else {
+                // Para validar error cuando no hay Settings en DB y mostrar mensaje en frontend
+                model.addAttribute("userSettingsDto", null);
+            }
 
             return "settings";
         }
