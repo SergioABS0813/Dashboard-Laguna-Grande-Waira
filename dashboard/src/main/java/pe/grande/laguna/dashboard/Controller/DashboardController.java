@@ -76,6 +76,7 @@ public class DashboardController {
 
 
 
+
                 } else {
                     model.addAttribute("selectedMicroNetwork", null);
                 }
