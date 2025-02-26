@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gráfico Mixto (Barras + Línea)</title>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+<div id="container" style="width:100%; height:400px;"></div>
+
+<script>
+  // 1) Configurar Highcharts para usar hora local (si tus datos ya están en hora local)
+  Highcharts.setOptions({
+    time: {
+      useUTC: false
+    }
+  });
+
+  // 2) Calcular la medianoche y el final del día de hoy (en milisegundos)
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
+
+  // 3) Ejemplo de datos de prueba (timestamps en milisegundos).
+  //    Normalmente, obtendrías estos arrays con fetch desde tu backend.
+  //    Cada elemento es [timestamp, valor].
+  let consumptionData = [
+    [startOfDay +  1*3600*1000, 2],
+    [startOfDay +  4*3600*1000, 3],
+    [startOfDay +  8*3600*1000, 4],
+    [startOfDay + 12*3600*1000, 6],
+    [startOfDay + 16*3600*1000, 5],
+    [startOfDay + 20*3600*1000, 2]
+  ];
+  let solarData = [
+    [startOfDay +  1*3600*1000, 1],
+    [startOfDay +  4*3600*1000, 2],
+    [startOfDay +  8*3600*1000, 6],
+    [startOfDay + 12*3600*1000, 9],
+    [startOfDay + 16*3600*1000, 7],
+    [startOfDay + 20*3600*1000, 3]
+  ];
+  let batteryVoltageData = [
+    [startOfDay +  1*3600*1000, 50.5],
+    [startOfDay +  4*3600*1000, 51.0],
+    [startOfDay +  8*3600*1000, 54.2],
+    [startOfDay + 12*3600*1000, 57.3],
+    [startOfDay + 16*3600*1000, 56.0],
+    [startOfDay + 20*3600*1000, 52.8]
+  ];
+
+  // 4) Crear el gráfico mixto
+  Highcharts.chart('container', {
+    chart: {
+      // El 'type' global puede ser 'column', pero lo sobreescribimos por serie
+      type: 'column',
+      backgroundColor: '#222222', // Opcional, si quieres fondo oscuro
+    },
+    title: {
+      text: null
+    },
+    xAxis: {
+      type: 'datetime',
+      min: startOfDay,
+      max: endOfDay,
+      tickInterval: 3600 * 1000, // Cada hora
+      labels: {
+        style: { color: '#FFFFFF' } // Opcional, para texto en blanco
+      },
+      title: {
+        text: 'Tiempo',
+        style: { color: '#FFFFFF' }
+      }
+    },
+    yAxis: [
+      {
+        // Eje Y izquierdo (kWh)
+        title: {
+          text: 'kWh',
+          style: { color: '#FFFFFF' }
+        },
+        min: 0,
+        max: 10, // Ajusta según tus valores máximos
+        labels: {
+          style: { color: '#FFFFFF' }
+        }
+      },
+      {
+        // Eje Y derecho (V)
+        title: {
+          text: 'V',
+          style: { color: '#FFFFFF' }
+        },
+        min: 42,
+        max: 62, // Ajusta según tus valores máximos
+        opposite: true,
+        labels: {
+          style: { color: '#FFFFFF' }
+        }
+      }
+    ],
+    // Colores para cada serie, puedes personalizar o usar la paleta por defecto
+    colors: ['#FF7373', '#FFA500', '#7ACF00'], // Ej: Rosa, Naranja, Verde
+    series: [
+      {
+        name: 'Consumption',
+        type: 'column', // Barras
+        data: consumptionData,
+        yAxis: 0 // Usa el eje Y izquierdo
+      },
+      {
+        name: 'Solar',
+        type: 'column', // Barras
+        data: solarData,
+        yAxis: 0 // También en el eje Y izquierdo
+      },
+      {
+        name: 'Battery Voltage (System)',
+        type: 'line', // Línea
+        data: batteryVoltageData,
+        yAxis: 1 // Eje Y derecho
+      }
+    ],
+    // Opcional: estilos extra
+    legend: {
+      itemStyle: { color: '#FFFFFF' }
+    },
+    plotOptions: {
+      column: {
+        borderWidth: 0,
+        groupPadding: 0.1
+      },
+      series: {
+        marker: {
+          enabled: true,
+          radius: 4
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>

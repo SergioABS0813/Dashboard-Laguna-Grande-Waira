@@ -28,6 +28,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     </title>
 
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+
 
     <!-- Fonts -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
@@ -41,6 +43,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <!-- CSS Files -->
     <link id="pagestyle" th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
+    <!-- HighCharts CSS -->
     <!-- Anti-flicker snippet (recommended)  -->
     <style>
         .async-hide {
@@ -238,10 +241,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     </nav>
     <!-- End Navbar -->
 
-    <div id="container-siteId" th:text="${selectedMicroNetwork.getSiteVRM()}"></div>
+    <div id="container-siteId" class="highcharts-negative" th:text="${selectedMicroNetwork.getSiteVRM()}"></div>
 
     <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
-    <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 400px;"></div>
+    <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 500px;"></div>
 
 
 
@@ -851,64 +854,179 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:inline="javascript">
     let chart;
 
+    Highcharts.setOptions({
+        time: {
+            useUTC: false
+        }
+    });
+
+    // Calcula la medianoche del día actual (en milisegundos)
+    const now = new Date();
+    const startOfDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    console.log(startOfDay)
+
+    // (Opcional) Calcula el final del día actual (23:59)
+    const endOfDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+    console.log(endOfDay)
+
     // Función para inicializar la gráfica con dos series: "Pdc" y "total_solar_yield"
     function createChart() {
+
+
         chart = Highcharts.chart('container', {
             chart: {
-                type: 'line'
+                type: 'column'
             },
             title: {
-                text: 'Datos de la Instalación'
+                text: 'Datos de Instalación'
             },
             xAxis: {
                 type: 'datetime',
+                // Forzamos que el eje X inicie a medianoche
+                // min: startOfDay,
+                // (Opcional) Forzamos que el eje X termine a las 23:59
+                // max: endOfDay,
+
+                // Opcionalmente, se puede ajustar el intervalo de ticks para ver cada hora
+                tickInterval: 3600 * 1000, // 1 hora en milisegundos
+
                 title: {
                     text: 'Tiempo'
                 }
             },
             yAxis: [{
                 title: {
-                    text: 'Pdc'
-                }
+                    text: 'Solar',
+                },
+
             }, {
                 title: {
-                    text: 'Total Solar Yield'
+                    text: 'Voltage'
                 },
+                startOnTick: true,
+                max: 70,
+                min: 24,
                 opposite: true
             }],
-            series: [{
-                name: 'Pdc',
-                data: []  // Datos que se actualizarán dinámicamente
-            }, {
-                name: 'Total Solar Yield',
-                data: [], // Datos que se actualizarán dinámicamente
-                yAxis: 1
-            }]
+
+            tooltip: {
+                shared: true
+            },
+
+            plotOptions: {
+                series: {
+                    marker: {
+                        enabled: true,      // Habilita los markers para todas las series
+                        symbol: 'circle',   // Puedes elegir otros símbolos: 'square', 'diamond', etc.
+                        radius: 4,
+                        lineWidth: 1,
+                        lineColor: '#333'
+                    }
+                }
+            },
+
+            series: [
+
+                {
+                    name: 'Solar',
+                    data: [],
+                    yAxis: 0,
+                    min: 0,
+                    zIndex: 0,
+                    color: '#e68434',
+                    pointWidth: 25,
+                    tooltip: {
+                        valueSuffix: ' kWh'
+                    }
+                },
+
+                {
+                    name: 'Battery Voltage',
+                    data: [],
+                    type: 'line',
+                    lineWidth: 1,
+                    yAxis: 1,
+                    color: '#3fac15',
+                    zIndex: 0,
+                    tooltip: {
+                        valueSuffix: ' V'
+                    }
+                },
+
+                {
+                    name: 'Battery Voltage Range',
+                    data: [],
+                    type: 'arearange',
+                    linkedTo: ':previous',
+                    color: '#66e634',
+                    symbol: 'circle',
+                    pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
+                    radius: '5',
+                    lineWidth: 0,
+                    fillOpacity: 0.5,
+                    yAxis: 1,
+                    tooltip: {
+                        valueSuffix: ' V'
+                    }
+                },
+
+                {
+                    name: 'Total Consumption',
+                    data: [],
+                    yAxis: 0,
+                    min: 0,
+                    color: '#e64334',
+                    pointWidth: 25,
+                    tooltip: {
+                        valueSuffix: ' kWh'
+                    }
+                }
+            ]
         });
     }
 
-       // Función para actualizar la gráfica consultando el endpoint /api/graph-data
-    function actualizarGrafica() {
+    // Función para actualizar la gráfica consultando el endpoint /api/graph-data
+    function graficaVRM() {
+
         var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
-        fetch(`/api/graph-data?siteId=${VRMSite}`)
+        var interval = "hours";
+
+        // Obtenemos la fecha/hora actual
+        var now = new Date();
+        const offset = -19;
+
+        // Convertimos ambas fechas a segundos desde el epoch (1 de enero de 1970)
+        var start = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), offset, 0, 0) / 1000);
+        var end = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23 + offset, 59, 59) / 1000);
+
+        console.log("Start (00:00 MTC-5) en epoch segundos:", start);
+        console.log("End (23:59:59 MTC-5) en epoch segundos:", end);
+
+
+        fetch(`/api/graph-data?siteId=${VRMSite}&interval=${interval}&start=${start}&end=${end}`)
             .then(response => response.json())
             .then(data => {
-                // Se espera que data contenga las series "Pdc" y "total_solar_yield"
-                if(data.Pdc && Array.isArray(data.Pdc)) {
-                    chart.series[0].setData(data.Pdc);
+                if (data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
+                    chart.series[0].setData(data.total_solar_yield);
                 }
-                if(data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
-                    chart.series[1].setData(data.total_solar_yield);
+                if (data.bv_avg && Array.isArray(data.bv_avg)) {
+                    chart.series[1].setData(data.bv_avg);
                 }
+                if (data.bv_range && Array.isArray(data.bv_range)) {
+                    chart.series[2].setData(data.bv_range);
+                }
+                if (data.total_consumption && Array.isArray(data.total_consumption)) {
+                    chart.series[3].setData(data.total_consumption);
+                }
+
             })
             .catch(error => console.error('Error al actualizar la gráfica:', error));
     }
 
     // Inicializa la gráfica y realiza la primera actualización
     createChart();
-    actualizarGrafica();
-    // Actualiza la gráfica cada 1 minuto (60000 ms)
-    setInterval(actualizarGrafica, 60000);
+    graficaVRM();
+    setInterval(graficaVRM, 60000);
 </script>
 
 <script>
