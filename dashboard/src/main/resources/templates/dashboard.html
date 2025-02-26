@@ -245,11 +245,20 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     </nav>
     <!-- End Navbar -->
 
-    <div id="container-siteId" class="highcharts-negative" th:text="${selectedMicroNetwork.getSiteVRM()}"></div>
+    <div id="container-siteId" class="highcharts-negative" style="display: none" th:text="${selectedMicroNetwork.getSiteVRM()}"></div>
 
-    <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
-    <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 500px;"></div>
 
+    <div class="container-fluid py-2">
+
+        <div class="col-12 mb-4">
+            <div class="card">
+
+                <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
+                <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 500px; padding: 10px"></div>
+
+            </div>
+        </div>
+    </div>
 
 
     <div class="container-fluid py-2">
@@ -879,19 +888,23 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
         chart = Highcharts.chart('container', {
             chart: {
-                type: 'column'
+                type: 'column',
             },
             title: {
-                text: 'Datos de Instalación'
+                text: '<div style="padding-top: 20px; text-align: start; font-family: Inter; font-weight: 700; color: #262626; font-size: calc(1.275rem + .3vw)" class="mb-0 h4 font-weight-bolders">Red Eléctrica</div>',
+                align: 'start',
+                x: 20,
+                y: 40,
+                margin: 70,
+            },
+            subtitle: {
+                text: '<div style="font-family: Inter; font-weight: 400; color: #737373; font-size: 1rem; line-height: 1.625" class="mb-0 h4 font-weight-bolders">Información Victron</div>',
+                x: 20,
+                y: 70,
             },
             xAxis: {
+                crosshair: true,
                 type: 'datetime',
-                // Forzamos que el eje X inicie a medianoche
-                // min: startOfDay,
-                // (Opcional) Forzamos que el eje X termine a las 23:59
-                // max: endOfDay,
-
-                // Opcionalmente, se puede ajustar el intervalo de ticks para ver cada hora
                 tickInterval: 3600 * 1000, // 1 hora en milisegundos
 
                 title: {
@@ -900,17 +913,32 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             },
             yAxis: [{
                 title: {
-                    text: 'Solar',
+                    text: 'Producción Solar',
+                    label: {
+                        text: 'kWh'
+                    }
                 },
 
             }, {
                 title: {
-                    text: 'Voltage'
+                    align: 'high',
+                    offset: 18,
+                    text: 'V',
+                    rotation: 0,
+                    y: -30,
+                    style: {
+                        color: '#65d322'
+                    }
                 },
                 startOnTick: true,
                 max: 70,
                 min: 24,
-                opposite: true
+                opposite: true,
+                labels: {
+                    style: {
+                        color: '#65d322'
+                    }
+                }
             }],
 
             tooltip: {
@@ -932,20 +960,20 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             series: [
 
                 {
-                    name: 'Solar',
+                    name: 'Producción Solar',
                     data: [],
                     yAxis: 0,
                     min: 0,
                     zIndex: 0,
                     color: '#e68434',
-                    pointWidth: 25,
+                    pointWidth: 20,
                     tooltip: {
                         valueSuffix: ' kWh'
                     }
                 },
 
                 {
-                    name: 'Battery Voltage',
+                    name: 'Voltaje Baterías',
                     data: [],
                     type: 'line',
                     lineWidth: 1,
@@ -958,7 +986,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 },
 
                 {
-                    name: 'Battery Voltage Range',
+                    name: 'Voltaje Baterías Rango',
                     data: [],
                     type: 'arearange',
                     linkedTo: ':previous',
@@ -975,12 +1003,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 },
 
                 {
-                    name: 'Total Consumption',
+                    name: 'Consumo Total',
                     data: [],
                     yAxis: 0,
                     min: 0,
                     color: '#e64334',
-                    pointWidth: 25,
+                    pointWidth: 20,
                     tooltip: {
                         valueSuffix: ' kWh'
                     }
