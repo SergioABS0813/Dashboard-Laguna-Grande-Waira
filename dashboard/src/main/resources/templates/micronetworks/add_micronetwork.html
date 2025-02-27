@@ -283,20 +283,25 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <!-- Label flotante (si usas input-group-outline) -->
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('siteVRM')} ? ' is-invalid'">
-                                        <label class="form-label">Site VRM</label>
-                                        <input id="siteVRM" type="text" th:field="*{siteVRM}" class="form-control">
+                                        <!-- Usamos <select> en lugar de <input> -->
+                                        <select th:field="*{siteVRM}" class="form-control">
+                                            <option value="">Seleccione un site en VRM...</option>
+                                            <!-- Recorremos la lista de opciones -->
+                                            <option th:each="op : ${vrmOptions}"
+                                                    th:value="${op.idSite}"
+                                                    th:text="${op.nombre}">
+                                            </option>
+                                        </select>
                                     </div>
-                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <!-- Mensaje de error debajo -->
                                     <div th:if="${#fields.hasErrors('siteVRM')}" class="text-danger">
-                                        <!-- Ícono de exclamación de Material Icons -->
                                         <span class="material-symbols-rounded align-middle">error</span>
-                                        <!-- Mensaje de error -->
                                         <span th:errors="*{siteVRM}"></span>
                                     </div>
                                 </div>
+
 
                             </div>
                             <!-- Fila 2 -->
@@ -319,20 +324,25 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <!-- Label flotante (si usas input-group-outline) -->
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('siteWeatherLink')} ? ' is-invalid'">
-                                        <label class="form-label">Site WeatherLink</label>
-                                        <input type="text" th:field="*{siteWeatherLink}" class="form-control">
+                                        <!-- Usamos <select> en lugar de <input> -->
+                                        <select th:field="*{siteWeatherLink}" class="form-control">
+                                            <option value="">Seleccione un site en WeatherLink...</option>
+                                            <!-- Recorremos la lista de opciones -->
+                                            <option th:each="op : ${weatherLinkOptions}"
+                                                    th:value="${op.idSite}"
+                                                    th:text="${op.nombre}">
+                                            </option>
+                                        </select>
                                     </div>
-                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <!-- Mensaje de error debajo -->
                                     <div th:if="${#fields.hasErrors('siteWeatherLink')}" class="text-danger">
-                                        <!-- Ícono de exclamación de Material Icons -->
                                         <span class="material-symbols-rounded align-middle">error</span>
-                                        <!-- Mensaje de error -->
                                         <span th:errors="*{siteWeatherLink}"></span>
                                     </div>
                                 </div>
+
 
                             </div>
                             <!-- Fila 3 -->
@@ -355,20 +365,25 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <!-- Label flotante (si usas input-group-outline) -->
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('siteSparkMeter')} ? ' is-invalid'">
-                                        <label class="form-label">Site SparkMeter</label>
-                                        <input type="text" th:field="*{siteSparkMeter}" class="form-control">
+                                        <!-- Usamos <select> en lugar de <input> -->
+                                        <select th:field="*{siteSparkMeter}" class="form-control">
+                                            <option value="">Seleccione un site en Sparkmeter...</option>
+                                            <!-- Recorremos la lista de opciones -->
+                                            <option th:each="op : ${sparkMeterOptions}"
+                                                    th:value="${op.idSite}"
+                                                    th:text="${op.nombre}">
+                                            </option>
+                                        </select>
                                     </div>
-                                    <!-- Mensaje de error inmediatamente debajo -->
+                                    <!-- Mensaje de error debajo -->
                                     <div th:if="${#fields.hasErrors('siteSparkMeter')}" class="text-danger">
-                                        <!-- Ícono de exclamación de Material Icons -->
                                         <span class="material-symbols-rounded align-middle">error</span>
-                                        <!-- Mensaje de error -->
-                                        <span th:errors="*{siteSparkMeter}"></span>
+                                        <span th:errors="*{sparkMeterOptions}"></span>
                                     </div>
                                 </div>
+
 
                             </div>
                             <!-- Fila 4 -->

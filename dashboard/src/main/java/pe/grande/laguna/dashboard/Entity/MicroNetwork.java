@@ -1,6 +1,7 @@
 package pe.grande.laguna.dashboard.Entity;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NonNull;
@@ -23,13 +24,13 @@ public class MicroNetwork implements Serializable {
     @NonNull
     private String id;
 
-    @NotBlank(message = "El site de VRM es obligatorio")
+    @NotNull(message = "El site de VRM es obligatorio")
     @Field(value = "siteVRM")
-    private String siteVRM;
+    private Integer siteVRM;
 
-    @NotBlank(message = "El site de Weather Link es obligatorio")
+    @NotNull(message = "El site de Weather Link es obligatorio")
     @Field(value = "siteWeatherLink")
-    private String siteWeatherLink;
+    private Integer siteWeatherLink;
 
     @NotBlank(message = "El site de Spark Meter es obligatorio")
     @Field(value = "siteSparkMeter")
@@ -66,7 +67,7 @@ public class MicroNetwork implements Serializable {
     public MicroNetwork() {
     }
 
-    public MicroNetwork(@NonNull String id, String siteVRM, String siteWeatherLink, String siteSparkMeter, String alias, String lat, String lon, Date timeCreation, Date timeEdition, String status, String provincia, String departamento) {
+    public MicroNetwork(@NonNull String id, Integer siteVRM, Integer siteWeatherLink, String siteSparkMeter, String alias, String lat, String lon, Date timeCreation, Date timeEdition, String status, String provincia, String departamento) {
         this.id = id;
         this.siteVRM = siteVRM;
         this.siteWeatherLink = siteWeatherLink;
@@ -89,19 +90,19 @@ public class MicroNetwork implements Serializable {
         this.id = id;
     }
 
-    public String getSiteVRM() {
+    public Integer getSiteVRM() {
         return siteVRM;
     }
 
-    public void setSiteVRM(String siteVRM) {
+    public void setSiteVRM(Integer siteVRM) {
         this.siteVRM = siteVRM;
     }
 
-    public String getSiteWeatherLink() {
+    public Integer getSiteWeatherLink() {
         return siteWeatherLink;
     }
 
-    public void setSiteWeatherLink(String siteWeatherLink) {
+    public void setSiteWeatherLink(Integer siteWeatherLink) {
         this.siteWeatherLink = siteWeatherLink;
     }
 

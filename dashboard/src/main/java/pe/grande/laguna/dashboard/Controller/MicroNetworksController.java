@@ -1,6 +1,7 @@
 package pe.grande.laguna.dashboard.Controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pe.grande.laguna.dashboard.Dto.InstalacionDTO;
+import pe.grande.laguna.dashboard.Dto.InstalacionSparkmeterDTO;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
 import pe.grande.laguna.dashboard.Entity.Settings;
 import pe.grande.laguna.dashboard.Entity.User;
@@ -25,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -88,43 +92,71 @@ public class MicroNetworksController {
     /* ********** START: Crear micronetworks ********** */
 
     @GetMapping("/micronetworks/create")
-    public String add(Model model, RedirectAttributes redirectAttributes) {
+    public String add(Model model, RedirectAttributes redirectAttributes) throws JsonProcessingException {
 
         Settings settings = settingsRepository.findAll()
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No hay Settings en la BD"));
 
-        //Validamos
-
-        boolean weatherOk = tokenValidationService.validateWeatherLink(
-                settings.getKeyWeatherLink(),
-                settings.getSecretWeatherLink()
-        );
-        boolean sparkOk = tokenValidationService.validateSparkMeter(
-                settings.getKeySparkMeter(),
-                settings.getSecretSparkMeter()
-        );
-        boolean vrmOk = tokenValidationService.validateVRM(settings.getTokenVRM());
-
-        if (!weatherOk) {
+        // Intentar obtener la lista de instalaciones VRM
+        ArrayList<InstalacionDTO> vrmOptions;
+        try {
+            vrmOptions = tokenValidationService.obtenerListaInstalaciones(settings.getTokenVRM());
+            // Si la lista está vacía, también puedes manejarlo como error
+            if (vrmOptions == null || vrmOptions.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "No se encontraron instalaciones VRM. Por favor, revise su cuenta o intente más tarde.");
+                return "redirect:/micronetworks";
+            }
+        } catch (Exception e) {
+            // Si ocurre un error al llamar al servicio o parsear la respuesta
             redirectAttributes.addFlashAttribute("errorMessage",
-                    "El token/key de WeatherLink es inválido. Por favor, verifique los valores en Ajustes.");
+                    "No se pudo obtener la lista de instalaciones VRM. Intente más tarde. Detalle: " + e.getMessage());
             return "redirect:/micronetworks";
-        } else if (!sparkOk) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "El token/key de Sparkmeter es inválido. Por favor, verifique los valores en Ajustes.");
-            return "redirect:/micronetworks";
-        } else if (!vrmOk) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "El token de VRM es inválido. Por favor, verifique el valor en Ajustes.");
-            return "redirect:/micronetworks";
-
         }
 
+        ArrayList<InstalacionDTO> weatherLinkOptions;
+        try {
+            weatherLinkOptions = tokenValidationService.obtenerListaInstalacionesWeatherLink(settings.getKeyWeatherLink(), settings.getSecretWeatherLink());
+            // Si la lista está vacía, también puedes manejarlo como error
+            if (weatherLinkOptions == null || weatherLinkOptions.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "No se encontraron instalaciones en WeatherLink. Por favor, revise su cuenta o intente más tarde.");
+                return "redirect:/micronetworks";
+            }
+        } catch (Exception e) {
+            // Si ocurre un error al llamar al servicio o parsear la respuesta
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "No se pudo obtener la lista de instalaciones en WeatherLink. Intente más tarde. Detalle: " + e.getMessage());
+            return "redirect:/micronetworks";
+        }
+
+        ArrayList<InstalacionSparkmeterDTO> SparkMeterOptions;
+        try {
+            SparkMeterOptions = tokenValidationService.obtenerListaInstalacionesSparkmeter(settings.getKeySparkMeter(), settings.getSecretSparkMeter());
+            // Si la lista está vacía, también puedes manejarlo como error
+            if (SparkMeterOptions == null || SparkMeterOptions.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "No se encontraron instalaciones Sparkmeter. Por favor, revise su cuenta o intente más tarde.");
+                return "redirect:/micronetworks";
+            }
+        } catch (Exception e) {
+            // Si ocurre un error al llamar al servicio o parsear la respuesta
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "No se pudo obtener la lista de instalaciones Sparkmeter. Intente más tarde. Detalle: " + e.getMessage());
+            return "redirect:/micronetworks";
+        }
+
+        // Si todo va bien, agregamos la lista al modelo
+        model.addAttribute("vrmOptions", vrmOptions);
+        model.addAttribute("weatherLinkOptions", weatherLinkOptions);
+        model.addAttribute("sparkMeterOptions", SparkMeterOptions);
+        // Y mandamos el MicroNetwork vacío
         model.addAttribute("microNetwork", new MicroNetwork());
         return "micronetworks/add_micronetwork";
     }
+
 
     @PostMapping("/micronetworks/create")
     public String create(@Valid @ModelAttribute("microNetwork") MicroNetwork microNetwork, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
