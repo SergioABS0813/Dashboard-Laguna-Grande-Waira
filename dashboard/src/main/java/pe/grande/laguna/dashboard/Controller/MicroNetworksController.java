@@ -198,10 +198,69 @@ public class MicroNetworksController {
     /* ********** START: Editar micronetworks ********** */
 
     @GetMapping("/micronetworks/edit/{id}")
-    public String editMicroNetwork(@PathVariable("id") String id, Model model) {
+    public String editMicroNetwork(@PathVariable("id") String id, Model model, RedirectAttributes redirectAttributes) {
         // Buscamos la microred por ID en la base de datos
         MicroNetwork microNetwork = microNetworkRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("MicroNetwork no encontrada con id: " + id));
+
+        Settings settings = settingsRepository.findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No hay Settings en la BD"));
+
+        // Intentar obtener la lista de instalaciones VRM
+        ArrayList<InstalacionDTO> vrmOptions;
+        try {
+            vrmOptions = tokenValidationService.obtenerListaInstalaciones(settings.getTokenVRM());
+            // Si la lista está vacía, también puedes manejarlo como error
+            if (vrmOptions == null || vrmOptions.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "No se encontraron instalaciones VRM. Por favor, revise su cuenta o intente más tarde.");
+                return "redirect:/micronetworks";
+            }
+        } catch (Exception e) {
+            // Si ocurre un error al llamar al servicio o parsear la respuesta
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "No se pudo obtener la lista de instalaciones VRM. Intente más tarde. Detalle: " + e.getMessage());
+            return "redirect:/micronetworks";
+        }
+
+        ArrayList<InstalacionDTO> weatherLinkOptions;
+        try {
+            weatherLinkOptions = tokenValidationService.obtenerListaInstalacionesWeatherLink(settings.getKeyWeatherLink(), settings.getSecretWeatherLink());
+            // Si la lista está vacía, también puedes manejarlo como error
+            if (weatherLinkOptions == null || weatherLinkOptions.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "No se encontraron instalaciones en WeatherLink. Por favor, revise su cuenta o intente más tarde.");
+                return "redirect:/micronetworks";
+            }
+        } catch (Exception e) {
+            // Si ocurre un error al llamar al servicio o parsear la respuesta
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "No se pudo obtener la lista de instalaciones en WeatherLink. Intente más tarde. Detalle: " + e.getMessage());
+            return "redirect:/micronetworks";
+        }
+
+        ArrayList<InstalacionSparkmeterDTO> SparkMeterOptions;
+        try {
+            SparkMeterOptions = tokenValidationService.obtenerListaInstalacionesSparkmeter(settings.getKeySparkMeter(), settings.getSecretSparkMeter());
+            // Si la lista está vacía, también puedes manejarlo como error
+            if (SparkMeterOptions == null || SparkMeterOptions.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "No se encontraron instalaciones Sparkmeter. Por favor, revise su cuenta o intente más tarde.");
+                return "redirect:/micronetworks";
+            }
+        } catch (Exception e) {
+            // Si ocurre un error al llamar al servicio o parsear la respuesta
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "No se pudo obtener la lista de instalaciones Sparkmeter. Intente más tarde. Detalle: " + e.getMessage());
+            return "redirect:/micronetworks";
+        }
+
+        // Si todo va bien, agregamos la lista al modelo
+        model.addAttribute("vrmOptions", vrmOptions);
+        model.addAttribute("weatherLinkOptions", weatherLinkOptions);
+        model.addAttribute("sparkMeterOptions", SparkMeterOptions);
 
         // Agregamos al modelo para que Thymeleaf rellene el formulario
         model.addAttribute("microNetwork", microNetwork);

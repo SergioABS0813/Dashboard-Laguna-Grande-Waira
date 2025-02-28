@@ -268,9 +268,10 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <!-- Label flotante (si usas input-group-outline) -->
+                                    <label class="form-label" for="alias">Alias</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('alias')} ? ' is-invalid'">
-                                        <label class="form-label" for="alias">Alias</label>
+                                        <label class="form-label" for="alias">Ingrese el Nombre o Alias de la instalación</label>
                                         <input id="alias" type="text" th:field="*{alias}" class="form-control">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
@@ -283,11 +284,12 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Site VRM</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('siteVRM')} ? ' is-invalid'">
                                         <!-- Usamos <select> en lugar de <input> -->
                                         <select th:field="*{siteVRM}" class="form-control">
-                                            <option value="">Seleccione un site en VRM...</option>
+                                            <option value="">Seleccione un site en VRM ...</option>
                                             <!-- Recorremos la lista de opciones -->
                                             <option th:each="op : ${vrmOptions}"
                                                     th:value="${op.idSite}"
@@ -308,10 +310,11 @@
                             <div class="row">
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="lat">Latitud</label>
                                     <!-- Label flotante (si usas input-group-outline) -->
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('lat')} ? ' is-invalid'">
-                                        <label class="form-label" for="lat">Latitud</label>
+                                        <label class="form-label" for="lat">Ingrese la Latitud</label>
                                         <input id="lat" type="text" th:field="*{lat}" class="form-control">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
@@ -324,11 +327,12 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Site WeatherLink</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('siteWeatherLink')} ? ' is-invalid'">
                                         <!-- Usamos <select> en lugar de <input> -->
                                         <select th:field="*{siteWeatherLink}" class="form-control">
-                                            <option value="">Seleccione un site en WeatherLink...</option>
+                                            <option value="">Seleccione un site en WeatherLink ...</option>
                                             <!-- Recorremos la lista de opciones -->
                                             <option th:each="op : ${weatherLinkOptions}"
                                                     th:value="${op.idSite}"
@@ -350,9 +354,10 @@
 
                                 <div class="col-md-6 mb-3">
                                     <!-- Label flotante (si usas input-group-outline) -->
+                                    <label class="form-label" for="lon">Longitud</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('lon')} ? ' is-invalid'">
-                                        <label class="form-label" for="lon">Longitud</label>
+                                        <label class="form-label" for="lon">Ingrese la Longitud</label>
                                         <input id="lon" type="text" th:field="*{lon}" class="form-control">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
@@ -365,6 +370,7 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Site SparkMeter</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('siteSparkMeter')} ? ' is-invalid'">
                                         <!-- Usamos <select> en lugar de <input> -->
@@ -391,9 +397,10 @@
 
                                 <div class="col-md-6 mb-3">
                                     <!-- Label flotante (si usas input-group-outline) -->
+                                    <label class="form-label">Provincia</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('provincia')} ? ' is-invalid'">
-                                        <label class="form-label">Provincia</label>
+                                        <label class="form-label">Ingrese la Provincia</label>
                                         <input type="text" th:field="*{provincia}" class="form-control">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
@@ -407,9 +414,10 @@
 
                                 <div class="col-md-6 mb-3">
                                     <!-- Label flotante (si usas input-group-outline) -->
+                                    <label class="form-label">Departamento</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('departamento')} ? ' is-invalid'">
-                                        <label class="form-label">Departamento</label>
+                                        <label class="form-label">Ingrese el Departamento</label>
                                         <input type="text" th:field="*{departamento}" class="form-control">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
