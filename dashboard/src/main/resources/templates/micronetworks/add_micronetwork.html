@@ -271,8 +271,7 @@
                                     <label class="form-label" for="alias">Alias</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('alias')} ? ' is-invalid'">
-                                        <label class="form-label" for="alias">Ingrese el Nombre o Alias de la instalación</label>
-                                        <input id="alias" type="text" th:field="*{alias}" class="form-control">
+                                        <input id="alias" type="text" th:field="*{alias}" class="form-control" placeholder="Ingrese el Nombre o Alias de la instalación">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
                                     <div th:if="${#fields.hasErrors('alias')}" class="text-danger">
@@ -314,8 +313,7 @@
                                     <!-- Label flotante (si usas input-group-outline) -->
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('lat')} ? ' is-invalid'">
-                                        <label class="form-label" for="lat">Ingrese la Latitud</label>
-                                        <input id="lat" type="text" th:field="*{lat}" class="form-control">
+                                        <input id="lat" type="text" th:field="*{lat}" class="form-control" placeholder="Ingrese la latitud">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
                                     <div th:if="${#fields.hasErrors('lat')}" class="text-danger">
@@ -357,8 +355,7 @@
                                     <label class="form-label" for="lon">Longitud</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('lon')} ? ' is-invalid'">
-                                        <label class="form-label" for="lon">Ingrese la Longitud</label>
-                                        <input id="lon" type="text" th:field="*{lon}" class="form-control">
+                                        <input id="lon" type="text" th:field="*{lon}" class="form-control" placeholder="Ingrese la longitud">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
                                     <div th:if="${#fields.hasErrors('lon')}" class="text-danger">
@@ -400,8 +397,7 @@
                                     <label class="form-label">Provincia</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('provincia')} ? ' is-invalid'">
-                                        <label class="form-label">Ingrese la Provincia</label>
-                                        <input type="text" th:field="*{provincia}" class="form-control">
+                                        <input type="text" th:field="*{provincia}" class="form-control" placeholder="Ingrese la provincia">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
                                     <div th:if="${#fields.hasErrors('provincia')}" class="text-danger">
@@ -417,8 +413,7 @@
                                     <label class="form-label">Departamento</label>
                                     <div class="input-group input-group-outline"
                                          th:classappend="${#fields.hasErrors('departamento')} ? ' is-invalid'">
-                                        <label class="form-label">Ingrese el Departamento</label>
-                                        <input type="text" th:field="*{departamento}" class="form-control">
+                                        <input type="text" th:field="*{departamento}" class="form-control" placeholder="Ingrese el departamento">
                                     </div>
                                     <!-- Mensaje de error inmediatamente debajo -->
                                     <div th:if="${#fields.hasErrors('departamento')}" class="text-danger">

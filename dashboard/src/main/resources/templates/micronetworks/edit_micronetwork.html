@@ -265,7 +265,7 @@
                                             <label class="form-label" for="alias">Alias</label>
                                             <div class="input-group input-group-outline"
                                                  th:classappend="${#fields.hasErrors('alias')} ? ' is-invalid'">
-                                                <input id="alias" type="text" th:field="*{alias}" class="form-control">
+                                                <input id="alias" type="text" th:field="*{alias}" class="form-control" placeholder="Ingrese el nombre o alias de la instalación">
                                             </div>
                                             <!-- Mensaje de error inmediatamente debajo -->
                                             <div th:if="${#fields.hasErrors('alias')}" class="text-danger">
@@ -305,7 +305,7 @@
                                             <label class="form-label" for="lat">Latitud</label>
                                             <div class="input-group input-group-outline"
                                                  th:classappend="${#fields.hasErrors('lat')} ? ' is-invalid'">
-                                                <input id="lat" type="text" th:field="*{lat}" class="form-control">
+                                                <input id="lat" type="text" th:field="*{lat}" class="form-control" placeholder="Ingrese la latitud">
                                             </div>
                                             <!-- Mensaje de error inmediatamente debajo -->
                                             <div th:if="${#fields.hasErrors('lat')}" class="text-danger">
@@ -345,7 +345,7 @@
                                             <label class="form-label" for="lon">Longitud</label>
                                             <div class="input-group input-group-outline"
                                                  th:classappend="${#fields.hasErrors('lon')} ? ' is-invalid'">
-                                                <input id="lon" type="text" th:field="*{lon}" class="form-control">
+                                                <input id="lon" type="text" th:field="*{lon}" class="form-control" placeholder="Ingrese la longitud">
                                             </div>
                                             <!-- Mensaje de error inmediatamente debajo -->
                                             <div th:if="${#fields.hasErrors('lon')}" class="text-danger">
@@ -385,7 +385,7 @@
                                             <label class="form-label">Provincia</label>
                                             <div class="input-group input-group-outline"
                                                  th:classappend="${#fields.hasErrors('provincia')} ? ' is-invalid'">
-                                                <input type="text" th:field="*{provincia}" class="form-control">
+                                                <input type="text" th:field="*{provincia}" class="form-control" placeholder="Ingrese la provincia">
                                             </div>
                                             <!-- Mensaje de error inmediatamente debajo -->
                                             <div th:if="${#fields.hasErrors('provincia')}" class="text-danger">
@@ -401,7 +401,7 @@
                                             <label class="form-label">Departamento</label>
                                             <div class="input-group input-group-outline"
                                                  th:classappend="${#fields.hasErrors('departamento')} ? ' is-invalid'">
-                                                <input type="text" th:field="*{departamento}" class="form-control">
+                                                <input type="text" th:field="*{departamento}" class="form-control" placeholder="Ingrese el departamento">
                                             </div>
                                             <!-- Mensaje de error inmediatamente debajo -->
                                             <div th:if="${#fields.hasErrors('departamento')}" class="text-danger">
