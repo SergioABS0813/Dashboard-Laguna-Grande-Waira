@@ -113,10 +113,24 @@ public class AdminController {
         return "redirect:/users_managment";
     }
 
-
-
-
     /* ******** END: Crear Usuario ******** */
+
+    @GetMapping("/user_managment/edit/{id}")
+    public String editUser(@PathVariable("id") String id, RedirectAttributes redirectAttributes, Model model) {
+        // Buscar usuario por ID
+        User user = usersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+
+        // Se envía la lista de micronetworks
+        ArrayList<MicroNetwork> listaInstalaciones = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+        model.addAttribute("listaInstalaciones", listaInstalaciones);
+
+        // Se envía un nuevo objeto User vacío
+        model.addAttribute("user", user);
+
+        // 4. Redirigir a la lista de usuarios
+        return "users_managment/edit_user";
+    }
 
 
 }
