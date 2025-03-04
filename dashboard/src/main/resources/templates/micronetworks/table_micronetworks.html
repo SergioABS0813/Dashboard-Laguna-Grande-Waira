@@ -40,12 +40,6 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
     <link th:href="@{/css/loader.css}" rel="stylesheet" />
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
-    <!-- jQuery y DataTables JS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <!-- Leaflet MAP -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -68,16 +62,15 @@
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- jQuery y DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <!-- DataTables Custom Styles -->
     <style>
-        .swal2-container {
-            z-index: 9999 !important; /* Se asegura que esté sobre todo */
-        }
-
-        .swal2-backdrop-show {
-            background: rgba(0, 0, 0, 0.7) !important; /* Asegura opacidad */
-        }
-
         .dataTables_wrapper .dataTables_scrollBody table.dataTable tbody td {
             white-space: nowrap;      /* No permitir salto de línea */
             overflow: hidden;         /* Ocultar texto sobrante */
@@ -366,7 +359,7 @@
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm" th:text="${microNetwork.getAlias()}">John Michael</h6>
+                                                        <h6 class="mb-0 text-sm" th:text="${microNetwork.getAlias()}">Alias</h6>
                                                     </div>
                                                 </div>
                                             </td>
@@ -556,7 +549,7 @@
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 <script th:src="@{/js/core/leaflet.awesome-markers.min.js}"></script>
 
-<script>
+<script th:inline="javascript">
     $(document).ready(function () {
         $('#micronets-table').DataTable({
             "paging": true,         // Habilita la paginación
@@ -564,7 +557,7 @@
             "ordering": true,       // Habilita la ordenación por columnas
             "info": true,           // Muestra información sobre la tabla
             "lengthChange": true,   // Permite cambiar el número de registros mostrados
-            "pageLength": 10,        // Número de registros mostrados por página
+            "pageLength": 5,       // Número de registros mostrados por página
             "scrollResize": true,
             "scrollY": 540,
             "scrollCollapse": false,
@@ -679,7 +672,6 @@
 
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script th:src="@{/js/plugins/loader.js}"></script>
 
 </body>
