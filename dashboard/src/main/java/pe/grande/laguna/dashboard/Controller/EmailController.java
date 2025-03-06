@@ -25,6 +25,6 @@ public class EmailController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al enviar el correo: " + e.getMessage());
         }
-        return "redirect:/users_managment"; // redirige a la página principal o a donde prefieras
+        return "redirect:/users_managment";
     }
 }

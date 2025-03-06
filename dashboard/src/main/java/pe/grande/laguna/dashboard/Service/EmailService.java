@@ -11,10 +11,10 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendHelloEmail(String to) {
+    public void sendHelloEmail(String correoReceptor) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("a20213170@pucp.edu.pe"); // o el mismo que en la propiedad username
-        message.setTo(to);
+        // La cuenta emisora del correo se configura en el application properties
+        message.setTo(correoReceptor);
         message.setSubject("Hola desde Spring Boot"); // Asunto del mensaje
         message.setText("¡Hola! Este es un mensaje de prueba enviado desde Spring Boot usando Gmail SMTP."); //Mensaje
 
