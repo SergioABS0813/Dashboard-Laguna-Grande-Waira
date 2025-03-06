@@ -20,7 +20,7 @@ public class EmailController {
     public String sendHello(RedirectAttributes redirectAttributes) {
         try {
             // Envía el mensaje a tu correo PUCP
-            emailService.sendHelloEmail("a20213170@pucp.edu.pe");
+            emailService.sendAlertEmailMedidorInoperativo("a20213170@pucp.edu.pe", "MEDIDOR 1", "A0452");
             redirectAttributes.addFlashAttribute("successMessage", "Correo enviado correctamente.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error al enviar el correo: " + e.getMessage());
