@@ -44,10 +44,31 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <link id="pagestyle" th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
     <link th:href="@{/css/loader.css}" rel="stylesheet" />
+    <!-- Incluir CSS de Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <!-- Anti-flicker snippet (recommended)  -->
     <style>
         .async-hide {
             opacity: 0 !important
+        }
+        /* Para selects múltiples y simples en el tema Bootstrap 5 de Select2 */
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__placeholder,
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder {
+            font-size: 18px !important;
+            /* Opcionalmente, color del placeholder */
+            color: #9e9e9e !important;
+        }
+
+        /* Si también deseas reducir el texto de los "chips" en el select múltiple */
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+            font-size: 14px !important;
         }
     </style>
 </head>
@@ -245,10 +266,43 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     </nav>
     <!-- End Navbar -->
 
+
+
+
+
+
+
+
     <div id="container-siteId" class="highcharts-negative" style="display: none" th:text="${selectedMicroNetwork.getSiteVRM()}"></div>
 
 
     <div class="container-fluid py-2">
+
+
+        <div class="z-index-1 end-2 translate-middle-y position-absolute" style="top: 120px">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="single-select">Tiempo de Inicio</label>
+                    <select id="single-select" style="width: 300px;" data-placeholder="Elegir">
+                        <option></option>
+                        <option value="1">Opción 1</option>
+                        <option value="2">Opción 2</option>
+                        <option value="3">Opción 3</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <a  class="btn btn-outline-dark" href="/micronetworks/create" type="button">Aplicar</a>
+                </div>
+
+                <div class="col-md-4">
+                    <a  class="btn btn-outline-dark" href="/micronetworks/create" type="button">Aplicar</a>
+                </div>
+            </div>
+
+        </div>
+
 
         <div class="col-12 mb-4">
             <div class="card">
@@ -259,6 +313,14 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             </div>
         </div>
     </div>
+
+
+
+
+
+
+
+
 
 
     <div class="container-fluid py-2">
@@ -780,6 +842,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             </div>
         </footer>
     </div>
+
+
+
 </main>
 <div class="fixed-plugin">
     <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
@@ -861,7 +926,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
-
 
 
 <script th:inline="javascript">
@@ -1025,7 +1089,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
         // Obtenemos la fecha/hora actual
         var now = new Date();
-        const offset = -19;
+        const offset = -5;
 
         // Convertimos ambas fechas a segundos desde el epoch (1 de enero de 1970)
         var start = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), offset, 0, 0) / 1000);
@@ -1304,9 +1368,19 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     }
 </script>
 
+
+    <script>
+        $(document).ready(function() {
+            $('#single-select').select2({
+                placeholder: 'Seleccione algo',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Start: Loader JS -->
     <script th:src="@{/js/plugins/loader.js}"></script>
     <!-- End: Loader JS -->
