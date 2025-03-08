@@ -279,31 +279,46 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <div class="container-fluid py-2">
 
 
-        <div class="z-index-1 end-2 translate-middle-y position-absolute" style="top: 120px">
+        <div class="row align-items-center">
 
-            <div class="row">
+            <!-- Columna izquierda: Información -->
+            <div class="col-xl-8 col-md-7 mb-2">
+                <h3 class="mb-0 ms-3 h4 font-weight-bolder">Red Eléctrica</h3>
+                <p class="mb-0 ms-3">Datos de la instalación Victron</p>
+            </div>
 
-                <div class="col-md-4">
-                    <label for="datetimepicker">Selecciona fecha:</label>
-                    <input type="text" id="datetimepicker" placeholder="2025-01-01 12:00" />
-                </div>
 
-                <div class="col-md-2">
+            <div class="col-xl-4 col-md-5 text-end">
+                <div class="d-flex justify-content-end align-items-end gap-3 me-2">
 
-                    <button id="guardarBtn">Guardar</button>
+
+                    <div class="d-flex flex-column justify-content-end">
+                        <label for="datetimepickerStart"></label>
+                        <input style="width: 150px !important; font-size: 0.9rem !important;" type="text" id="datetimepickerStart" placeholder="2025-01-01 12:00" />
+                    </div>
+
+                    <div style="width: 10px !important;"> - </div>
+
+                    <div class="d-flex flex-column justify-content-end">
+                    <label for="datetimepickerEnd"></label>
+                        <input style="width: 150px !important; font-size: 0.9rem !important;" type="text" id="datetimepickerEnd" placeholder="2025-01-01 12:00" />
+                    </div>
+
+                    <div class="d-flex flex-column justify-content-end">
+                        <a id="aplicarBtn" class="btn btn-outline-dark justify-content-end mb-0" type="button">Aplicar</a>
+                    </div>
+
                 </div>
 
 
             </div>
-
         </div>
 
-
-        <div class="col-12 mb-4">
+        <div class="col-12 mb-4 mt-3">
             <div class="card">
 
                 <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
-                <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 500px; padding: 10px"></div>
+                <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 500px; padding-top: 30px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px"></div>
 
             </div>
         </div>
@@ -923,481 +938,254 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
 
-<script th:inline="javascript">
-    let chart;
-
-    Highcharts.setOptions({
-        time: {
-            useUTC: false
-        }
-    });
-
-    // Calcula la medianoche del día actual (en milisegundos)
-    const now = new Date();
-    const startOfDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-    console.log(startOfDay)
-
-    // (Opcional) Calcula el final del día actual (23:59)
-    const endOfDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-    console.log(endOfDay)
-
-    // Función para inicializar la gráfica con dos series: "Pdc" y "total_solar_yield"
-    function createChart() {
-
-
-        chart = Highcharts.chart('container', {
-            chart: {
-                type: 'column',
-            },
-            title: {
-                text: '<div style="padding-top: 20px; text-align: start; font-family: Inter; font-weight: 700; color: #262626; font-size: calc(1.275rem + .3vw)" class="mb-0 h4 font-weight-bolders">Red Eléctrica</div>',
-                align: 'start',
-                x: 20,
-                y: 40,
-                margin: 70,
-            },
-            subtitle: {
-                text: '<div style="font-family: Inter; font-weight: 400; color: #737373; font-size: 1rem; line-height: 1.625" class="mb-0 h4 font-weight-bolders">Información Victron</div>',
-                x: 20,
-                y: 70,
-            },
-            xAxis: {
-                crosshair: true,
-                type: 'datetime',
-                tickInterval: 3600 * 1000, // 1 hora en milisegundos
-
-                title: {
-                    text: 'Tiempo'
-                }
-            },
-            yAxis: [{
-                title: {
-                    text: 'Producción Solar',
-                    label: {
-                        text: 'kWh'
-                    }
-                },
-
-            }, {
-                title: {
-                    align: 'high',
-                    offset: 18,
-                    text: 'V',
-                    rotation: 0,
-                    y: -30,
-                    style: {
-                        color: '#65d322'
-                    }
-                },
-                startOnTick: true,
-                max: 70,
-                min: 24,
-                opposite: true,
-                labels: {
-                    style: {
-                        color: '#65d322'
-                    }
-                }
-            }],
-
-            tooltip: {
-                shared: true
-            },
-
-            plotOptions: {
-                series: {
-                    marker: {
-                        enabled: true,      // Habilita los markers para todas las series
-                        symbol: 'circle',   // Puedes elegir otros símbolos: 'square', 'diamond', etc.
-                        radius: 4,
-                        lineWidth: 1,
-                        lineColor: '#333'
-                    }
-                }
-            },
-
-            series: [
-
-                {
-                    name: 'Producción Solar',
-                    data: [],
-                    yAxis: 0,
-                    min: 0,
-                    zIndex: 0,
-                    color: '#e68434',
-                    pointWidth: 20,
-                    tooltip: {
-                        valueSuffix: ' kWh'
-                    }
-                },
-
-                {
-                    name: 'Voltaje Baterías',
-                    data: [],
-                    type: 'line',
-                    lineWidth: 1,
-                    yAxis: 1,
-                    color: '#3fac15',
-                    zIndex: 0,
-                    tooltip: {
-                        valueSuffix: ' V'
-                    }
-                },
-
-                {
-                    name: 'Voltaje Baterías Rango',
-                    data: [],
-                    type: 'arearange',
-                    linkedTo: ':previous',
-                    color: '#66e634',
-                    symbol: 'circle',
-                    pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
-                    radius: '5',
-                    lineWidth: 0,
-                    fillOpacity: 0.5,
-                    yAxis: 1,
-                    tooltip: {
-                        valueSuffix: ' V'
-                    }
-                },
-
-                {
-                    name: 'Consumo Total',
-                    data: [],
-                    yAxis: 0,
-                    min: 0,
-                    color: '#e64334',
-                    pointWidth: 20,
-                    tooltip: {
-                        valueSuffix: ' kWh'
-                    }
-                }
-            ]
-        });
-    }
-
-    // Función para actualizar la gráfica consultando el endpoint /api/graph-data
-    function graficaVRM() {
-
-        var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
-        var interval = "hours";
-
-        // Obtenemos la fecha/hora actual
-        var now = new Date();
-        const offset = -5;
-
-        // Convertimos ambas fechas a segundos desde el epoch (1 de enero de 1970)
-        var start = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), offset, 0, 0) / 1000);
-        var end = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23 + offset, 59, 59) / 1000);
-
-        console.log("Start (00:00 MTC-5) en epoch segundos:", start);
-        console.log("End (23:59:59 MTC-5) en epoch segundos:", end);
-
-
-        fetch(`/api/graph-data?siteId=${VRMSite}&interval=${interval}&start=${start}&end=${end}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
-                    chart.series[0].setData(data.total_solar_yield);
-                }
-                if (data.bv_avg && Array.isArray(data.bv_avg)) {
-                    chart.series[1].setData(data.bv_avg);
-                }
-                if (data.bv_range && Array.isArray(data.bv_range)) {
-                    chart.series[2].setData(data.bv_range);
-                }
-                if (data.total_consumption && Array.isArray(data.total_consumption)) {
-                    chart.series[3].setData(data.total_consumption);
-                }
-
-            })
-            .catch(error => console.error('Error al actualizar la gráfica:', error));
-    }
-
-    // Inicializa la gráfica y realiza la primera actualización
-    createChart();
-    graficaVRM();
-    setInterval(graficaVRM, 60000);
-</script>
-
-<script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
-
-    new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["M", "T", "W", "T", "F", "S", "S"],
-            datasets: [{
-                label: "Views",
-                tension: 0.4,
-                borderWidth: 0,
-                borderRadius: 4,
-                borderSkipped: false,
-                backgroundColor: "#43A047",
-                data: [50, 45, 22, 28, 50, 60, 76],
-                barThickness: 'flex'
-            }, ],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: '#e5e5e5'
-                    },
-                    ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: 500,
-                        beginAtZero: true,
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            lineHeight: 2
-                        },
-                        color: "#737373"
-                    },
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#737373',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-
-
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
-
-    new Chart(ctx2, {
-        type: "line",
-        data: {
-            labels: ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
-            datasets: [{
-                label: "Sales",
-                tension: 0,
-                borderWidth: 2,
-                pointRadius: 3,
-                pointBackgroundColor: "#43A047",
-                pointBorderColor: "transparent",
-                borderColor: "#43A047",
-                backgroundColor: "transparent",
-                fill: true,
-                data: [120, 230, 130, 440, 250, 360, 270, 180, 90, 300, 310, 220],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function(context) {
-                            const fullMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                            return fullMonths[context[0].dataIndex];
-                        }
-                    }
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [4, 4],
-                        color: '#e5e5e5'
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#737373',
-                        padding: 10,
-                        font: {
-                            size: 12,
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#737373',
-                        padding: 10,
-                        font: {
-                            size: 12,
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-
-    var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
-
-    new Chart(ctx3, {
-        type: "line",
-        data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [{
-                label: "Tasks",
-                tension: 0,
-                borderWidth: 2,
-                pointRadius: 3,
-                pointBackgroundColor: "#43A047",
-                pointBorderColor: "transparent",
-                borderColor: "#43A047",
-                backgroundColor: "transparent",
-                fill: true,
-                data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [4, 4],
-                        color: '#e5e5e5'
-                    },
-                    ticks: {
-                        display: true,
-                        padding: 10,
-                        color: '#737373',
-                        font: {
-                            size: 14,
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [4, 4]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#737373',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-</script>
-<script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-        var options = {
-            damping: '0.5'
-        }
-        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-</script>
-
-
     <script>
+        // Variables globales para almacenar el rango seleccionado (en epoch segundos)
+        var customStartEpoch = null;
+        var customEndEpoch = null;
+
         document.addEventListener('DOMContentLoaded', function() {
             // 1) Generar la fecha/hora actual en formato "YYYY-MM-DD HH:mm"
             const now = new Date();
             const year = now.getFullYear();
-            // month empieza en 0, agregamos +1 y formateamos con padStart(2,'0')
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             const hour = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
 
-            const placeholderActual = `${year}-${month}-${day} ${hour}:${minutes}`;
+            // Ejemplo de placeholders (se usa el día actual por defecto)
+            const placeholderStart = `${year}-${month}-${day-1} ${hour}:${minutes}`;
+            const placeholderEnd = `${year}-${month}-${day} ${hour}:${minutes}`;
 
-            // 2) Asignar este string al placeholder del input
-            const input = document.getElementById('datetimepicker');
-            input.placeholder = placeholderActual;
+            // 2) Asignar los placeholders a los inputs
+            const inputStart = document.getElementById('datetimepickerStart');
+            const inputEnd = document.getElementById('datetimepickerEnd');
+            inputStart.placeholder = placeholderStart;
+            inputEnd.placeholder = placeholderEnd;
 
-
-            // 3) Inicializar Flatpickr en ese input
-            flatpickr(input, {
+            // 3) Inicializar Flatpickr en los inputs
+            flatpickr(inputStart, {
                 enableTime: true,
-                dateFormat: 'Y-m-d H:00', // Muestra fecha + hora con :00
                 time_24hr: true,
-                minuteIncrement: 60,      // Forzar los minutos a 00
-                maxDate: 'today'          // (Opcional) no permite seleccionar fechas futuras a hoy
+                maxDate: 'today'
+            });
+
+            flatpickr(inputEnd, {
+                enableTime: true,
+                time_24hr: true,
+                maxDate: 'today'
+            });
+
+            // 4) Capturar el rango seleccionado al pulsar "Aplicar"
+            document.getElementById('aplicarBtn').addEventListener('click', function() {
+                const selectedStart = inputStart.value;
+                const selectedEnd = inputEnd.value;
+
+                // Si se ingresan ambos valores, se convierten a epoch (segundos)
+                if (selectedStart && selectedEnd) {
+                    // Convertir el string (formato "YYYY-MM-DD HH:mm") a formato ISO
+                    const startDate = new Date(selectedStart.replace(" ", "T"));
+                    const endDate = new Date(selectedEnd.replace(" ", "T"));
+                    customStartEpoch = Math.floor(startDate.getTime() / 1000);
+                    customEndEpoch = Math.floor(endDate.getTime() / 1000);
+                } else {
+                    customStartEpoch = null;
+                    customEndEpoch = null;
+                }
+
+                // Actualizar la gráfica con el rango seleccionado
+                graficaVRM();
             });
         });
     </script>
 
+    <!-- Script para la gráfica (Highcharts) -->
+    <script th:inline="javascript">
+        let chart;
+
+        Highcharts.setOptions({
+            time: {
+                useUTC: false
+            }
+        });
+
+        // (Opcional) Para depuración: calculamos el inicio y fin del día actual
+        const now = new Date();
+        const startOfDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const endOfDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        console.log("Inicio del día (UTC):", startOfDay);
+        console.log("Fin del día (UTC):", endOfDay);
+
+        // Función para inicializar la gráfica con las series correspondientes
+        function createChart() {
+            chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                title: '',
+                xAxis: {
+                    crosshair: true,
+                    type: 'datetime',
+                    tickInterval: 3600 * 1000, // 1 hora en milisegundos
+                    title: {
+                        text: 'Tiempo'
+                    }
+                },
+                yAxis: [{
+                    title: {
+                        text: 'Producción Solar',
+                        label: {
+                            text: 'kWh'
+                        }
+                    }
+                }, {
+                    title: {
+                        align: 'high',
+                        offset: 18,
+                        text: 'V',
+                        rotation: 0,
+                        y: -30,
+                        style: {
+                            color: '#65d322'
+                        }
+                    },
+                    startOnTick: true,
+                    max: 70,
+                    min: 24,
+                    opposite: true,
+                    labels: {
+                        style: {
+                            color: '#65d322'
+                        }
+                    }
+                }],
+                tooltip: {
+                    shared: true
+                },
+                plotOptions: {
+                    series: {
+                        marker: {
+                            enabled: true,
+                            symbol: 'circle',
+                            radius: 4,
+                            lineWidth: 1,
+                            lineColor: '#333'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: 'Producción Solar',
+                        data: [],
+                        yAxis: 0,
+                        min: 0,
+                        zIndex: 0,
+                        color: '#e68434',
+                        pointWidth: 10,
+                        tooltip: {
+                            valueSuffix: ' kWh'
+                        }
+                    },
+                    {
+                        name: 'Voltaje Baterías',
+                        data: [],
+                        type: 'line',
+                        lineWidth: 1,
+                        yAxis: 1,
+                        color: '#3fac15',
+                        zIndex: 0,
+                        tooltip: {
+                            valueSuffix: ' V'
+                        }
+                    },
+                    {
+                        name: 'Voltaje Baterías Rango',
+                        data: [],
+                        type: 'arearange',
+                        linkedTo: ':previous',
+                        color: '#66e634',
+                        symbol: 'circle',
+                        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
+                        radius: '5',
+                        lineWidth: 0,
+                        fillOpacity: 0.5,
+                        yAxis: 1,
+                        tooltip: {
+                            valueSuffix: ' V'
+                        }
+                    },
+                    {
+                        name: 'Consumo Total',
+                        data: [],
+                        yAxis: 0,
+                        min: 0,
+                        color: '#e64334',
+                        pointWidth: 10,
+                        tooltip: {
+                            valueSuffix: ' kWh'
+                        }
+                    }
+                ]
+            });
+        }
+
+        // Función para actualizar la gráfica consultando el endpoint /api/graph-data
+        function graficaVRM() {
+            var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
+            var interval = "hours";
+            let start, end;
+
+            // Si se ha definido un rango personalizado, se usa ese; de lo contrario, se usa el día actual
+            if (customStartEpoch !== null && customEndEpoch !== null) {
+                start = customStartEpoch;
+                end = customEndEpoch;
+            } else {
+                var time = new Date();
+                const offset = +5; // Ajuste horario (según se requiera)
+                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
+                end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
+            }
+            console.log("Start epoch:", start);
+            console.log("End epoch:", end);
+
+            fetch(`/api/graph-data?siteId=${VRMSite}&interval=${interval}&start=${start}&end=${end}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
+                        chart.series[0].setData(data.total_solar_yield);
+                    }
+                    if (data.bv_avg && Array.isArray(data.bv_avg)) {
+                        chart.series[1].setData(data.bv_avg);
+                    }
+                    if (data.bv_range && Array.isArray(data.bv_range)) {
+                        chart.series[2].setData(data.bv_range);
+                    }
+                    if (data.total_consumption && Array.isArray(data.total_consumption)) {
+                        chart.series[3].setData(data.total_consumption);
+                    }
+                })
+                .catch(error => console.error('Error al actualizar la gráfica:', error));
+        }
+
+        // Inicializa la gráfica y realiza la primera actualización usando el rango por defecto (día actual)
+        createChart();
+        graficaVRM();
+        setInterval(graficaVRM, 60000);
+    </script>
 
 
+    <script>
+        var win = navigator.platform.indexOf('Win') > -1;
+        if (win && document.querySelector('#sidenav-scrollbar')) {
+            var options = {
+                damping: '0.5'
+            }
+            Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+        }
+    </script>
 
-<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-<script th:src="@{/js/core/material-dashboard.min.js}"></script>
+
+    <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+    <script th:src="@{/js/core/material-dashboard.min.js}"></script>
     <!-- Start: Loader JS -->
     <script th:src="@{/js/plugins/loader.js}"></script>
     <!-- End: Loader JS -->
