@@ -1135,11 +1135,17 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             } else {
                 var time = new Date();
                 const offset = +5; // Ajuste horario (según se requiera)
-                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate() - 1, offset, 0, 0) / 1000);
+                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
                 end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
+
             }
             console.log("Start epoch:", start);
             console.log("End epoch:", end);
+
+            // Establece el rango completo en el eje X (en milisegundos)
+            if (chart && chart.xAxis && chart.xAxis[0]) {
+                chart.xAxis[0].setExtremes(start * 1000, end * 1000);
+            }
 
             fetch(`/api/graph-data?siteId=${VRMSite}&interval=${interval}&start=${start}&end=${end}`)
                 .then(response => response.json())
