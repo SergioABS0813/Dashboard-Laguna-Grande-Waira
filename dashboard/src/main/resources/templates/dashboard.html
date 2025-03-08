@@ -44,14 +44,14 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <link id="pagestyle" th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
     <link th:href="@{/css/loader.css}" rel="stylesheet" />
-    <!-- Incluir CSS de Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
 
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- FlatPickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <!-- Anti-flicker snippet (recommended)  -->
     <style>
@@ -282,23 +282,18 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         <div class="z-index-1 end-2 translate-middle-y position-absolute" style="top: 120px">
 
             <div class="row">
-                <div class="col-md-4">
-                    <label for="single-select">Tiempo de Inicio</label>
-                    <select id="single-select" style="width: 300px;" data-placeholder="Elegir">
-                        <option></option>
-                        <option value="1">Opción 1</option>
-                        <option value="2">Opción 2</option>
-                        <option value="3">Opción 3</option>
-                    </select>
-                </div>
 
                 <div class="col-md-4">
-                    <a  class="btn btn-outline-dark" href="/micronetworks/create" type="button">Aplicar</a>
+                    <label for="datetimepicker">Selecciona fecha:</label>
+                    <input type="text" id="datetimepicker" placeholder="2025-01-01 12:00" />
                 </div>
 
-                <div class="col-md-4">
-                    <a  class="btn btn-outline-dark" href="/micronetworks/create" type="button">Aplicar</a>
+                <div class="col-md-2">
+
+                    <button id="guardarBtn">Guardar</button>
                 </div>
+
+
             </div>
 
         </div>
@@ -1370,14 +1365,36 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
     <script>
-        $(document).ready(function() {
-            $('#single-select').select2({
-                placeholder: 'Seleccione algo',
-                allowClear: true,
-                width: '100%'
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1) Generar la fecha/hora actual en formato "YYYY-MM-DD HH:mm"
+            const now = new Date();
+            const year = now.getFullYear();
+            // month empieza en 0, agregamos +1 y formateamos con padStart(2,'0')
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const placeholderActual = `${year}-${month}-${day} ${hour}:${minutes}`;
+
+            // 2) Asignar este string al placeholder del input
+            const input = document.getElementById('datetimepicker');
+            input.placeholder = placeholderActual;
+
+
+            // 3) Inicializar Flatpickr en ese input
+            flatpickr(input, {
+                enableTime: true,
+                dateFormat: 'Y-m-d H:00', // Muestra fecha + hora con :00
+                time_24hr: true,
+                minuteIncrement: 60,      // Forzar los minutos a 00
+                maxDate: 'today'          // (Opcional) no permite seleccionar fechas futuras a hoy
             });
         });
     </script>
+
+
+
 
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
