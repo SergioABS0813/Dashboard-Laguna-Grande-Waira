@@ -342,7 +342,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Today's Money</p>
+                                <p class="text-sm mb-0 text-capitalize">Producción Solar</p>
                                 <h4 class="mb-0">$53k</h4>
                             </div>
                             <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
@@ -356,12 +356,14 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     </div>
                 </div>
             </div>
+
+
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
                 <div class="card">
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Today's Users</p>
+                                <p class="text-sm mb-0 text-capitalize">Consumo Eléctrico</p>
                                 <h4 class="mb-0">2300</h4>
                             </div>
                             <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
@@ -1162,6 +1164,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     if (data.total_consumption && Array.isArray(data.total_consumption)) {
                         chart.series[3].setData(data.total_consumption);
                     }
+                    if (data.totals && typeof data.totals === 'object') {
+                        console.log('Totals:', data.totals);
+                        console.log('total_solar_yield:', data.totals.total_solar_yield);
+                        console.log('total_consumption:', data.totals.total_consumption);
+                    }
+
                 })
                 .catch(error => console.error('Error al actualizar la gráfica:', error));
         }

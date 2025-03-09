@@ -146,6 +146,27 @@ public class ApiControllerVRM {
                     graphData.put("bv_range", bv_range);
                 }
             }
+
+            // Procesar los totales (totals)
+            if (installationData.containsKey("totals")) {
+                Object totalsObj = installationData.get("totals");
+                if (totalsObj instanceof Map) {
+                    Map totals = (Map) totalsObj;
+                    Map<String, Object> processedTotals = new HashMap<>();
+                    for (Object key : totals.keySet()) {
+                        Object value = totals.get(key);
+                        // Si es un número, redondearlo a 2 decimales
+                        if (value instanceof Number) {
+                            double rounded = roundToTwoDecimals(((Number) value).doubleValue());
+                            processedTotals.put(key.toString(), rounded);
+                        } else {
+                            processedTotals.put(key.toString(), value);
+                        }
+                    }
+                    graphData.put("totals", processedTotals);
+                }
+            }
+
         }
         return graphData;
     }
