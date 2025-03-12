@@ -309,7 +309,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     </div>
 
                     <div class="d-flex flex-column justify-content-end">
-                        <a id="recargarBtn" class="btn btn-outline-dark justify-content-end mb-0" style="padding-left: 10px !important; padding-right: 10px !important; padding-bottom: 6px !important; padding-top: 6px !important;  font-size: 0.85rem !important; margin: 0 !important;" type="button">↻</a>
+                        <a class="btn btn-outline-dark justify-content-end mb-0"
+                           href="#"
+                           onclick="location.reload();"
+                           style="padding-left: 10px !important; padding-right: 10px !important; padding-bottom: 6px !important; padding-top: 6px !important; font-size: 0.85rem !important; margin: 0 !important;">
+                            ↻
+                        </a>
                     </div>
 
                 </div>
@@ -337,7 +342,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Today's Money</p>
+                                <p class="text-sm mb-0 text-capitalize">Producción Solar</p>
                                 <h4 class="mb-0">$53k</h4>
                             </div>
                             <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
@@ -351,12 +356,14 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     </div>
                 </div>
             </div>
+
+
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
                 <div class="card">
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Today's Users</p>
+                                <p class="text-sm mb-0 text-capitalize">Consumo Eléctrico</p>
                                 <h4 class="mb-0">2300</h4>
                             </div>
                             <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
@@ -1130,11 +1137,17 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             } else {
                 var time = new Date();
                 const offset = +5; // Ajuste horario (según se requiera)
-                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate() - 1, offset, 0, 0) / 1000);
+                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
                 end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
+
             }
             console.log("Start epoch:", start);
             console.log("End epoch:", end);
+
+            // Establece el rango completo en el eje X (en milisegundos)
+            if (chart && chart.xAxis && chart.xAxis[0]) {
+                chart.xAxis[0].setExtremes(start * 1000, end * 1000);
+            }
 
             fetch(`/api/graph-data?siteId=${VRMSite}&interval=${interval}&start=${start}&end=${end}`)
                 .then(response => response.json())
@@ -1151,6 +1164,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     if (data.total_consumption && Array.isArray(data.total_consumption)) {
                         chart.series[3].setData(data.total_consumption);
                     }
+                    if (data.totals && typeof data.totals === 'object') {
+                        console.log('Totals:', data.totals);
+                        console.log('total_solar_yield:', data.totals.total_solar_yield);
+                        console.log('total_consumption:', data.totals.total_consumption);
+                    }
+
                 })
                 .catch(error => console.error('Error al actualizar la gráfica:', error));
         }
