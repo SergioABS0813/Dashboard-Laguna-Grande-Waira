@@ -120,7 +120,7 @@
                     <span class="nav-link-text ms-1">Instalaciones</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" th:if="${session.user != null and session.user.role == 'ADMIN'}">
                 <a class="nav-link active bg-gradient-dark text-white" th:href="@{/users_managment}">
                     <i class="material-symbols-rounded opacity-5">table_view</i>
                     <span class="nav-link-text ms-1">Usuarios</span>
