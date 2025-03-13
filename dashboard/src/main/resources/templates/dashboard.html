@@ -384,12 +384,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
         <div class="col-xl-8 col-md-12 mb-1 mt-2">
             <div class="card">
-                <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 400px;">
+                <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 500px;">
                     <span>Cargando dispositivos...</span>
                 </div>
 
                 <div id="chart-container" style="position: relative;">
-                    <div id="orgChart" style="height: 400px;"></div>
+                    <div id="orgChart" style="height: 500px;"></div>
 
                     <!-- Aquí se crearán dinámicamente gráficos -->
 
@@ -1037,13 +1037,13 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#2A82DA',
+                            'background-color': '#fff',
                             'label': 'data(label)',
                             'text-valign': 'center',
                             'text-halign': 'center',
-                            'color': '#fff',
-                            'width': 150,
-                            'height': 80,
+                            'color': '#1b1b1b',
+                            'width': 280,
+                            'height': 200,
                             'shape': 'round-rectangle',
                             'font-size': 12,
                             'text-wrap': 'wrap',
@@ -1066,14 +1066,14 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             'background-width': '100%',
                             'background-height': '100%',
                             'border-width': 0,
-                            'width': 130,
-                            'height': 150,
+                            'width': 150,
+                            'height': 170,
                             'shape': 'round-rectangle',
                             'label': 'data(label)', // ← dinámico
                             'color': '#fff',
                             'text-valign': 'center',
-                            'text-margin-y': '45px',
-                            'font-size': '10px',
+                            'text-margin-y': '50px',
+                            'font-size': '12px',
                             'text-wrap': 'wrap',
                             'text-max-width': 120,
                             'border-radius': '1px'
@@ -1147,9 +1147,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
                         // Nodos especiales
                         const specialNodes = [
-                            { id: "mppt-solar", label: `MPPT SOLAR - (${data.devices.filter(dev => dev.idDeviceType === 4).length})`, x: 150, y: 150 },
-                            { id: "battery-node", label: "Battery System\n(Discharging)", x: -150, y: 150 },
-                            { id: "ac-loads", label: "AC Loads\n(Watts)", x: 180, y: 0, hasChart: true, chartData: [1, 2, 3, 4] }
+                            { id: "mppt-solar", label: `MPPT SOLAR - (${data.devices.filter(dev => dev.idDeviceType === 4).length})`, x: 230, y: 240 },
+                            { id: "battery-node", label: "Battery System\n(Discharging)", x: -230, y: 240 },
+                            { id: "ac-loads", label: "AC Loads", x: 320, y: 0, hasChart: true, chartData: [1, 2, 3, 4] }
                         ];
 
                         specialNodes.forEach(node => {
@@ -1159,8 +1159,20 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             });
                             nodeIds.add(node.id);
 
-                            edges.push({ data: { source: rootId, target: node.id }, classes: 'edge-bg' });
-                            edges.push({ data: { source: rootId, target: node.id }, classes: 'edge-fg animado' });
+                            edges.push({ data: { id: 'root-mppt-bg', source: rootId, target: "mppt-solar" }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'root-mppt-fg', source: rootId, target: "mppt-solar" }, classes: 'edge-fg animado' });
+                            edges.push({ data: { id: 'mppt-root-bg', source: "mppt-solar", target: rootId }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'mppt-root-fg', source: "mppt-solar", target: rootId }, classes: 'edge-fg animado' });
+
+                            edges.push({ data: { id: 'root-battery-bg', source: rootId, target: "battery-node" }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'root-battery-fg', source: rootId, target: "battery-node" }, classes: 'edge-fg animado' });
+                            edges.push({ data: { id: 'battery-root-bg', source: "battery-node", target: rootId }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'battery-root-fg', source: "battery-node", target: rootId }, classes: 'edge-fg animado' });
+
+                            edges.push({ data: { id: 'root-loads-bg', source: rootId, target: "ac-loads" }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'root-loads-fg', source: rootId, target: "ac-loads" }, classes: 'edge-fg animado' });
+                            edges.push({ data: { id: 'loads-root-bg', source: "ac-loads", target: rootId }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'loads-root-fg', source: "ac-loads", target: rootId }, classes: 'edge-fg animado' });
                         });
 
                         cy.add([...nodes, ...edges]);
@@ -1177,18 +1189,51 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             const chartDiv = document.createElement('div');
                             chartDiv.id = `chart-${node.id()}`;
                             chartDiv.style.position = 'absolute';
-                            chartDiv.style.width = '180px';
-                            chartDiv.style.height = '170px';
+                            chartDiv.style.width = '280px';
+                            chartDiv.style.height = '200px';
+                            chartDiv.style.borderRadius = '5px';
+                            chartDiv.style.borderStyle = 'solid';
+                            chartDiv.style.borderWidth = '1px';
+                            chartDiv.style.borderColor = 'rgb(175,175,175)';
+                            chartDiv.style.paddingBottom = '50px'
 
                             chartParent.appendChild(chartDiv);
 
                             Highcharts.chart(chartDiv.id, {
                                 chart: {
                                     type: 'area',
-                                    backgroundColor: 'rgba(255,255,255,1)'
+                                    backgroundColor: 'rgb(248,248,248)',
+                                    renderTo: 'container',
+                                    margin: [0, 0, 0, 0],
                                 },
-                                title: { text: node.data('label') },
-                                series: [{ data: node.data('chartData') }]
+                                title: {
+                                    text: node.data('label') ,
+                                    align: 'left',
+                                    style: {
+                                        color: 'rgb(58,58,58)',
+                                        fontSize:'12px',
+                                        fontFamily: 'Inter,Helvetica,Arial,sans-serif',
+                                        fontWeight: '300s',
+
+                                    }
+                                },
+
+                                yAxis: [{
+                                    visible: false
+                                }],
+
+                                xAxis: [{
+                                    visible: false
+                                }],
+
+                                legend:{ enabled:false },
+
+                                series:
+                                    [
+                                    {
+                                        data: node.data('chartData')
+                                    }
+                                    ]
                             });
                         });
 
@@ -1204,7 +1249,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             updateAllChartPositions();
                         });
 
-                        setInvertingState();
+
 
                         // ✅ Espera a que todos los nodos sean añadidos antes de actualizar posiciones
                         setTimeout(() => {
@@ -1228,6 +1273,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             let offset = 0;
 
             function animateEdges() {
+                setInvertingState();
                 offset += -1;
                 cy.edges().style('line-dash-offset', offset);
                 requestAnimationFrame(animateEdges);
@@ -1259,8 +1305,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     const position = node.renderedPosition();
                     const zoom = cy.zoom();
 
-                    chartDiv.style.left = (position.x - 100) + 'px'; // Ajuste según tamaño
-                    chartDiv.style.top = (position.y - 75) + 'px';
+                    chartDiv.style.left = (position.x - 140) + 'px'; // Ajuste según tamaño
+                    chartDiv.style.top = (position.y - 100) + 'px';
                     chartDiv.style.transform = `scale(${zoom})`;
                 });
             }
@@ -1586,6 +1632,13 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     if (graphData.data && Object.keys(graphData.data).length !== 0) {
                         console.log(`📊 Datos obtenidos para atributo ${idDataAttribute} e instancia ${instance}:`, graphData);
                     }
+
+                    // Elegir las series para AC Load
+
+                    // Elegir las series para Battery
+
+                    // Elegir las series para MPPT
+
 
                 })
                 .catch(error => console.error(`Error al obtener datos para atributo ${idDataAttribute}:`, error));
