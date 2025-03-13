@@ -387,7 +387,15 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 400px;">
                     <span>Cargando dispositivos...</span>
                 </div>
-                <div id="orgChart" style="height: 400px;"></div>
+
+                <div id="chart-container" style="position: relative;">
+                    <div id="orgChart" style="height: 400px;"></div>
+
+                    <!-- Aquí se crearán dinámicamente gráficos -->
+
+                </div>
+
+
             </div>
         </div>
 
@@ -1120,106 +1128,69 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         let edges = [];
                         let nodeIds = new Set();
 
-                        // Encontrar nodo raíz (device con idDeviceType === 1)
                         let rootDevice = data.devices.find(dev => dev.idDeviceType === 1 && dev.instance !== null);
                         if (!rootDevice) {
                             chartContainer.innerHTML = "<span>No se encontró un dispositivo principal (tipo 1).</span>";
                             loader.style.display = 'none';
                             chartContainer.style.display = 'block';
-                            console.error("❌ No existe dispositivo con tipo=1 válido.");
                             return;
                         }
 
                         const rootId = rootDevice.instance.toString();
 
-                        // Nodo raíz
                         nodes.push({
-                            data: {
-                                id: rootId,
-                                label: `${rootDevice.name}\n(${rootDevice.productName})`
-                            },
-                            position: { x: 0, y: 0 } // posición central
-                            , classes: 'main-node'
+                            data: { id: rootId, label: `${rootDevice.name}\n(${rootDevice.productName})` },
+                            position: { x: 0, y: 0 },
+                            classes: 'main-node'
                         });
                         nodeIds.add(rootId);
 
-                        // Nodo combinado para dispositivos tipo 4
-                        const tipo4Devices = data.devices.filter(dev => dev.idDeviceType === 4 && dev.instance !== null);
-                        if (tipo4Devices.length > 0) {
+                        // Nodos especiales
+                        const specialNodes = [
+                            { id: "mppt-solar", label: `MPPT SOLAR - (${data.devices.filter(dev => dev.idDeviceType === 4).length})`, x: 150, y: 150 },
+                            { id: "battery-node", label: "Battery System\n(Discharging)", x: -150, y: 150 },
+                            { id: "ac-loads", label: "AC Loads\n(Watts)", x: 180, y: 0, hasChart: true, chartData: [1, 2, 3, 4] }
+                        ];
+
+                        specialNodes.forEach(node => {
                             nodes.push({
-                                data: {
-                                    id: "mppt-solar",
-                                    label: `MPPT SOLAR - (${tipo4Devices.length})`
-                                },
-                                position: { x: 150, y: 150 }
+                                data: { id: node.id, label: node.label, hasChart: node.hasChart, chartData: node.chartData },
+                                position: { x: node.x, y: node.y }
                             });
-                            nodeIds.add("mppt-solar");
-                            edges.push({ data: { id: 'root-mppt-bg', source: rootId, target: "mppt-solar" }, classes: 'edge-bg' });
-                            edges.push({ data: { id: 'root-mppt-fg', source: rootId, target: "mppt-solar" }, classes: 'edge-fg animado' });
+                            nodeIds.add(node.id);
 
-                            edges.push({ data: { id: 'mppt-root-bg', source: "mppt-solar", target: rootId }, classes: 'edge-bg' });
-                            edges.push({ data: { id: 'mppt-root-fg', source: "mppt-solar", target: rootId }, classes: 'edge-fg animado' });
-                        }
-
-                        // Nodo batería manual
-                        nodes.push({
-                            data: {
-                                id: "battery-node",
-                                label: "Battery System\n(Discharging)"
-                            },
-                            position: { x: -150, y: 150 }
+                            edges.push({ data: { source: rootId, target: node.id }, classes: 'edge-bg' });
+                            edges.push({ data: { source: rootId, target: node.id }, classes: 'edge-fg animado' });
                         });
-                        nodeIds.add("battery-node");
-                        edges.push({ data: { id: 'root-battery-bg', source: rootId, target: "battery-node" }, classes: 'edge-bg' });
-                        edges.push({ data: { id: 'root-battery-fg', source: rootId, target: "battery-node" }, classes: 'edge-fg animado' });
-
-                        edges.push({ data: { id: 'battery-root-bg', source: "battery-node", target: rootId }, classes: 'edge-bg' });
-                        edges.push({ data: { id: 'battery-root-fg', source: "battery-node", target: rootId }, classes: 'edge-fg animado' });
-
-                        // Nodo AC Loads
-                        nodes.push({
-                            data: {
-                                id: "ac-loads",
-                                label: "AC Loads\n(Watts)"
-                            },
-                            position: { x: 180, y: 0 }
-                        });
-                        nodeIds.add("ac-loads");
-                        edges.push({ data: { id: 'root-loads-bg', source: rootId, target: "ac-loads" }, classes: 'edge-bg' });
-                        edges.push({ data: { id: 'root-loads-fg', source: rootId, target: "ac-loads" }, classes: 'edge-fg animado' });
-
-                        edges.push({ data: { id: 'loads-root-bg', source: "ac-loads", target: rootId }, classes: 'edge-bg' });
-                        edges.push({ data: { id: 'loads-root-fg', source: "ac-loads", target: rootId }, classes: 'edge-fg animado' });
-
-                        // Otros nodos (omitir tipo 4, tipo 1 y null)
-                        data.devices.forEach(device => {
-                            if (device.instance !== null &&
-                                device.idDeviceType !== 1 &&
-                                device.idDeviceType !== 4) {
-
-                                nodes.push({
-                                    data: {
-                                        id: device.instance.toString(),
-                                        label: `${device.name}\n(${device.productName})`
-                                    },
-                                    position: { x: 400, y: -400 }  // Posición arbitraria, ajustar después si necesario
-                                });
-                                nodeIds.add(device.instance.toString());
-
-                                edges.push({
-                                    data: {
-                                        source: rootId,
-                                        target: device.instance.toString()
-                                    }
-                                });
-                            }
-                        });
-
-                        console.log('Nodes generados:', nodes);
-                        console.log('Edges generados:', edges);
 
                         cy.add([...nodes, ...edges]);
                         cy.layout({ name: 'preset' }).run();
+
+                        // ⚠️ Verifica que el contenedor de los gráficos existe antes de agregar divs dinámicos
+                        const chartParent = document.getElementById('chart-container');
+                        if (!chartParent) {
+                            console.error("❌ ERROR: 'chart-container' no encontrado en el DOM.");
+                            return;
+                        }
+
+                        cy.nodes('[hasChart]').forEach(node => {
+                            const chartDiv = document.createElement('div');
+                            chartDiv.id = `chart-${node.id()}`;
+                            chartDiv.style.position = 'absolute';
+                            chartDiv.style.width = '180px';
+                            chartDiv.style.height = '170px';
+
+                            chartParent.appendChild(chartDiv);
+
+                            Highcharts.chart(chartDiv.id, {
+                                chart: {
+                                    type: 'area',
+                                    backgroundColor: 'rgba(255,255,255,1)'
+                                },
+                                title: { text: node.data('label') },
+                                series: [{ data: node.data('chartData') }]
+                            });
+                        });
 
                         loader.style.display = 'none';
                         chartContainer.style.display = 'block';
@@ -1230,9 +1201,16 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         window.addEventListener('resize', () => {
                             cy.resize();
                             cy.fit(undefined, 10);
+                            updateAllChartPositions();
                         });
 
                         setInvertingState();
+
+                        // ✅ Espera a que todos los nodos sean añadidos antes de actualizar posiciones
+                        setTimeout(() => {
+                            updateAllChartPositions();
+                            cy.on('render pan zoom', updateAllChartPositions);
+                        }, 500);
 
                         console.log("✅ Organigrama generado correctamente con Cytoscape.js.");
                     })
@@ -1243,7 +1221,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         console.error("❌ Error al obtener los dispositivos:", error);
                     });
             }
-
 
 
 
@@ -1273,6 +1250,26 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
             animateEdges();
             loadDevices();
+
+            function updateAllChartPositions() {
+                cy.nodes('[hasChart]').forEach(node => {
+                    const chartDiv = document.getElementById(`chart-${node.id()}`);
+                    if (!chartDiv) return; // Evitar errores si no existe
+
+                    const position = node.renderedPosition();
+                    const zoom = cy.zoom();
+
+                    chartDiv.style.left = (position.x - 100) + 'px'; // Ajuste según tamaño
+                    chartDiv.style.top = (position.y - 75) + 'px';
+                    chartDiv.style.transform = `scale(${zoom})`;
+                });
+            }
+
+            // llama al iniciar
+            updateAllChartPositions();
+
+            // Llama en interacciones para actualizar automáticamente
+            cy.on('render pan zoom', updateAllChartPositions);
         });
     </script>
 
