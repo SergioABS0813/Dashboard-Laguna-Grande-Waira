@@ -45,6 +45,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
     <link th:href="@{/css/loader.css}" rel="stylesheet" />
 
+    <!-- cytoscape GRAPHICS -->
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <script src="https://unpkg.com/cytoscape-animated-edges/cytoscape-animated-edges.js"></script>
+
+
+
 
 
     <!-- JQuery -->
@@ -71,6 +77,40 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             font-size: 14px !important;
         }
     </style>
+
+
+    <style>
+        #loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        #orgChart {
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+    </style>
+
+    <style>
+        @keyframes flow {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        .flowing-edge {
+            stroke-dasharray: 10;
+            animation: flow 15s linear infinite;
+        }
+    </style>
+
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -323,7 +363,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             </div>
         </div>
 
-        <div class="col-12 mb-1 mt-3">
+        <div class="col-12 mb-1 mt-2">
             <div class="card">
 
                 <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
@@ -331,7 +371,33 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
             </div>
         </div>
+
     </div>
+
+
+
+
+
+
+
+    <div class="container-fluid pb-2">
+
+        <div class="col-xl-8 col-md-12 mb-1 mt-2">
+            <div class="card">
+                <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 400px;">
+                    <span>Cargando dispositivos...</span>
+                </div>
+                <div id="orgChart" style="height: 400px;"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
 
 
     <div class="container-fluid py-2">
@@ -936,7 +1002,283 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
 
-    <script>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("✅ DOM completamente cargado, verificando Cytoscape.js...");
+
+            if (typeof cytoscape === "undefined") {
+                console.error("❌ Cytoscape.js no está cargado correctamente.");
+                return;
+            }
+
+            console.log("✅ Cytoscape.js cargado correctamente.");
+
+            var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
+            console.log("🔍 Site ID usado en Cytoscape.js:", VRMSite);
+
+            const loader = document.getElementById('loader');
+            const chartContainer = document.getElementById('orgChart');
+
+            var cy = cytoscape({
+                container: chartContainer,
+                userZoomingEnabled: false,
+                userPanningEnabled: false,
+                boxSelectionEnabled: false,
+                autoungrabify: true,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': '#2A82DA',
+                            'label': 'data(label)',
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                            'color': '#fff',
+                            'width': 150,
+                            'height': 80,
+                            'shape': 'round-rectangle',
+                            'font-size': 12,
+                            'text-wrap': 'wrap',
+                            'text-max-width': 140,
+                            'shadow-blur': 10,
+                            'shadow-color': '#000',
+                            'shadow-opacity': 0.4,
+                            'shadow-offset-x': 0,
+                            'shadow-offset-y': 4,
+                            'border-radius': '1px'
+                        }
+                    },
+
+                    {
+                        selector: '.main-node',
+                        style: {
+                            'background-color': 'transparent',
+                            'background-image': 'url(/svg/main_node.svg)', // ruta al SVG que creaste
+                            'background-fit': 'contain',
+                            'background-width': '100%',
+                            'background-height': '100%',
+                            'border-width': 0,
+                            'width': 130,
+                            'height': 150,
+                            'shape': 'round-rectangle',
+                            'label': 'data(label)', // ← dinámico
+                            'color': '#fff',
+                            'text-valign': 'center',
+                            'text-margin-y': '45px',
+                            'font-size': '10px',
+                            'text-wrap': 'wrap',
+                            'text-max-width': 120,
+                            'border-radius': '1px'
+                        }
+                    },
+
+                    {
+                        selector: '.edge-bg', // edge de fondo (sombra)
+                        style: {
+                            'width': 3,
+                            'line-color': '#e6e6e6', // color más oscuro o negro como borde
+                            'target-arrow-shape': 'none',
+                            'curve-style': 'taxi',
+                            'taxi-direction': 'horizontal',
+                            'taxi-turn': 10,
+                        }
+                    },
+                    {
+                        selector: '.edge-fg', // edge superior animado
+                        style: {
+                            'width': 2,
+                            'line-color': '#2A82DA',
+                            'target-arrow-color': '#2A82DA',
+                            'target-arrow-shape': 'none',
+                            'curve-style': 'taxi',
+                            'taxi-direction': 'horizontal',
+                            'taxi-turn': 10,
+                            'line-style': 'dashed',
+                            'line-dash-pattern': [10, 50],
+                            'line-dash-offset': 0
+                        }
+                    }
+                ]
+            });
+
+            function loadDevices() {
+                console.log("⏳ Cargando dispositivos desde la API...");
+                loader.style.display = 'flex';
+                chartContainer.style.display = 'none';
+
+                fetch(`/api/devices-and-attributes?siteId=${VRMSite}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.devices || data.devices.length === 0) {
+                            chartContainer.innerHTML = "<span>No hay dispositivos disponibles.</span>";
+                            loader.style.display = 'none';
+                            chartContainer.style.display = 'block';
+                            return;
+                        }
+
+                        let nodes = [];
+                        let edges = [];
+                        let nodeIds = new Set();
+
+                        // Encontrar nodo raíz (device con idDeviceType === 1)
+                        let rootDevice = data.devices.find(dev => dev.idDeviceType === 1 && dev.instance !== null);
+                        if (!rootDevice) {
+                            chartContainer.innerHTML = "<span>No se encontró un dispositivo principal (tipo 1).</span>";
+                            loader.style.display = 'none';
+                            chartContainer.style.display = 'block';
+                            console.error("❌ No existe dispositivo con tipo=1 válido.");
+                            return;
+                        }
+
+                        const rootId = rootDevice.instance.toString();
+
+                        // Nodo raíz
+                        nodes.push({
+                            data: {
+                                id: rootId,
+                                label: `${rootDevice.name}\n(${rootDevice.productName})`
+                            },
+                            position: { x: 0, y: 0 } // posición central
+                            , classes: 'main-node'
+                        });
+                        nodeIds.add(rootId);
+
+                        // Nodo combinado para dispositivos tipo 4
+                        const tipo4Devices = data.devices.filter(dev => dev.idDeviceType === 4 && dev.instance !== null);
+                        if (tipo4Devices.length > 0) {
+                            nodes.push({
+                                data: {
+                                    id: "mppt-solar",
+                                    label: `MPPT SOLAR - (${tipo4Devices.length})`
+                                },
+                                position: { x: 150, y: 150 }
+                            });
+                            nodeIds.add("mppt-solar");
+                            edges.push({ data: { id: 'root-mppt-bg', source: rootId, target: "mppt-solar" }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'root-mppt-fg', source: rootId, target: "mppt-solar" }, classes: 'edge-fg animado' });
+
+                            edges.push({ data: { id: 'mppt-root-bg', source: "mppt-solar", target: rootId }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'mppt-root-fg', source: "mppt-solar", target: rootId }, classes: 'edge-fg animado' });
+                        }
+
+                        // Nodo batería manual
+                        nodes.push({
+                            data: {
+                                id: "battery-node",
+                                label: "Battery System\n(Discharging)"
+                            },
+                            position: { x: -150, y: 150 }
+                        });
+                        nodeIds.add("battery-node");
+                        edges.push({ data: { id: 'root-battery-bg', source: rootId, target: "battery-node" }, classes: 'edge-bg' });
+                        edges.push({ data: { id: 'root-battery-fg', source: rootId, target: "battery-node" }, classes: 'edge-fg animado' });
+
+                        edges.push({ data: { id: 'battery-root-bg', source: "battery-node", target: rootId }, classes: 'edge-bg' });
+                        edges.push({ data: { id: 'battery-root-fg', source: "battery-node", target: rootId }, classes: 'edge-fg animado' });
+
+                        // Nodo AC Loads
+                        nodes.push({
+                            data: {
+                                id: "ac-loads",
+                                label: "AC Loads\n(Watts)"
+                            },
+                            position: { x: 180, y: 0 }
+                        });
+                        nodeIds.add("ac-loads");
+                        edges.push({ data: { id: 'root-loads-bg', source: rootId, target: "ac-loads" }, classes: 'edge-bg' });
+                        edges.push({ data: { id: 'root-loads-fg', source: rootId, target: "ac-loads" }, classes: 'edge-fg animado' });
+
+                        edges.push({ data: { id: 'loads-root-bg', source: "ac-loads", target: rootId }, classes: 'edge-bg' });
+                        edges.push({ data: { id: 'loads-root-fg', source: "ac-loads", target: rootId }, classes: 'edge-fg animado' });
+
+                        // Otros nodos (omitir tipo 4, tipo 1 y null)
+                        data.devices.forEach(device => {
+                            if (device.instance !== null &&
+                                device.idDeviceType !== 1 &&
+                                device.idDeviceType !== 4) {
+
+                                nodes.push({
+                                    data: {
+                                        id: device.instance.toString(),
+                                        label: `${device.name}\n(${device.productName})`
+                                    },
+                                    position: { x: 400, y: -400 }  // Posición arbitraria, ajustar después si necesario
+                                });
+                                nodeIds.add(device.instance.toString());
+
+                                edges.push({
+                                    data: {
+                                        source: rootId,
+                                        target: device.instance.toString()
+                                    }
+                                });
+                            }
+                        });
+
+                        console.log('Nodes generados:', nodes);
+                        console.log('Edges generados:', edges);
+
+                        cy.add([...nodes, ...edges]);
+                        cy.layout({ name: 'preset' }).run();
+
+                        loader.style.display = 'none';
+                        chartContainer.style.display = 'block';
+
+                        cy.resize();
+                        cy.fit(undefined, 20);
+
+                        window.addEventListener('resize', () => {
+                            cy.resize();
+                            cy.fit(undefined, 10);
+                        });
+
+                        setInvertingState();
+
+                        console.log("✅ Organigrama generado correctamente con Cytoscape.js.");
+                    })
+                    .catch(error => {
+                        loader.innerHTML = "<span>Error al cargar los dispositivos.</span>";
+                        loader.style.display = 'none';
+                        chartContainer.style.display = 'block';
+                        console.error("❌ Error al obtener los dispositivos:", error);
+                    });
+            }
+
+
+
+
+            // Animación continua para simular flujo de agua
+            let offset = 0;
+
+            function animateEdges() {
+                offset += -1;
+                cy.edges().style('line-dash-offset', offset);
+                requestAnimationFrame(animateEdges);
+            }
+
+            function setInvertingState(){
+
+                cy.getElementById('root-mppt-bg').hide();
+                cy.getElementById('root-mppt-fg').hide();
+                cy.getElementById('mppt-root-fg').hide();
+                cy.getElementById('mppt-root-fg').hide();
+
+                cy.getElementById('root-battery-bg').hide();
+                cy.getElementById('root-battery-fg').hide();
+
+                cy.getElementById('loads-root-bg').hide();
+                cy.getElementById('loads-root-fg').hide();
+            }
+
+
+            animateEdges();
+            loadDevices();
+        });
+    </script>
+
+
+
+    <script th:inline="javascript">
         // Variables globales para almacenar el rango seleccionado (en epoch segundos)
         var customStartEpoch = null;
         var customEndEpoch = null;
@@ -991,15 +1333,15 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 }
 
                 // Actualizar la gráfica con el rango seleccionado
-                graficaVRM();
+                fetchMainGraphVRM();
             });
         });
     </script>
 
     <!-- Script para la gráfica (Highcharts) -->
     <script th:inline="javascript">
-        let chart;
 
+        let chart;
         Highcharts.setOptions({
             time: {
                 useUTC: false
@@ -1013,8 +1355,58 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         console.log("Inicio del día (UTC):", startOfDay);
         console.log("Fin del día (UTC):", endOfDay);
 
+        // Función para actualizar la gráfica consultando el endpoint /api/graph-data
+        function fetchMainGraphVRM() {
+            var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
+            var interval = "hours";
+            let start, end;
+
+            // Si se ha definido un rango personalizado, se usa ese; de lo contrario, se usa el día actual
+            if (customStartEpoch !== null && customEndEpoch !== null) {
+                start = customStartEpoch;
+                end = customEndEpoch;
+            } else {
+                var time = new Date();
+                const offset = +5; // Ajuste horario (según se requiera)
+                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
+                end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
+
+            }
+            console.log("Start epoch:", start);
+            console.log("End epoch:", end);
+
+            // Establece el rango completo en el eje X (en milisegundos)
+            if (chart && chart.xAxis && chart.xAxis[0]) {
+                chart.xAxis[0].setExtremes(start * 1000, end * 1000);
+            }
+
+            fetch(`/api/graph-data?siteId=${VRMSite}&interval=${interval}&start=${start}&end=${end}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
+                        chart.series[0].setData(data.total_solar_yield);
+                    }
+                    if (data.bv_avg && Array.isArray(data.bv_avg)) {
+                        chart.series[1].setData(data.bv_avg);
+                    }
+                    if (data.bv_range && Array.isArray(data.bv_range)) {
+                        chart.series[2].setData(data.bv_range);
+                    }
+                    if (data.total_consumption && Array.isArray(data.total_consumption)) {
+                        chart.series[3].setData(data.total_consumption);
+                    }
+                    if (data.totals && typeof data.totals === 'object') {
+                        console.log('Totals:', data.totals);
+                        console.log('total_solar_yield:', data.totals.total_solar_yield);
+                        console.log('total_consumption:', data.totals.total_consumption);
+                    }
+
+                })
+                .catch(error => console.error('Error al actualizar la gráfica:', error));
+        }
+
         // Función para inicializar la gráfica con las series correspondientes
-        function createChart() {
+        function createMainGraph() {
             chart = Highcharts.chart('container', {
                 chart: {
                     type: 'column'
@@ -1124,10 +1516,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             });
         }
 
-        // Función para actualizar la gráfica consultando el endpoint /api/graph-data
-        function graficaVRM() {
+        function fetchDevicesAndAttributesVRM() {
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
-            var interval = "hours";
             let start, end;
 
             // Si se ha definido un rango personalizado, se usa ese; de lo contrario, se usa el día actual
@@ -1149,35 +1539,71 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 chart.xAxis[0].setExtremes(start * 1000, end * 1000);
             }
 
-            fetch(`/api/graph-data?siteId=${VRMSite}&interval=${interval}&start=${start}&end=${end}`)
+            fetch(`/api/devices-and-attributes?siteId=${VRMSite}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
-                        chart.series[0].setData(data.total_solar_yield);
-                    }
-                    if (data.bv_avg && Array.isArray(data.bv_avg)) {
-                        chart.series[1].setData(data.bv_avg);
-                    }
-                    if (data.bv_range && Array.isArray(data.bv_range)) {
-                        chart.series[2].setData(data.bv_range);
-                    }
-                    if (data.total_consumption && Array.isArray(data.total_consumption)) {
-                        chart.series[3].setData(data.total_consumption);
-                    }
-                    if (data.totals && typeof data.totals === 'object') {
-                        console.log('Totals:', data.totals);
-                        console.log('total_solar_yield:', data.totals.total_solar_yield);
-                        console.log('total_consumption:', data.totals.total_consumption);
-                    }
+
+                    const { devices, filteredAttributes } = data;
+
+                    const attributesPerInstance = [];
+                    const seenAttributes = new Set();
+
+                    devices.forEach(device => {
+                        const { instance } = device;
+
+                        if (instance !== null && instance !== undefined) {
+                            filteredAttributes.forEach(attr => {
+                                const key = `${attr.idDataAttribute}-${instance}`;
+
+                                if (!seenAttributes.has(key)) {
+                                    seenAttributes.add(key);
+                                    attributesPerInstance.push({
+                                        idDataAttribute: attr.idDataAttribute,
+                                        instance: instance
+                                    });
+                                }
+                            });
+                        } else {
+                            console.warn(`⚠️ Dispositivo ignorado por no tener instancia: ${device.name}`);
+                        }
+                    });
+
+                    console.log("🗂 Atributos duplicados por instancia de cada dispositivo:", attributesPerInstance);
+
+                    attributesPerInstance.forEach(({ idDataAttribute, instance }) => {
+                        fetchWidgetsGraphVRM(idDataAttribute, instance, VRMSite, start, end);
+                    });
 
                 })
                 .catch(error => console.error('Error al actualizar la gráfica:', error));
+
         }
 
-        // Inicializa la gráfica y realiza la primera actualización usando el rango por defecto (día actual)
-        createChart();
-        graficaVRM();
-        setInterval(graficaVRM, 60000);
+
+        function fetchWidgetsGraphVRM(idDataAttribute, instance, VRMSite, start, end) {
+
+            fetch(`/api/graph-widgets?siteId=${VRMSite}&attributeIds=${idDataAttribute}&instance=${instance}&start=${start}&end=${end}`)
+                .then(response => response.json())
+                .then(graphData => {
+
+                    if (graphData.data && Object.keys(graphData.data).length !== 0) {
+                        console.log(`📊 Datos obtenidos para atributo ${idDataAttribute} e instancia ${instance}:`, graphData);
+                    }
+
+                })
+                .catch(error => console.error(`Error al obtener datos para atributo ${idDataAttribute}:`, error));
+        }
+
+        /* ACTIVA GRÁFICAS */
+
+        createMainGraph();
+        fetchMainGraphVRM();
+        setInterval(fetchMainGraphVRM, 60000);
+
+
+        fetchDevicesAndAttributesVRM();
+
+
     </script>
 
 

@@ -2,11 +2,13 @@ package pe.grande.laguna.dashboard.Controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.grande.laguna.dashboard.Dto.VRMDeviceDTO;
 import pe.grande.laguna.dashboard.Entity.Settings;
 import pe.grande.laguna.dashboard.Repository.SettingsRepository;
 import pe.grande.laguna.dashboard.Service.VRMService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class ApiControllerVRM {
@@ -14,28 +16,30 @@ public class ApiControllerVRM {
     private final VRMService vrmService;
     private final SettingsRepository settingsRepository;
 
+    List<String> allowedCodes = Arrays.asList("a1", "a2", "a3", "t9", "t10", "CV", "OP1", "OP2", "OP3");
+
+
     public ApiControllerVRM(VRMService vrmService, SettingsRepository settingsRepository) {
         this.vrmService = vrmService;
         this.settingsRepository = settingsRepository;
     }
 
     @GetMapping("/api/graph-data")
-    public ResponseEntity<Map<String, Object>> getGraphData(@RequestParam("siteId") String siteId,
+    public ResponseEntity<Map<String, Object>> getMainGraphData(@RequestParam("siteId") String siteId,
                                                             @RequestParam(value = "interval", required = false) String interval,
                                                             @RequestParam("start") String start,
                                                             @RequestParam("end") String end) {
 
-        // Obtención segura del token (puede ser de variables de entorno, un servicio, etc.)
         String token = obtenerTokenSeguro();
 
         // Invoca el servicio para obtener los datos de la instalación
-        ResponseEntity<Map> responseEntity = vrmService.getInstallationData(token, siteId, interval, start, end);
+        ResponseEntity<Map> responseEntity = vrmService.getMainData(token, siteId, interval, start, end);
 
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             Map installationData = responseEntity.getBody();
 
             // Procesa los datos obtenidos para extraer la información para las gráficas
-            Map<String, Object> graphData = procesarDatosParaGraficas(installationData);
+            Map<String, Object> graphData = processDataMainGraph(installationData);
 
             return ResponseEntity.ok(graphData);
         } else {
@@ -44,27 +48,111 @@ public class ApiControllerVRM {
         }
     }
 
-    /**
-     * Simula la obtención segura de un token. En producción, este método debe obtener
-     * el token desde una fuente segura (por ejemplo, variables de entorno o un servicio de autenticación).
-     */
-    private String obtenerTokenSeguro(){
 
-        Settings settings = settingsRepository.findAll()
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No hay Settings en la BD"));
+    @GetMapping("/api/devices-and-attributes")
+    public ResponseEntity<Map<String, Object>> getDevicesAndAttributes(@RequestParam("siteId") String siteId) {
 
-        return settings.getTokenVRM();
+        System.out.println("getGeneralData");
+
+        String token = obtenerTokenSeguro();
+
+        // Invoca el servicio para obtener componentes
+        ResponseEntity<Map> responseEntityComponents = vrmService.getComponentsData(token, siteId);
+        // Invoca el servicio para obtener los atributos
+        ResponseEntity<Map> responseEntityAttributes = vrmService.getDataAttributesData(token, siteId);
+
+        if (responseEntityComponents.getStatusCode().is2xxSuccessful() && responseEntityAttributes.getStatusCode().is2xxSuccessful()) {
+            Map<String, Object> componentsData = responseEntityComponents.getBody();
+            Map<String, Object> attributesData = responseEntityAttributes.getBody();
+
+            System.out.println("Componentes obtenidos: " + componentsData);
+
+            List<VRMDeviceDTO> devices = new ArrayList<>();
+            List<Map<String, Object>> filteredAttributes = new ArrayList<>();
+
+            // Extraer dispositivos de componentsData
+            if (componentsData != null && componentsData.containsKey("records")) {
+                Map<String, Object> records = (Map<String, Object>) componentsData.get("records");
+
+                if (records.containsKey("devices")) {
+                    List<Map<String, Object>> deviceList = (List<Map<String, Object>>) records.get("devices");
+                    devices = mapToDevices(deviceList);
+
+                    // Imprimir lista de equipos
+                    devices.forEach(device -> System.out.println(device.getMachineSerialNumber() + " - " + device.getName() + " - " + device.getProductName() + "- Instance: " + device.getInstance()));
+
+                }
+            }
+
+            if (attributesData != null && attributesData.containsKey("result")) {
+                Map<String, Object> result = (Map<String, Object>) attributesData.get("result");
+
+                if (result.containsKey("attributes")) {
+                    List<Map<String, Object>> attributesList = (List<Map<String, Object>>) result.get("attributes");
+
+                    for (VRMDeviceDTO device : devices) {
+                        for (Map<String, Object> attribute : attributesList) {
+                            Integer instance = device.getInstance();
+                            String code = (String) attribute.get("code");
+
+                            // Filtrar por idDeviceType Y verificar si el code está en la lista permitida
+                            if (allowedCodes.contains(code)) {
+                                attribute.put("instance", instance);
+                                filteredAttributes.add(attribute);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("devices", devices);
+            response.put("filteredAttributes", filteredAttributes);
+
+            System.out.println("Atributos filtrados: " + filteredAttributes.size());
+
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(responseEntityComponents.getStatusCode()).body(null);
+        }
     }
 
-    /**
-     * Procesa la respuesta de la API para extraer la información necesaria para las gráficas.
-     * Se asume que la respuesta contiene, por ejemplo, "timestamps" y "values" que se usarán
-     * como etiquetas y datos respectivamente.
-     */
 
-    private Map<String, Object> procesarDatosParaGraficas(Map installationData) {
+    @GetMapping("/api/graph-widgets")
+    public ResponseEntity<Map<String, Object>> getWidgetGraphData(@RequestParam("siteId") String siteId,
+                                                                  @RequestParam("attributeIds") String attributeId,
+                                                                  @RequestParam("instance") String instance,
+                                                                  @RequestParam("start") String start,
+                                                                  @RequestParam("end") String end) {
+
+        String token = obtenerTokenSeguro();
+
+        // Invoca el servicio para obtener los datos de la instalación
+        ResponseEntity<Map> responseEntity = vrmService.getDataWidget(token, siteId, attributeId, instance, start, end);
+
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            Map bodyData = responseEntity.getBody();
+
+            // Procesa los datos obtenidos para extraer la información para las gráficas
+            Map<String, Object> processedData = processDataWidgets(bodyData);
+
+            return ResponseEntity.ok(processedData);
+        } else {
+            // En caso de error, se retorna el código de estado correspondiente
+            return ResponseEntity.status(responseEntity.getStatusCode()).body(null);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    private Map<String, Object> processDataMainGraph(Map installationData) {
         Map<String, Object> graphData = new HashMap<>();
 
         if (installationData != null && installationData.containsKey("records")) {
@@ -171,14 +259,106 @@ public class ApiControllerVRM {
         return graphData;
     }
 
+
+    private Map<String, Object> processDataWidgets(Map<String, Object> bodyData) {
+        Map<String, Object> processedData = new HashMap<>();
+
+        if (bodyData != null && bodyData.containsKey("records")) {
+            Object recordsObj = bodyData.get("records");
+
+            if (recordsObj instanceof Map) {
+                Map<String, Object> records = (Map<String, Object>) recordsObj;
+
+                if (records.containsKey("data")) {
+                    Object dataObj = records.get("data");
+
+                    if (dataObj instanceof Map) {
+                        Map<String, List<List<Number>>> dataMap = (Map<String, List<List<Number>>>) dataObj;
+                        Map<String, List<List<Number>>> formattedData = new HashMap<>();
+
+                        for (Map.Entry<String, List<List<Number>>> entry : dataMap.entrySet()) {
+                            String attributeId = entry.getKey();
+                            List<List<Number>> rawData = entry.getValue();
+
+                            // 🔹 Evita agregar datos vacíos
+                            if (rawData == null || rawData.isEmpty()) {
+                                System.out.println("⚠️ Datos vacíos para atributo: " + attributeId + ", no se incluirá.");
+                                continue;
+                            }
+
+                            List<List<Number>> formattedList = new ArrayList<>();
+
+                            for (List<Number> row : rawData) {
+                                if (row.size() >= 2) {
+                                    Number timestamp = row.get(0);
+                                    Number value = row.get(1);
+
+                                    if (value != null) {
+                                        double roundedValue = roundToTwoDecimals(value.doubleValue());
+                                        formattedList.add(Arrays.asList(timestamp.longValue(), roundedValue));
+                                    }
+                                }
+                            }
+
+                            // 🔹 Solo agregar si hay datos válidos
+                            if (!formattedList.isEmpty()) {
+                                formattedData.put(attributeId, formattedList);
+                            }
+                        }
+
+                        processedData.put("data", formattedData);
+                    }
+                }
+
+                if (records.containsKey("meta")) {
+                    processedData.put("meta", records.get("meta"));
+                }
+
+                if (records.containsKey("instance")) {
+                    processedData.put("instance", records.get("instance"));
+                }
+            }
+        }
+
+        return processedData;
+    }
+
+
+
+
     /**
-     * Redondea (round half up) a dos decimales.
-     * Si deseas siempre redondear hacia arriba, cambia Math.round() por Math.ceil().
+     * No exponer los tokens de las APIs
      */
+
+    private String obtenerTokenSeguro(){
+
+        Settings settings = settingsRepository.findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No hay Settings en la BD"));
+
+        return settings.getTokenVRM();
+    }
+
+
     private double roundToTwoDecimals(double value) {
         return Math.round(value * 100.0) / 100.0;
     }
 
+
+    public static List<VRMDeviceDTO> mapToDevices(List<Map<String, Object>> deviceList) {
+            return deviceList.stream().map(deviceMap -> {
+                VRMDeviceDTO device = new VRMDeviceDTO();
+                device.setMachineSerialNumber((String) deviceMap.get("machineSerialNumber"));
+                device.setName((String) deviceMap.get("name"));
+                device.setProductName((String) deviceMap.get("productName"));
+                device.setFirmwareVersion((String) deviceMap.get("firmwareVersion"));
+                device.setIdDeviceType((Integer) deviceMap.get("idDeviceType"));
+                device.setInstance((Integer) deviceMap.get("instance"));
+                device.setIdSite((Integer) deviceMap.get("idSite"));
+                return device;
+            }).collect(Collectors.toList());
+    }
 
 }
 
