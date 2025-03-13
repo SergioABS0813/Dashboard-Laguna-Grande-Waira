@@ -17,10 +17,16 @@ public class ProfileController {
         this.usersRepository = usersRepository;
     }
 
-    @GetMapping("/profile")
-    public String profile(Model model) {
+    @GetMapping("/profileUser")
+    public String profile(Model model) { //En este perfil se colocarán las opciones de alertas y notificaciones en una sección con los datos
 
 
         return "profile";
+    }
+
+    @GetMapping("/profileAdmin")
+    public String profileAdmin(Model model) { //se colocan datos de la cuenta y las notificaciones
+
+        return "profileAdmin";
     }
 }
