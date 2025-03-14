@@ -6,17 +6,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
 import pe.grande.laguna.dashboard.Entity.User;
+import pe.grande.laguna.dashboard.Repository.MicroNetworkRepository;
 import pe.grande.laguna.dashboard.Repository.UsersRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ProfileController {
 
     final UsersRepository usersRepository;
+    final MicroNetworkRepository microNetworkRepository;
 
-    public ProfileController(UsersRepository usersRepository) {
+    public ProfileController(UsersRepository usersRepository, MicroNetworkRepository microNetworkRepository) {
         this.usersRepository = usersRepository;
+        this.microNetworkRepository = microNetworkRepository;
     }
 
     @GetMapping("/profileUser/{id}")
@@ -25,6 +29,13 @@ public class ProfileController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
 
         model.addAttribute("user", user);
+
+        //Crear micronetworkList
+        ArrayList<MicroNetwork> microNetworkArrayList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+
+        //Solo para probar datatable
+        model.addAttribute("microNetworkList", microNetworkArrayList);
+
         return "profile";
     }
 

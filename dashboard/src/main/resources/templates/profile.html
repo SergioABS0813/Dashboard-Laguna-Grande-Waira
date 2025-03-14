@@ -308,7 +308,7 @@
       <div class="row">
         <div class="row">
 
-          <div class="col-12 col-xl-4">
+          <div class="col-12 col-xl-3">
             <div class="card card-plain h-100">
               <div class="card-header pb-0 p-3">
                 <div class="row">
@@ -335,69 +335,121 @@
               </div>
             </div>
           </div>
-          <div class="col-12 col-xl-4">
+          <div class="col-12 col-xl-6">
             <div class="card card-plain h-100">
               <div class="card-header pb-0 p-3">
                 <h6 class="mb-0">Notificaciones</h6>
               </div>
               <div class="card-body p-3">
-                <ul class="list-group">
-                  <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2 pt-0">
-                    <div class="avatar me-3">
-                      <img src="../assets/img/kal-visuals-square.jpg" alt="kal" class="border-radius-lg shadow">
-                    </div>
-                    <div class="d-flex align-items-start flex-column justify-content-center">
-                      <h6 class="mb-0 text-sm">Sophie B.</h6>
-                      <p class="mb-0 text-xs">Hi! I need more information..</p>
-                    </div>
-                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                  </li>
-                  <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                    <div class="avatar me-3">
-                      <img src="../assets/img/marie.jpg" alt="kal" class="border-radius-lg shadow">
-                    </div>
-                    <div class="d-flex align-items-start flex-column justify-content-center">
-                      <h6 class="mb-0 text-sm">Anne Marie</h6>
-                      <p class="mb-0 text-xs">Awesome work, can you..</p>
-                    </div>
-                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                  </li>
-                  <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                    <div class="avatar me-3">
-                      <img src="../assets/img/ivana-square.jpg" alt="kal" class="border-radius-lg shadow">
-                    </div>
-                    <div class="d-flex align-items-start flex-column justify-content-center">
-                      <h6 class="mb-0 text-sm">Ivanna</h6>
-                      <p class="mb-0 text-xs">About files I can..</p>
-                    </div>
-                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                  </li>
-                  <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                    <div class="avatar me-3">
-                      <img src="../assets/img/team-4.jpg" alt="kal" class="border-radius-lg shadow">
-                    </div>
-                    <div class="d-flex align-items-start flex-column justify-content-center">
-                      <h6 class="mb-0 text-sm">Peterson</h6>
-                      <p class="mb-0 text-xs">Have a great afternoon..</p>
-                    </div>
-                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                  </li>
-                  <li class="list-group-item border-0 d-flex align-items-center px-0">
-                    <div class="avatar me-3">
-                      <img src="../assets/img/team-3.jpg" alt="kal" class="border-radius-lg shadow">
-                    </div>
-                    <div class="d-flex align-items-start flex-column justify-content-center">
-                      <h6 class="mb-0 text-sm">Nick Daniel</h6>
-                      <p class="mb-0 text-xs">Hi! I need more information..</p>
-                    </div>
-                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                  </li>
-                </ul>
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                  <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
+                    <h6 class="text-white text-capitalize ps-3 d-inline-block">Instalaciones</h6>
+
+                    <a th:if="${isAdmin}" class="btn btn-outline-light position-absolute end-2 top-50 translate-middle-y"  th:href="@{/micronetworks/create}" type="button">+ Añadir Instalación</a>
+
+                  </div>
+
+                </div>
+
+                <div class="card-body px-0 pb-2">
+                  <!-- Flash attribute de Edit -->
+                  <div th:if="${successMessageEdit}" class="alert alert-info alert-dismissible fade show" role="alert">
+                    <span th:text="${successMessageEdit}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+
+                  <!-- Flash attribute de Create -->
+                  <div th:if="${successMessageCreate}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${successMessageCreate}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+
+                  <!-- Flash attribute de Delete -->
+                  <div th:if="${successMessageDelete}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                    <span th:text="${successMessageDelete}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+
+                  <!-- Flash attribute de Error de ingreso a crear nueva instalación -->
+
+                  <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                    <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+
+                  <div class="table-responsive p-0">
+                    <table id="micronets-table" class="table align-items-center mb-0">
+                      <thead>
+                        <tr>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Microred</th>
+                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Estado</th>
+                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Latitud</th>
+                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Longitud</th>
+                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creación</th>
+                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Última Edición</th>
+                          <th class="text-secondary opacity-7"></th>
+                          <th class="text-secondary opacity-7"></th>
+                          <th class="text-secondary opacity-7"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr  style="background-color: #f6f8f8; border-bottom: 1px solid #ddd;" th:each="microNetwork : ${microNetworkList}">
+                          <td>
+                            <div class="d-flex px-2 py-1">
+                              <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm" th:text="${microNetwork.getAlias()}">Alias</h6>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span th:if="${microNetwork.getStatus().equals('ACTIVO')}" class="badge badge-sm bg-gradient-success" th:text="${microNetwork.getStatus()}">Online</span>
+                            <span th:if="${microNetwork.getStatus().equals('INACTIVO')}" class="badge badge-sm bg-gradient-danger" th:text="${microNetwork.getStatus()}">Online</span>
+                            <span th:if="${microNetwork.getStatus().equals(null)}" class="badge badge-sm bg-gradient-danger" th:text="SEARCHING">Online</span>
+                          </td>
+
+                          <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold" th:text="${microNetwork.getLat()}">Latitud</span>
+                          </td>
+                          <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold" th:text="${microNetwork.getLon()}">Longitud</span>
+                          </td>
+                          <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold" th:text="${#dates.format(microNetwork.getTimeCreation(), 'dd/MM/yyyy HH:mm')}">Time Creation</span>
+                          </td>
+                          <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold" th:text="${#dates.format(microNetwork.getTimeEdition(), 'dd/MM/yyyy HH:mm')}">Time Edition</span>
+                          </td>
+                          <td class="align-middle">
+                            <a class="btn btn-link text-secondary px-3 mb-0"
+                               th:href="@{/micronetworks/edit/{id}(id=${microNetwork.id})}">
+                              <i class="material-symbols-rounded text-sm me-2">edit</i>Editar
+                            </a>
+                          </td>
+                          <td class="align-middle">
+                            <a class="btn btn-link text-secondary px-3 mb-0 delete-micronetwork"
+                               th:href="@{/micronetworks/delete/{id}(id=${microNetwork.id})}">
+                              <i class="material-symbols-rounded text-sm me-2">delete</i>Eliminar
+                            </a>
+                          </td>
+                          <td class="align-middle">
+                            <a class="btn btn-link text-secondary px-3 mb-0"
+                               th:href="@{/dashboard/{id}(id=${microNetwork.id})}">
+                              <i class="material-symbols-rounded text-sm me-2">visibility</i>Ver
+                            </a>
+                          </td>
+
+
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
 
-          <div class="col-12 col-xl-4">
+          <div class="col-12 col-xl-3">
             <div class="card card-plain h-100">
               <div class="card-header pb-0 p-3">
                 <h6 class="mb-0">Configuración</h6>
@@ -654,6 +706,36 @@
   </script>
   <!-- END Alerta Aplicar cambios -->
 
+  <script th:inline="javascript">
+    $(document).ready(function () {
+      $('#micronets-table').DataTable({
+        "paging": true,         // Habilita la paginación
+        "searching": true,      // Habilita la barra de búsqueda
+        "ordering": true,       // Habilita la ordenación por columnas
+        "info": true,           // Muestra información sobre la tabla
+        "lengthChange": true,   // Permite cambiar el número de registros mostrados
+        "pageLength": 5,       // Número de registros mostrados por página
+        "scrollResize": true,
+        "scrollY": 540,
+        "scrollCollapse": false,
+        "language": {
+          "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
+        },
+        "drawCallback": function (settings) {
+          var api = this.api();
+          var pageInfo = api.page.info();
+
+          // Oculta la paginación si no es necesaria
+          if (pageInfo.pages <= 1) {
+            $('.dataTables_paginate').hide();
+          } else {
+            $('.dataTables_paginate').show();
+          }
+        }
+      });
+    });
+  </script>
+
 
 
   <script>
@@ -669,7 +751,6 @@
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 
 <script th:src="@{/js/core/material-dashboard.min.js}"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <!-- Start: Loader JS -->
   <script th:src="@{/js/plugins/loader.js}"></script>
   <!-- End: Loader JS -->
