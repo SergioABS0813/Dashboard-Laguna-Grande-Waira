@@ -1,5 +1,6 @@
 package pe.grande.laguna.dashboard.Controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import pe.grande.laguna.dashboard.Entity.MicroNetwork;
 import pe.grande.laguna.dashboard.Entity.User;
 import pe.grande.laguna.dashboard.Repository.MicroNetworkRepository;
 import pe.grande.laguna.dashboard.Repository.UsersRepository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -131,6 +133,33 @@ public class AdminController {
         // 4. Redirigir a la lista de usuarios
         return "users_managment/edit_user";
     }
+
+    /*START POST: Guardar Alertas en base de datos para usuarios no ADMIN*/
+
+    @PostMapping("/profileUser/saveAlerts")
+    public String saveAlerts(
+            @ModelAttribute("user") User updatedUser,
+            HttpSession session,
+            RedirectAttributes redirectAttributes
+    ) {
+        /* //Extraemos de DB el user existente para rellenar los datos
+        User userExisting = usersRepository.findById(updatedUser.getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + updatedUser.getId()));
+
+        updatedUser.setEmail(userExisting.getEmail());
+        updatedUser.setEmail(userExisting.getEmail());*/
+
+
+        // Guardar en BD
+        usersRepository.save(updatedUser);
+
+        // Mensaje de éxito y redirección
+        redirectAttributes.addFlashAttribute("successMessage", "Se actualizaron las alertas correctamente.");
+        return "redirect:/profileUser/" + updatedUser.getId();
+    }
+
+    /*END POST: Guardar Alertas en base de datos para usuarios no ADMIN*/
+
 
 
 }

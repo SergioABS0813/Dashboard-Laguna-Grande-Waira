@@ -3,7 +3,9 @@ package pe.grande.laguna.dashboard.Controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import pe.grande.laguna.dashboard.Entity.MicroNetwork;
+import pe.grande.laguna.dashboard.Entity.User;
 import pe.grande.laguna.dashboard.Repository.UsersRepository;
 
 import java.util.ArrayList;
@@ -17,10 +19,12 @@ public class ProfileController {
         this.usersRepository = usersRepository;
     }
 
-    @GetMapping("/profileUser")
-    public String profile(Model model) { //En este perfil se colocarán las opciones de alertas y notificaciones en una sección con los datos
+    @GetMapping("/profileUser/{id}")
+    public String profile(Model model, @PathVariable("id") String id) { //En este perfil se colocarán las opciones de alertas y notificaciones en una sección con los datos
+        User user = usersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
 
-
+        model.addAttribute("user", user);
         return "profile";
     }
 

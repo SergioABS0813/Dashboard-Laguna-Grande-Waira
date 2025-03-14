@@ -136,8 +136,8 @@
         <li class="nav-item mt-3">
           <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active bg-gradient-dark text-white" th:href="@{/profileUser}">
+        <li class="nav-item" th:if="${session.user != null and session.user.role == 'USER'}">
+          <a class="nav-link text-dark" th:href="@{/profileUser/{id}(id=${session.user.id})}">
             <i class="material-symbols-rounded opacity-5">person</i>
             <span class="nav-link-text ms-1">Profile</span>
           </a>
@@ -405,15 +405,26 @@
               <div class="card-body p-3">
                 <h6 class="text-uppercase text-body text-xs font-weight-bolder">Account</h6>
                 <!-- Sección de configuración con tus checkboxes -->
-                <form th:action="@{/profileUser/saveAlerts}" method="post" id="alertSettingsForm">
+                <form th:action="@{/profileUser/saveAlerts}" method="post" id="alertSettingsForm" th:object="${user}">
+                  <input type="hidden" th:field="*{id}" />
+                  <input type="hidden" th:field="*{email}" />
+                  <input type="hidden" th:field="*{password}" />
+                  <input type="hidden" th:field="*{role}" />
+                  <input type="hidden" th:field="*{active}" />
+                  <input type="hidden" th:field="*{phone}" />
+                  <input type="hidden" th:field="*{name}" />
+                  <input type="hidden" th:field="*{lastname}" />
+                  <input type="hidden" th:field="*{micronetworkList}" />
+
+
                   <ul class="list-group">
                     <li class="list-group-item border-0 px-0">
                       <div class="form-check form-switch ps-0">
+                        <!-- Se vincula la propiedad alertsEmail -->
                         <input class="form-check-input ms-auto alert-checkbox"
                                type="checkbox"
                                id="alertEmailSwitch"
-                               name="alertsEmail"
-                        th:checked="${session.user.alertsEmail}">
+                               th:field="*{alertsEmail}">
                         <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0"
                                for="alertEmailSwitch">
                           Enviar alertas por correo
@@ -423,11 +434,11 @@
 
                     <li class="list-group-item border-0 px-0">
                       <div class="form-check form-switch ps-0">
+                        <!-- Se vincula la propiedad alertsWhatsapp -->
                         <input class="form-check-input ms-auto alert-checkbox"
                                type="checkbox"
                                id="alertWhatsappSwitch"
-                               name="alertsWhatsapp"
-                        th:checked="${session.user.alertsWhatsapp}">
+                               th:field="*{alertsWhatsapp}">
                         <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0"
                                for="alertWhatsappSwitch">
                           Enviar alertas por Whatsapp
@@ -437,11 +448,11 @@
 
                     <li class="list-group-item border-0 px-0">
                       <div class="form-check form-switch ps-0">
+                        <!-- Se vincula la propiedad alertsSMS -->
                         <input class="form-check-input ms-auto alert-checkbox"
                                type="checkbox"
                                id="alertSMSSwitch"
-                               name="alertsSMS"
-                        th:checked="${session.user.alertsSMS}">
+                               th:field="*{alertsSMS}">
                         <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0"
                                for="alertSMSSwitch">
                           Enviar alertas por SMS
@@ -450,13 +461,14 @@
                     </li>
                   </ul>
 
-                  <!-- Botón para aplicar cambios -->
+                  <!-- Botón para aplicar cambios, inicialmente oculto -->
                   <div class="text-center mt-3">
                     <button id="applyChangesBtn" class="btn btn-primary" style="display: none;">
                       Aplicar Cambios
                     </button>
                   </div>
                 </form>
+
 
 
               </div>

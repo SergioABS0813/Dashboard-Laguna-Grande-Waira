@@ -173,7 +173,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 </a>
             </li>
             <li class="nav-item" th:if="${session.user != null and session.user.role == 'USER'}">
-                <a class="nav-link text-dark" th:href="@{/profileUser}">
+                <a class="nav-link text-dark" th:href="@{/profileUser/{id}(id=${session.user.id})}">
                     <i class="material-symbols-rounded opacity-5">person</i>
                     <span class="nav-link-text ms-1">Profile</span>
                 </a>
