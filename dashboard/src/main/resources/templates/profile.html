@@ -64,6 +64,17 @@
         font-size: 15px;
       }
 
+      /* Elevar el z-index del contenedor de SweetAlert2 */
+      .swal2-container {
+        z-index: 999999 !important; /* Número muy alto */
+      }
+
+      /* (Opcional) Ajustar la opacidad del fondo al mostrar la alerta */
+      .swal2-container.swal2-backdrop-show {
+        background: rgba(0, 0, 0, 0.7) !important; /* Más oscuro que el default */
+      }
+
+
     </style>
 
     <!-- Anti-flicker snippet (recommended)  -->
@@ -277,7 +288,9 @@
       <div class="row gx-4 mb-2">
         <div class="col-auto">
           <div class="avatar avatar-xl position-relative">
-            <img src="../assets/img/bruce-mars.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+            <img th:src="@{/svg/profile-user.svg}"
+                 alt="Ícono de usuario"
+                 class="w-100 border-radius-lg shadow-sm">
           </div>
         </div>
         <div class="col-auto my-auto">
@@ -391,26 +404,60 @@
               </div>
               <div class="card-body p-3">
                 <h6 class="text-uppercase text-body text-xs font-weight-bolder">Account</h6>
-                <ul class="list-group">
-                  <li class="list-group-item border-0 px-0">
-                    <div class="form-check form-switch ps-0">
-                      <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" checked>
-                      <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault">Enviar alertas por correo</label>
-                    </div>
-                  </li>
-                  <li class="list-group-item border-0 px-0">
-                    <div class="form-check form-switch ps-0">
-                      <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault1">
-                      <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault1">Enviar alertas por Whatsapp</label>
-                    </div>
-                  </li>
-                  <li class="list-group-item border-0 px-0">
-                    <div class="form-check form-switch ps-0">
-                      <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault2" checked>
-                      <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault2">Enviar alertas por SMS</label>
-                    </div>
-                  </li>
-                </ul>
+                <!-- Sección de configuración con tus checkboxes -->
+                <form th:action="@{/profileUser/saveAlerts}" method="post" id="alertSettingsForm">
+                  <ul class="list-group">
+                    <li class="list-group-item border-0 px-0">
+                      <div class="form-check form-switch ps-0">
+                        <input class="form-check-input ms-auto alert-checkbox"
+                               type="checkbox"
+                               id="alertEmailSwitch"
+                               name="alertsEmail"
+                        th:checked="${session.user.alertsEmail}">
+                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0"
+                               for="alertEmailSwitch">
+                          Enviar alertas por correo
+                        </label>
+                      </div>
+                    </li>
+
+                    <li class="list-group-item border-0 px-0">
+                      <div class="form-check form-switch ps-0">
+                        <input class="form-check-input ms-auto alert-checkbox"
+                               type="checkbox"
+                               id="alertWhatsappSwitch"
+                               name="alertsWhatsapp"
+                        th:checked="${session.user.alertsWhatsapp}">
+                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0"
+                               for="alertWhatsappSwitch">
+                          Enviar alertas por Whatsapp
+                        </label>
+                      </div>
+                    </li>
+
+                    <li class="list-group-item border-0 px-0">
+                      <div class="form-check form-switch ps-0">
+                        <input class="form-check-input ms-auto alert-checkbox"
+                               type="checkbox"
+                               id="alertSMSSwitch"
+                               name="alertsSMS"
+                        th:checked="${session.user.alertsSMS}">
+                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0"
+                               for="alertSMSSwitch">
+                          Enviar alertas por SMS
+                        </label>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <!-- Botón para aplicar cambios -->
+                  <div class="text-center mt-3">
+                    <button id="applyChangesBtn" class="btn btn-primary" style="display: none;">
+                      Aplicar Cambios
+                    </button>
+                  </div>
+                </form>
+
 
               </div>
             </div>
@@ -536,9 +583,65 @@
 <script th:src="@{/js/core/perfect-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
+  <!-- START Aplicar cambios btn -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const checkboxes = document.querySelectorAll('.alert-checkbox');
+      const applyButton = document.getElementById('applyChangesBtn');
+
+      // Guardamos estado inicial
+      const initialStates = Array.from(checkboxes).map(chk => chk.checked);
+
+      function allMatchInitial() {
+        return Array.from(checkboxes).every((chk, index) => {
+          return chk.checked === initialStates[index];
+        });
+      }
+
+      function updateButtonVisibility() {
+        applyButton.style.display = allMatchInitial() ? 'none' : 'inline-block';
+      }
+
+      checkboxes.forEach(chk => {
+        chk.addEventListener('change', updateButtonVisibility);
+      });
+
+      // Al inicio
+      updateButtonVisibility();
+    });
+  </script>
+
+  <!-- END Aplicar cambios btn -->
+  <!-- START Alerta Aplicar cambios -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const applyButton = document.getElementById('applyChangesBtn');
+      const form = document.getElementById('alertSettingsForm');
+
+      applyButton.addEventListener('click', function(e) {
+        e.preventDefault(); // Evitamos que se envíe el form inmediatamente
+
+        Swal.fire({
+          title: '¿Aplicar cambios?',
+          text: '¿Estás seguro de guardar estos cambios?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, aplicar',
+          cancelButtonText: 'Cancelar',
+          allowOutsideClick: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit(); // Si confirma, enviamos el formulario
+          }
+        });
+      });
+    });
+  </script>
+  <!-- END Alerta Aplicar cambios -->
 
 
-<script>
+
+  <script>
   var win = navigator.platform.indexOf('Win') > -1;
   if (win && document.querySelector('#sidenav-scrollbar')) {
     var options = {
