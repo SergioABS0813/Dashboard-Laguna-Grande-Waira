@@ -16,7 +16,12 @@ public class ApiControllerVRM {
     private final VRMService vrmService;
     private final SettingsRepository settingsRepository;
 
-    List<String> allowedCodes = Arrays.asList("a1", "a2", "a3", "t9", "t10", "CV", "OP1", "OP2", "OP3");
+
+    List<String> ACLoadCodes = Arrays.asList("a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9");
+    List<String> MPPTCodes = Arrays.asList("PVP", "OP2", "OP3", "OP4", "OP5", "OP6", "OP7", "OP8", "OP9");
+    List<String> BatteryVoltageCodes = List.of("CV");
+
+    List<String> allowedCodes = Arrays.asList("a1", "a2", "a3", "CV", "PVP");
 
 
     public ApiControllerVRM(VRMService vrmService, SettingsRepository settingsRepository) {
@@ -52,8 +57,6 @@ public class ApiControllerVRM {
     @GetMapping("/api/devices-and-attributes")
     public ResponseEntity<Map<String, Object>> getDevicesAndAttributes(@RequestParam("siteId") String siteId) {
 
-        System.out.println("getGeneralData");
-
         String token = obtenerTokenSeguro();
 
         // Invoca el servicio para obtener componentes
@@ -65,8 +68,6 @@ public class ApiControllerVRM {
             Map<String, Object> componentsData = responseEntityComponents.getBody();
             Map<String, Object> attributesData = responseEntityAttributes.getBody();
 
-            System.out.println("Componentes obtenidos: " + componentsData);
-
             List<VRMDeviceDTO> devices = new ArrayList<>();
             List<Map<String, Object>> filteredAttributes = new ArrayList<>();
 
@@ -77,10 +78,6 @@ public class ApiControllerVRM {
                 if (records.containsKey("devices")) {
                     List<Map<String, Object>> deviceList = (List<Map<String, Object>>) records.get("devices");
                     devices = mapToDevices(deviceList);
-
-                    // Imprimir lista de equipos
-                    devices.forEach(device -> System.out.println(device.getMachineSerialNumber() + " - " + device.getName() + " - " + device.getProductName() + "- Instance: " + device.getInstance()));
-
                 }
             }
 
@@ -95,11 +92,12 @@ public class ApiControllerVRM {
                             Integer instance = device.getInstance();
                             String code = (String) attribute.get("code");
 
-                            // Filtrar por idDeviceType Y verificar si el code está en la lista permitida
                             if (allowedCodes.contains(code)) {
                                 attribute.put("instance", instance);
+                                attribute.put("code", code);
                                 filteredAttributes.add(attribute);
                             }
+
                         }
                     }
                 }

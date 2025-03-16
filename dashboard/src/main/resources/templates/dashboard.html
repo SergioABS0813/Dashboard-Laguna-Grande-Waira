@@ -394,7 +394,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     <span>Cargando dispositivos...</span>
                 </div>
 
-                <div id="chart-container" style="position: relative;">
+                <div id="chart-container" style="position: relative; display: none;">
                     <div id="orgChart" style="height: 500px;"></div>
 
                     <!-- Aquí se crearán dinámicamente gráficos -->
@@ -1017,20 +1017,13 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
     <script th:inline="javascript">
-        document.addEventListener("DOMContentLoaded", function () {
-            console.log("✅ DOM completamente cargado, verificando Cytoscape.js...");
 
-            if (typeof cytoscape === "undefined") {
-                console.error("❌ Cytoscape.js no está cargado correctamente.");
-                return;
-            }
-
-            console.log("✅ Cytoscape.js cargado correctamente.");
-
+        function chargeMainVRMDiagram(ACLoadData, MPPTData, BatteryVoltageData){
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
             console.log("🔍 Site ID usado en Cytoscape.js:", VRMSite);
 
             const loader = document.getElementById('loader');
+            const mainContainer = document.getElementById('chart-container');
             const chartContainer = document.getElementById('orgChart');
 
             var cy = cytoscape({
@@ -1117,7 +1110,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
             function loadDevices() {
                 console.log("⏳ Cargando dispositivos desde la API...");
-                loader.style.display = 'flex';
+                loader.style.height = '500px'
+                mainContainer.style.display = 'none';
                 chartContainer.style.display = 'none';
 
                 fetch(`/api/devices-and-attributes?siteId=${VRMSite}`)
@@ -1126,6 +1120,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         if (!data.devices || data.devices.length === 0) {
                             chartContainer.innerHTML = "<span>No hay dispositivos disponibles.</span>";
                             loader.style.display = 'none';
+                            mainContainer.style.display = 'block';
                             chartContainer.style.display = 'block';
                             return;
                         }
@@ -1138,6 +1133,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         if (!rootDevice) {
                             chartContainer.innerHTML = "<span>No se encontró un dispositivo principal (tipo 1).</span>";
                             loader.style.display = 'none';
+                            mainContainer.style.display = 'block';
                             chartContainer.style.display = 'block';
                             return;
                         }
@@ -1153,9 +1149,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
                         // Nodos especiales
                         const specialNodes = [
-                            { id: "mppt-solar", label: `MPPT SOLAR - (${data.devices.filter(dev => dev.idDeviceType === 4).length})`, x: 230, y: 240 },
-                            { id: "battery-node", label: "Battery System\n(Discharging)", x: -230, y: 240 },
-                            { id: "ac-loads", label: "AC Loads", x: 320, y: 0, hasChart: true, chartData: [1, 2, 3, 4] }
+                            { id: "mppt-solar", label: `MPPT SOLAR - (${data.devices.filter(dev => dev.idDeviceType === 4).length})`, x: 230, y: 240, hasChart: true, chartData: MPPTData },
+                            { id: "battery-node", label: "Battery System\n(Discharging)", x: -230, y: 240, hasChart: true, chartData: BatteryVoltageData },
+                            { id: "ac-loads", label: "AC Loads", x: 320, y: 0, hasChart: true, chartData: ACLoadData }
                         ];
 
                         specialNodes.forEach(node => {
@@ -1192,15 +1188,50 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         }
 
                         cy.nodes('[hasChart]').forEach(node => {
+
+                            const chartData = node.data('chartData');
+                            if (!chartData || chartData.length === 0) {
+                                console.warn(`⚠️ No hay datos para el nodo ${node.id()}`);
+                                return;
+                            }
+
+                            let attributeCode = null;
+                            let attributeDescription = null;
+                            let unitFormat = null;
+                            let dataPoints = null;
+
+                            // Iteramos sobre cada entrada de `chartData`
+                            chartData.forEach(entry => {
+                                if (!entry.data) return;
+
+                                Object.keys(entry.data).forEach(attributeId => {
+                                    const meta = entry.meta && entry.meta[attributeId] ? entry.meta[attributeId] : {};
+                                    attributeCode = meta.code || `Attr-${attributeId}`;
+                                    attributeDescription = meta.description || `Atributo ${attributeId}`;
+                                    unitFormat = meta.formatWithUnit ? meta.formatWithUnit.replace("%.0F", "").trim() : "";
+
+                                    dataPoints = entry.data[attributeId].map(([timestamp, value]) => [
+                                        timestamp * 1000, // Convertimos segundos a milisegundos para Highcharts
+                                        value
+                                    ]);
+                                });
+                            });
+
+                            // Si no hay series generadas, salimos
+                            if (chartData.length === 0) {
+                                console.warn(`⚠️ No hay series válidas para el nodo ${node.id()}`);
+                                return;
+                            }
+
                             const chartDiv = document.createElement('div');
                             chartDiv.id = `chart-${node.id()}`;
                             chartDiv.style.position = 'absolute';
-                            chartDiv.style.width = '280px';
-                            chartDiv.style.height = '200px';
-                            chartDiv.style.borderRadius = '5px';
+                            chartDiv.style.maxWidth = '280px';
+                            chartDiv.style.maxHeight = '180px';
+                            chartDiv.style.borderRadius = '4px';
                             chartDiv.style.borderStyle = 'solid';
-                            chartDiv.style.borderWidth = '1px';
-                            chartDiv.style.borderColor = 'rgb(175,175,175)';
+                            chartDiv.style.borderWidth = '0.1em';
+                            chartDiv.style.borderColor = 'rgb(191,191,191)';
                             chartDiv.style.paddingBottom = '50px'
 
                             chartParent.appendChild(chartDiv);
@@ -1208,9 +1239,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             Highcharts.chart(chartDiv.id, {
                                 chart: {
                                     type: 'area',
-                                    backgroundColor: 'rgb(248,248,248)',
-                                    renderTo: 'container',
-                                    margin: [0, 0, 0, 0],
+                                    minHeight: 180,
+                                    maxHeight: 180,
+                                    backgroundColor: 'rgb(255,255,255)',
+                                    margin: [80, 0, 0, 0],
+                                    linkColor: 'rgb(255,255,255)',
                                 },
                                 title: {
                                     text: node.data('label') ,
@@ -1225,25 +1258,52 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                 },
 
                                 yAxis: [{
-                                    visible: false
+                                    visible: false,
+                                    gridLineWidth: 0,
+                                    startOnTick: false,
+                                    endOnTick: false
                                 }],
 
                                 xAxis: [{
-                                    visible: false
+                                    visible: false,
+                                    type: 'datetime'
                                 }],
 
                                 legend:{ enabled:false },
 
+
+                                plotOptions: {
+                                    area: {
+                                        marker: {
+                                            enabled: false,
+                                            symbol: 'circle',
+                                            radius: 2,
+                                            states: {
+                                                hover: {
+                                                    enabled: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+
                                 series:
                                     [
-                                    {
-                                        data: node.data('chartData')
-                                    }
+                                        {
+                                            name: `${attributeDescription} (${attributeCode})`,
+                                            data: dataPoints,
+                                            tooltip: {
+                                                valueSuffix: ` ${unitFormat}`
+                                            }
+                                        }
                                     ]
                             });
                         });
 
+
+
                         loader.style.display = 'none';
+                        mainContainer.style.display = 'block';
                         chartContainer.style.display = 'block';
 
                         cy.resize();
@@ -1268,6 +1328,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     .catch(error => {
                         loader.innerHTML = "<span>Error al cargar los dispositivos.</span>";
                         loader.style.display = 'none';
+                        mainContainer.style.display = 'block';
                         chartContainer.style.display = 'block';
                         console.error("❌ Error al obtener los dispositivos:", error);
                     });
@@ -1322,11 +1383,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
             // Llama en interacciones para actualizar automáticamente
             cy.on('render pan zoom', updateAllChartPositions);
-        });
+        }
+
     </script>
 
 
-
+    <!-- Script para la los selectores de rango -->
     <script th:inline="javascript">
         // Variables globales para almacenar el rango seleccionado (en epoch segundos)
         var customStartEpoch = null;
@@ -1565,6 +1627,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             });
         }
 
+
         function fetchDevicesAndAttributesVRM() {
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
             let start, end;
@@ -1579,13 +1642,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
                 end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
 
-            }
-            console.log("Start epoch:", start);
-            console.log("End epoch:", end);
-
-            // Establece el rango completo en el eje X (en milisegundos)
-            if (chart && chart.xAxis && chart.xAxis[0]) {
-                chart.xAxis[0].setExtremes(start * 1000, end * 1000);
             }
 
             fetch(`/api/devices-and-attributes?siteId=${VRMSite}`)
@@ -1602,12 +1658,13 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
                         if (instance !== null && instance !== undefined) {
                             filteredAttributes.forEach(attr => {
-                                const key = `${attr.idDataAttribute}-${instance}`;
+                                const key = `${attr.idDataAttribute}-${attr.code}-${instance}`;
 
                                 if (!seenAttributes.has(key)) {
                                     seenAttributes.add(key);
                                     attributesPerInstance.push({
                                         idDataAttribute: attr.idDataAttribute,
+                                        code: attr.code,
                                         instance: instance
                                     });
                                 }
@@ -1619,36 +1676,65 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
                     console.log("🗂 Atributos duplicados por instancia de cada dispositivo:", attributesPerInstance);
 
-                    attributesPerInstance.forEach(({ idDataAttribute, instance }) => {
-                        fetchWidgetsGraphVRM(idDataAttribute, instance, VRMSite, start, end);
-                    });
+                    initWidgetsSegregation(attributesPerInstance, VRMSite, start, end)
 
                 })
                 .catch(error => console.error('Error al actualizar la gráfica:', error));
+        }
+
+
+        function initWidgetsSegregation(attributesPerInstance, VRMSite, start, end) {
+            const ACLoadCodes = new Set(["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9"]);
+            const MPPTCodes = new Set(["PVP"]);
+            const BatteryVoltageCodes = new Set(["CV"]);
+
+            let ACLoadData = [];
+            let MPPTData = [];
+            let BatteryVoltageData = [];
+
+            // Mapeamos todas las peticiones para obtener los datos de cada widget
+            const fetchPromises = attributesPerInstance.map(({ idDataAttribute, code, instance }) => {
+                return fetchWidgetsGraphVRM(idDataAttribute, code, instance, VRMSite, start, end)
+                    .then(graphData => {
+                        if (graphData && graphData.data && Object.keys(graphData.data).length !== 0) {
+                            if (ACLoadCodes.has(code)) {
+                                ACLoadData.push(graphData);
+                            } else if (MPPTCodes.has(code)) {
+                                MPPTData.push(graphData);
+                            } else if (BatteryVoltageCodes.has(code)) {
+                                BatteryVoltageData.push(graphData);
+                            }
+                        }
+                    })
+                    .catch(error => console.error(`❌ Error en fetchWidgetsGraphVRM para ${code}:`, error));
+            });
+
+            // Esperar a que todas las llamadas a la API terminen antes de cargar el diagrama
+            Promise.all(fetchPromises).then(() => {
+                console.log("✅ Datos de widgets obtenidos, ahora cargando el diagrama...");
+                chargeMainVRMDiagram(ACLoadData, MPPTData, BatteryVoltageData);
+            }).catch(error => {
+                console.error("❌ Error en la carga de widgets:", error);
+            });
 
         }
 
 
-        function fetchWidgetsGraphVRM(idDataAttribute, instance, VRMSite, start, end) {
-
-            fetch(`/api/graph-widgets?siteId=${VRMSite}&attributeIds=${idDataAttribute}&instance=${instance}&start=${start}&end=${end}`)
+        function fetchWidgetsGraphVRM(idDataAttribute, code, instance, VRMSite, start, end) {
+            return fetch(`/api/graph-widgets?siteId=${VRMSite}&attributeIds=${idDataAttribute}&instance=${instance}&start=${start}&end=${end}`)
                 .then(response => response.json())
                 .then(graphData => {
-
                     if (graphData.data && Object.keys(graphData.data).length !== 0) {
                         console.log(`📊 Datos obtenidos para atributo ${idDataAttribute} e instancia ${instance}:`, graphData);
                     }
-
-                    // Elegir las series para AC Load
-
-                    // Elegir las series para Battery
-
-                    // Elegir las series para MPPT
-
-
+                    return graphData;
                 })
-                .catch(error => console.error(`Error al obtener datos para atributo ${idDataAttribute}:`, error));
+                .catch(error => {
+                    console.error(`Error al obtener datos para atributo ${idDataAttribute}:`, error);
+                });
         }
+
+
 
         /* ACTIVA GRÁFICAS */
 
