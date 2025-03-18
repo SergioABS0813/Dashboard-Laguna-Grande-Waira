@@ -228,45 +228,42 @@ public class VRMService {
     public void checkVoltagesPeriodically() {
         try {
 
-            String token = "6e23e410c0b8981b5362f844004770f7c71480949bec44f320a3c6155d45846e"; // Recuperar desde BD o configuración
+            String token = "6e23e410c0b8981b5362f844004770f7c71480949bec44f320a3c6155d45846e"; // Recuperar desde BD o configuración (FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
             int idUser = 543462;
 
             // 1) Obtener todos los idSites del usuario
             List<Integer> idSites = obtenerIdSites(idUser, token);
 
             // 2) Calcular timestamps start y end (en UNIX seg).
-            // Falta setear para que sea hora peruana
+            // Falta setear para que sea hora peruana FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
             long now = System.currentTimeMillis() / 1000; // Actual en seg
             long fourMinutesAgo = now - 240;             // 4 min en seg
 
             for (Integer siteId : idSites) {
-                // 3) Llamar a la API de VRM para extraer voltaje (por ej. 'bv')
+                // 3) Llamar a la API de VRM para extraer voltaje
                 VRMGraphResponse graphResp = obtenerGraphData(siteId, fourMinutesAgo, now, token);
 
-                // 4) Parsear el voltaje (o la medición) que te interesa
+                // 4) Parsear el voltaje
                 VRMMeasurement measurement = parseLastVoltage(graphResp, siteId);
 
                 // 5) Si el voltaje excede cierto umbral, enviar alerta
                 Double voltage = measurement.getVoltage();
-                if (voltage != null && voltage > 50.0) {
-                    // Supongamos que tienes un método para obtener el nombre
-                    // de la instalación (p. ej. "Laguna Grande") en base a siteId:
+                if (voltage != null && voltage > 50.0) { //FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA CORREGIR LA ALERTA VALOR DE VOLTAJE
+
                     String nombreMicrored = "Laguna Grande"; //Sería hacer una consulta a la API VRM
                     //String nombreMicrored = obtenerNombreMicrored(siteId);
 
-                    // Igualmente, si quieres enviar el correo al usuario final,
-                    // obtienes su correo de tu BD o de la config:
-                    String correoReceptor = "a20213170@pucp.edu.pe";
+                    String correoReceptor = "a20213170@pucp.edu.pe"; // FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA MANDAR CORREO A TODOS LOS USUARIOS QUE TENGAN ASIGNADO EL SITE
 
-                    // Llamas a tu EmailService
-                    emailService.sendAlertEmailSobrecarga(
+                    // Enviamos correo
+                    emailService.sendAlertEmailBateriaBaja(
                             correoReceptor,
                             nombreMicrored,
                             voltage
                     );
                 }
 
-                // FALTA CREAR LAS NOTIFICACIONES Y COLOCARLAS A BD
+                // FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA CREAR LAS NOTIFICACIONES Y COLOCARLAS A BD
             }
 
         } catch (Exception e) {
