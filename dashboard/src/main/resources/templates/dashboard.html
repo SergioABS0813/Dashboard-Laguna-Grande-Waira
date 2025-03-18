@@ -50,11 +50,21 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <script src="https://unpkg.com/cytoscape-animated-edges/cytoscape-animated-edges.js"></script>
 
 
+    <!-- Leaflet MAP -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
 
+    <!-- AwesomeMarkers Icons -->
+    <link th:href="@{/css/leaflet.awesome-markers.css}" rel="stylesheet" />
 
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 
     <!-- FlatPickr -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -81,6 +91,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <style>
         .highcharts-credits {
+            display: none !important;
+        }
+
+        .leaflet-control-attribution {
             display: none !important;
         }
 
@@ -392,26 +406,42 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <div class="container-fluid pb-2">
 
-        <div class="col-xl-8 col-md-12 mb-1 mt-2">
-            <div class="card">
-                <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 500px;">
-                    <span>Cargando dispositivos...</span>
+        <div class="row">
+
+            <div class="col-xl-8 col-md-12 mb-1 mt-2">
+                <div class="card">
+                    <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 600px;">
+                        <span>Cargando dispositivos...</span>
+                    </div>
+
+                    <div id="chart-container" style="position: relative; display: none;">
+                        <div id="orgChart" style="height: 600px;"></div>
+
+                        <!-- Aquí se crearán dinámicamente gráficos -->
+
+                    </div>
+
+
                 </div>
-
-                <div id="chart-container" style="position: relative; display: none;">
-                    <div id="orgChart" style="height: 600px;"></div>
-
-                    <!-- Aquí se crearán dinámicamente gráficos -->
-
-                </div>
-
-
             </div>
+
+            <div class=" col-xl-4 col-lg-4 col-md-6 mb-1 mt-2">
+
+                <div class="card" style="height: 600px;">
+
+                    <div class="card-body p-0" style="height: 600px;">
+                        <!-- Ajusta el 60px según la altura aproximada del header -->
+                        <div id="map" style="width: 100%; height: 100%; border-radius: 0.5rem !important;">
+                            <!-- Aquí se inyecta el mapa (Leaflet, Google Maps, etc.) -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
+
     </div>
-
-
 
 
 
@@ -1022,7 +1052,66 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <script th:inline="javascript">
 
+        function chargeMapInstalations() {
+            var mapMarkersData = /*[[${microNetworkList}]]*/ [];
+            var mapMicroNetwork = /*[[${selectedMicroNetwork}]]*/ {};
+
+            var map = L.map('map').setView([-9.189967, -75.015152], 6);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 14,
+                minZoom: 6,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // 🔹 Agregamos todos los marcadores
+            mapMarkersData.forEach(function(marker) {
+                L.marker([marker.lat, marker.lon])
+                    .addTo(map)
+                    .bindPopup(marker.alias);
+            });
+
+            // 🔥 Si hay un sitio seleccionado, mostramos su cartilla con información
+            if (mapMicroNetwork && mapMicroNetwork.lat && mapMicroNetwork.lon) {
+                var selectedMarker = L.marker([mapMicroNetwork.lat, mapMicroNetwork.lon]).addTo(map);
+
+                var infoBox = `
+                <div style="width: 250px; padding: 10px; font-family: Inter, sans-serif;">
+                    <h3 style="margin: 0; font-size: 16px;">${mapMicroNetwork.alias}</h3>
+                    <br>
+                    <b style="font-family: Inter, sans-serif;">Provincia:</b> ${mapMicroNetwork.provincia}
+                    <br>
+                    <b style="font-family: Inter, sans-serif;">Departamento:</b> ${mapMicroNetwork.departamento}
+                    <br>
+                    <b style="font-family: Inter, sans-serif;">Ubicación:</b> ${mapMicroNetwork.lat}, ${mapMicroNetwork.lon}
+                </div>
+            `;
+
+                selectedMarker.bindPopup(infoBox).openPopup();
+
+                // 📌 Mover la vista para centrar el sitio seleccionado
+                map.setView([mapMicroNetwork.lat, mapMicroNetwork.lon], 10);
+            }
+        }
+
+        function editSite(siteId) {
+            alert(`Editar sitio con ID: ${siteId}`);
+            // Aquí puedes abrir un modal o redirigir a otra vista para configuración
+        }
+
+    </script>
+
+
+    <script th:inline="javascript">
+
+
+
         function chargeMainVRMDiagram(ACLoadData, ACLoadInfoData, MPPTData, MPPTInfoData, BatteryVoltageData, BatteryCurrentData){
+
+            let stateCondition = null;
+            let isAnimatingEdges = false;
+            let animationFrameId = null;
+
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
             console.log("🔍 Site ID usado en Cytoscape.js:", VRMSite);
 
@@ -1119,18 +1208,19 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 ]
             });
 
-            let stateCondition = null;
-
             function loadDevices() {
                 console.log("⏳ Cargando dispositivos desde la API...");
-                loader.style.height = '500px'
-                mainContainer.style.display = 'none';
-                chartContainer.style.display = 'none';
+
+                if (stateCondition === null) {
+                    loader.style.height = '600px'
+                    mainContainer.style.display = 'none';
+                    chartContainer.style.display = 'none';
+                }
 
                 fetch(`/api/devices-and-attributes?siteId=${VRMSite}`)
                     .then(response => response.json())
                     .then(data => {
-                        if (!data.devices || data.devices.length === 0) {
+                        if ((!data.devices || data.devices.length === 0) && stateCondition === null) {
                             chartContainer.innerHTML = "<span>No hay dispositivos disponibles.</span>";
                             loader.style.display = 'none';
                             mainContainer.style.display = 'block';
@@ -1144,7 +1234,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
                         let rootDevice = data.devices.find(dev => dev.idDeviceType === 1 && dev.instance !== null);
                         if (!rootDevice) {
-                            chartContainer.innerHTML = "<span>No se encontró un dispositivo principal (tipo 1).</span>";
+                            chartContainer.innerHTML = "<span>No se encontró un dispositivo principal.</span>";
                             loader.style.display = 'none';
                             mainContainer.style.display = 'block';
                             chartContainer.style.display = 'block';
@@ -1542,14 +1632,15 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                 },
 
                                 subtitle: {
-                                    text: `<div style="z-index: 10 !important;">${formatNumber(latestValue)} W</div>`,
-                                    useHTML: true,
+                                    text: `<div>${formatNumber(latestValue)} W</div>`,
+                                    // useHTML: false,
                                     align: 'left',
                                     style: {
                                         fontSize: '2.2em',
                                         fontWeight: 'bold',
                                         fontFamily: 'Inter, sans-serif',
                                         color: '#333',
+                                        zIndex: 10
                                     }
                                 },
 
@@ -1565,6 +1656,13 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                     visible: false,
                                     type: 'datetime'
                                 }],
+
+                                tooltip: {
+                                useHTML:true,
+                                    style:{
+                                    zIndex:15
+                                }
+                                },
 
                                 legend: { enabled: false },
 
@@ -1589,9 +1687,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         });
 
 
-                        loader.style.display = 'none';
-                        mainContainer.style.display = 'block';
-                        chartContainer.style.display = 'block';
+                        if (stateCondition !== null) {
+                            loader.style.display = 'none';
+                            mainContainer.style.display = 'block';
+                            chartContainer.style.display = 'block';
+                        }
+
 
                         cy.resize();
                         cy.fit(undefined, 20);
@@ -1602,11 +1703,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             updateAllChartPositions();
                         });
 
-
-                        setTimeout(() => {
-                            updateAllChartPositions();
-                            cy.on('render pan zoom', updateAllChartPositions);
-                        }, 500);
+                        restartAnimation();
 
                         console.log("✅ Organigrama generado correctamente con Cytoscape.js.");
                     })
@@ -1617,26 +1714,40 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         chartContainer.style.display = 'block';
                         console.error("❌ Error al obtener los dispositivos:", error);
                     });
-
-
-
             }
 
             let offset = 0;
 
-            function animateEdges() {
 
-                if (stateCondition === "discharging"){
-                    setDischarginState();
-                } else if (stateCondition === "charging"){
-                    setCharginState();
-                } else {
-                    failureState();
+            function animateEdges() {
+                if (isAnimatingEdges) return; // ✅ Si ya está en ejecución, salir
+                isAnimatingEdges = true;
+
+                function animate() {
+                    resetState();
+
+                    if (stateCondition === "discharging") {
+                        setDischarginState();
+                    } else if (stateCondition === "charging") {
+                        setCharginState();
+                    } else {
+                        failureState();
+                    }
+
+                    offset -= 1;
+                    cy.edges().style('line-dash-offset', offset);
+                    animationFrameId = requestAnimationFrame(animate); // 🔁 Animación continua
                 }
 
-                offset += -1;
-                cy.edges().style('line-dash-offset', offset);
-                requestAnimationFrame(animateEdges);
+                animate();
+            }
+
+            function restartAnimation() {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId); // 🚫 Detener animación actual
+                    isAnimatingEdges = false; // Permitir que se reinicie
+                }
+                animateEdges(); // 🔄 Iniciar de nuevo
             }
 
             function setDischarginState() {
@@ -1698,9 +1809,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             }
 
 
-            animateEdges();
-            loadDevices();
-
             function updateAllChartPositions() {
                 cy.nodes('[hasChart]').forEach(node => {
                     const containerDiv = document.getElementById(`container-${node.id()}`);
@@ -1723,8 +1831,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     : Highcharts.numberFormat(value, 2, '.', '');
             }
 
-            // llama al iniciar
-            updateAllChartPositions();
+
+
+            loadDevices();
+            setInterval(loadDevices, 10000);
 
             // Llama en interacciones para actualizar automáticamente
             cy.on('render pan zoom', updateAllChartPositions);
@@ -2105,13 +2215,14 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
         /* ACTIVA GRÁFICAS */
 
+
+
         createMainGraph();
         fetchMainGraphVRM();
         setInterval(fetchMainGraphVRM, 60000);
 
-
         fetchDevicesAndAttributesVRM();
-
+        chargeMapInstalations();
 
     </script>
 

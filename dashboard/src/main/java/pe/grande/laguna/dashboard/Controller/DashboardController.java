@@ -95,6 +95,8 @@ public class DashboardController {
             }
 
             model.addAttribute("microNetworkList", new ArrayList<>(microNetworkMap.values()));
+            ArrayList<MicroNetwork> microNetworkList = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+            model.addAttribute("microNetworkList", microNetworkList);
 
         }
 
