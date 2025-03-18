@@ -18,10 +18,12 @@ public class ApiControllerVRM {
 
 
     List<String> ACLoadCodes = Arrays.asList("a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9");
-    List<String> MPPTCodes = Arrays.asList("PVP", "OP2", "OP3", "OP4", "OP5", "OP6", "OP7", "OP8", "OP9");
-    List<String> BatteryVoltageCodes = List.of("CV");
 
-    List<String> allowedCodes = Arrays.asList("a1", "a2", "a3", "CV", "PVP");
+    List<String> MPPTCodes = Arrays.asList("PVP", "PVV", "PVI", "OF");
+
+    List<String> BatteryVoltageCodes = Arrays.asList("bv", "bc");
+
+    List<String> allowedCodes = Arrays.asList("a1", "a2", "a3", "bv", "bc", "PVP", "PVV", "PVI", "OF");
 
 
     public ApiControllerVRM(VRMService vrmService, SettingsRepository settingsRepository) {

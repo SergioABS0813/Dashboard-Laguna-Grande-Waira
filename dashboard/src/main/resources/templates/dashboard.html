@@ -80,6 +80,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
     <style>
+        .highcharts-credits {
+            display: none !important;
+        }
+
         #loader {
             display: flex;
             align-items: center;
@@ -395,7 +399,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 </div>
 
                 <div id="chart-container" style="position: relative; display: none;">
-                    <div id="orgChart" style="height: 500px;"></div>
+                    <div id="orgChart" style="height: 600px;"></div>
 
                     <!-- Aquí se crearán dinámicamente gráficos -->
 
@@ -1018,7 +1022,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <script th:inline="javascript">
 
-        function chargeMainVRMDiagram(ACLoadData, MPPTData, BatteryVoltageData){
+        function chargeMainVRMDiagram(ACLoadData, ACLoadInfoData, MPPTData, MPPTInfoData, BatteryVoltageData, BatteryCurrentData){
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
             console.log("🔍 Site ID usado en Cytoscape.js:", VRMSite);
 
@@ -1027,10 +1031,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             const chartContainer = document.getElementById('orgChart');
 
             var cy = cytoscape({
+
                 container: chartContainer,
                 userZoomingEnabled: false,
                 userPanningEnabled: false,
                 boxSelectionEnabled: false,
+
                 autoungrabify: true,
                 style: [
                     {
@@ -1042,7 +1048,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             'text-halign': 'center',
                             'color': '#1b1b1b',
                             'width': 280,
-                            'height': 200,
+                            'height': 260,
                             'shape': 'round-rectangle',
                             'font-size': 12,
                             'text-wrap': 'wrap',
@@ -1052,7 +1058,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             'shadow-opacity': 0.4,
                             'shadow-offset-x': 0,
                             'shadow-offset-y': 4,
-                            'border-radius': '1px'
+                            'border-radius': '1px',
+
+                            'user-select': 'none',   // Deshabilita selección
+                            'pointer-events': 'none', // Evita interacción del mouse
+                            'background-opacity': 1,  // Evita el sombreado
+                            'overlay-opacity': 0,      // 🔥 Evita la capa de selección cuando se mantiene presionado
                         }
                     },
 
@@ -1108,6 +1119,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 ]
             });
 
+            let stateCondition = null;
+
             function loadDevices() {
                 console.log("⏳ Cargando dispositivos desde la API...");
                 loader.style.height = '500px'
@@ -1149,10 +1162,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
                         // Nodos especiales
                         const specialNodes = [
-                            { id: "mppt-solar", label: `MPPT SOLAR - (${data.devices.filter(dev => dev.idDeviceType === 4).length})`, x: 230, y: 240, hasChart: true, chartData: MPPTData },
-                            { id: "battery-node", label: "Battery System\n(Discharging)", x: -230, y: 240, hasChart: true, chartData: BatteryVoltageData },
+                            { id: "mppt-solar", label: `MPPT SOLAR - (${data.devices.filter(dev => dev.idDeviceType === 4).length})`, x: 230, y: 260, hasChart: true, chartData: MPPTData },
+                            { id: "battery-node", label: "Battery Array", x: -230, y: 260, hasChart: true, chartData: BatteryVoltageData },
                             { id: "ac-loads", label: "AC Loads", x: 320, y: 0, hasChart: true, chartData: ACLoadData }
                         ];
+
 
                         specialNodes.forEach(node => {
                             nodes.push({
@@ -1175,6 +1189,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             edges.push({ data: { id: 'root-loads-fg', source: rootId, target: "ac-loads" }, classes: 'edge-fg animado' });
                             edges.push({ data: { id: 'loads-root-bg', source: "ac-loads", target: rootId }, classes: 'edge-bg' });
                             edges.push({ data: { id: 'loads-root-fg', source: "ac-loads", target: rootId }, classes: 'edge-fg animado' });
+
+                            edges.push({ data: { id: 'mppt-battery-bg', source: "mppt-solar", target: "battery-node" }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'mppt-battery-fg', source: "mppt-solar", target: "battery-node" }, classes: 'edge-fg animado' });
+                            edges.push({ data: { id: 'battery-mppt-bg', source: "battery-node", target: "mppt-solar" }, classes: 'edge-bg' });
+                            edges.push({ data: { id: 'battery-mppt-fg', source: "battery-node", target: "mppt-solar" }, classes: 'edge-fg animado' });
                         });
 
                         cy.add([...nodes, ...edges]);
@@ -1188,74 +1207,352 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         }
 
                         cy.nodes('[hasChart]').forEach(node => {
-
                             const chartData = node.data('chartData');
-                            if (!chartData || chartData.length === 0) {
+
+                            if ((!chartData || chartData.length === 0) && node.id() !== "battery-node") {
                                 console.warn(`⚠️ No hay datos para el nodo ${node.id()}`);
                                 return;
                             }
 
-                            let attributeCode = null;
-                            let attributeDescription = null;
-                            let unitFormat = null;
-                            let dataPoints = null;
+                            let series = [];
 
-                            // Iteramos sobre cada entrada de `chartData`
+                            let sumSeriesACLoad = {};
+                            let ACLoadPowers = [];
+                            let ACLoadFreq = [];
+
+                            let sumSeriesMPPT = {};
+                            let MPPTVoltages = [];
+                            let MPPTPowers = [];
+                            let MPPTCurrents = [];
+
+                            let batteryVoltage;
+                            let batteryCurrent;
+                            let batteryPower;
+
+                            let unitFormat = null;
+
+
+                            if (node.id() === "ac-loads") {
+                                ACLoadInfoData.forEach(entry => {
+                                    if (!entry.data) return;
+
+                                    Object.keys(entry.data).forEach(attributeId => {
+                                        ACLoadFreq[entry.instance] = entry.data[attributeId][entry.data[attributeId].length - 1][1];
+                                    });
+                                });
+                            }
+
+                            if (node.id() === "mppt-solar") {
+                                MPPTInfoData.forEach(entry => {
+                                    if (!entry.data) return;
+
+                                    Object.keys(entry.data).forEach(attributeId => {
+                                        MPPTVoltages[entry.instance] = entry.data[attributeId][entry.data[attributeId].length - 1][1];
+                                    });
+                                });
+                            }
+
+                            if (node.id() === "battery-node") {
+                                BatteryVoltageData.forEach(entry => {
+                                    if (!entry.data) return;
+
+                                    Object.keys(entry.data).forEach(attributeId => {
+                                        batteryVoltage = entry.data[attributeId][entry.data[attributeId].length - 1][1];
+                                    });
+                                });
+
+                                BatteryCurrentData.forEach(entry => {
+                                    if (!entry.data) return;
+
+                                    Object.keys(entry.data).forEach(attributeId => {
+                                        batteryCurrent = entry.data[attributeId][entry.data[attributeId].length - 1][1];
+                                    });
+                                });
+
+                                batteryPower = batteryVoltage*batteryCurrent
+                            }
+
                             chartData.forEach(entry => {
                                 if (!entry.data) return;
 
-                                Object.keys(entry.data).forEach(attributeId => {
-                                    const meta = entry.meta && entry.meta[attributeId] ? entry.meta[attributeId] : {};
-                                    attributeCode = meta.code || `Attr-${attributeId}`;
-                                    attributeDescription = meta.description || `Atributo ${attributeId}`;
-                                    unitFormat = meta.formatWithUnit ? meta.formatWithUnit.replace("%.0F", "").trim() : "";
+                                Object.entries(entry.data).forEach(([attributeId, dataValues]) => {
+                                    const meta = entry.meta?.[attributeId] || {};
+                                    let instance = entry.instance || 0;
+                                    unitFormat = meta.formatWithUnit ? meta.formatWithUnit.split(" ").slice(1).join(" ") : '';
 
-                                    dataPoints = entry.data[attributeId].map(([timestamp, value]) => [
-                                        timestamp * 1000, // Convertimos segundos a milisegundos para Highcharts
-                                        value
-                                    ]);
+                                    let dataPoints = dataValues.map(([timestamp, value]) => {
+                                        let timeMs = timestamp * 1000; // 🔥 Convertimos segundos a milisegundos para Highcharts
+
+                                        if (node.id() === "ac-loads") {
+                                            sumSeriesACLoad[timeMs] = (sumSeriesACLoad[timeMs] || 0) + value;
+                                            ACLoadPowers[instance] = dataValues[dataValues.length - 1][1];
+                                        } else if (node.id() === "mppt-solar") {
+                                            sumSeriesMPPT[timeMs] = (sumSeriesMPPT[timeMs] || 0) + value;
+                                            MPPTPowers[instance] = dataValues[dataValues.length - 1][1];
+                                        }
+
+                                        return [timeMs, value];
+                                    });
                                 });
                             });
 
-                            // Si no hay series generadas, salimos
-                            if (chartData.length === 0) {
-                                console.warn(`⚠️ No hay series válidas para el nodo ${node.id()}`);
-                                return;
+                            if (node.id() === "battery-node") {
+                                if (batteryPower < 0 || batteryCurrent < 0) {
+                                    console.log("ESTADO DESCARGANDO");
+                                    stateCondition = "discharging";
+                                } else if (batteryPower > 0 || batteryCurrent > 0) {
+                                    console.log("ESTADO CARGANDO");
+                                    stateCondition = "charging";
+                                } else {
+                                    console.log("DESCONOCIDO");
+                                    stateCondition = "failure";
+                                }
                             }
+
+
+                            if (node.id() === "battery-node") {
+                                let batteryVoltageSeries = [];
+                                let batteryCurrentSeries = [];
+
+                                BatteryVoltageData.forEach(entry => {
+                                    if (!entry.data) return;
+
+                                    Object.keys(entry.data).forEach(attributeId => {
+                                        let dataPoints = entry.data[attributeId].map(([timestamp, value]) => [
+                                            timestamp * 1000,
+                                            value
+                                        ]);
+
+                                        batteryVoltageSeries.push({
+                                            name: `Battery Voltage (${attributeId})`,
+                                            data: dataPoints,
+                                            tooltip: {
+                                                valueSuffix: ` V`
+                                            }
+                                        });
+                                    });
+                                });
+
+                                BatteryCurrentData.forEach(entry => {
+                                    if (!entry.data) return;
+
+                                    Object.keys(entry.data).forEach(attributeId => {
+                                        let dataPoints = entry.data[attributeId].map(([timestamp, value]) => [
+                                            timestamp * 1000,
+                                            value
+                                        ]);
+
+                                        batteryCurrentSeries.push({
+                                            name: `Battery Current (${attributeId})`,
+                                            data: dataPoints,
+                                            tooltip: {
+                                                valueSuffix: ` A`
+                                            }
+                                        });
+                                    });
+                                });
+
+                                series.push(...batteryVoltageSeries, ...batteryCurrentSeries);
+                            }
+
+                            if (node.id() === "ac-loads") {
+                                let sumDataPoints = Object.entries(sumSeriesACLoad).map(([timestamp, value]) => [
+                                    parseInt(timestamp),  // Convertir timestamp de string a número
+                                    value
+                                ]);
+
+                                series.push({
+                                    name: "Total AC Load",
+                                    data: sumDataPoints,
+                                    tooltip: {
+                                        valueSuffix: ` ${unitFormat}`
+                                    }
+                                });
+                            }
+
+                            if (node.id() === "mppt-solar") {
+                                let sumDataPoints = Object.entries(sumSeriesMPPT).map(([timestamp, value]) => [
+                                    parseInt(timestamp),  // Convertir timestamp de string a número
+                                    value
+                                ]);
+
+                                Object.keys(MPPTPowers).forEach(charger => {
+
+                                    console.log(MPPTPowers[charger])
+                                    console.log(MPPTVoltages[charger])
+
+                                    if (MPPTVoltages[charger]) {
+                                        MPPTCurrents[charger] = (MPPTPowers[charger] / MPPTVoltages[charger]).toFixed(2);
+                                    } else {
+                                        MPPTCurrents[charger] = "N/A";
+                                    }
+                                });
+
+                                series.push({
+                                    name: "Total MPPT",
+                                    data: sumDataPoints,
+                                    tooltip: {
+                                        valueSuffix: ` ${unitFormat}`
+                                    }
+                                });
+                            }
+
+                            let latestValue;
+                            if (node.id() === "battery-node"){
+                                latestValue = batteryPower;
+
+                            } else {
+                                latestValue = series.length > 0 ? series[series.length - 1].data[series[series.length - 1].data.length - 1][1] : '-';
+                            }
+
+                            const containerDiv = document.createElement('div');
+                            containerDiv.style.position = 'absolute';
+                            containerDiv.id = `container-${node.id()}`;
+                            containerDiv.style.display = 'flex';
+                            containerDiv.style.flexDirection = 'column';
+                            containerDiv.style.alignItems = 'center';
+                            containerDiv.style.maxWidth = '280px';
+                            containerDiv.style.marginBottom = '10px';
+                            containerDiv.style.borderRadius = '4px';
+                            containerDiv.style.borderStyle = 'solid';
+                            containerDiv.style.borderWidth = '0.1em';
+                            containerDiv.style.borderColor = 'rgb(191,191,191)';
 
                             const chartDiv = document.createElement('div');
                             chartDiv.id = `chart-${node.id()}`;
-                            chartDiv.style.position = 'absolute';
+                            chartDiv.style.padding = '1px';
                             chartDiv.style.maxWidth = '280px';
-                            chartDiv.style.maxHeight = '180px';
-                            chartDiv.style.borderRadius = '4px';
-                            chartDiv.style.borderStyle = 'solid';
-                            chartDiv.style.borderWidth = '0.1em';
-                            chartDiv.style.borderColor = 'rgb(191,191,191)';
-                            chartDiv.style.paddingBottom = '50px'
 
-                            chartParent.appendChild(chartDiv);
+                            const extraDiv = document.createElement('div');
+                            extraDiv.id = `extra-${node.id()}`;
+                            extraDiv.style.marginRight = '10px';
+                            extraDiv.style.width = '280px';
+                            extraDiv.style.maxHeight = '80px';
+                            extraDiv.style.overflowX = 'none';
+                            extraDiv.style.overflowY = 'auto';
+                            extraDiv.style.fontSize = '14px';
+                            extraDiv.style.color = '#333';
+                            extraDiv.style.textAlign = 'start';
+
+                            if (node.id() === "ac-loads") {
+
+                                extraDiv.style.marginTop = '10px';
+                                extraDiv.style.marginBottom = '10px';
+                                extraDiv.style.paddingLeft = '15px';
+                                extraDiv.style.paddingRight = '10px';
+
+                                let tableHTML = `
+                                <table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
+
+                                Object.keys(ACLoadPowers).forEach(load => {
+
+                                    let lastFreqValue = ACLoadFreq.filter(v => v !== undefined).pop();
+                                    console.log(lastFreqValue);
+
+                                    let freq = lastFreqValue ? `${lastFreqValue.toFixed(2)} Hz` : "N/A";
+                                    let power = ACLoadPowers[load] ? `${ACLoadPowers[load]} W` : "0 W";
+
+                                    tableHTML += `
+                                    <tr>
+                                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">L${Number(load) + 1}</td>
+                                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">${power}</td>
+                                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">${freq}</td>
+                                    </tr>`;});
+
+                                tableHTML += ` </tbody></table>`;
+
+                                extraDiv.innerHTML = tableHTML;
+                            }
+
+
+
+                            if (node.id() === "mppt-solar") {
+
+                                extraDiv.style.marginTop = '10px';
+                                extraDiv.style.marginBottom = '10px';
+                                extraDiv.style.paddingLeft = '15px';
+                                extraDiv.style.paddingRight = '10px';
+
+                                let tableHTML = `
+                                <table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
+
+                                Object.keys(MPPTPowers).forEach(charger => {
+                                    let voltage = MPPTVoltages[charger] ? `${MPPTVoltages[charger].toFixed(2)} V` : "0 V";
+                                    let current = MPPTCurrents[charger] ? `${MPPTCurrents[charger]} A` : "0 A";
+                                    let power = MPPTPowers[charger] ? `${MPPTPowers[charger]} W` : "0 W";
+
+                                    tableHTML += `
+                                    <tr>
+                                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">MPPT-${charger}</td>
+                                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">${voltage}</td>
+                                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">${current}</td>
+                                        <td style="padding: 5px; border-bottom: 1px solid #ddd;">${power}</td>
+                                    </tr>`;});
+
+                                tableHTML += ` </tbody></table>`;
+
+                                extraDiv.innerHTML = tableHTML;
+                            }
+
+                            if (node.id() === "battery-node") {
+
+                                extraDiv.style.marginTop = '10px';
+                                extraDiv.style.marginBottom = '10px';
+                                extraDiv.style.paddingLeft = '15px';
+                                extraDiv.style.paddingRight = '10px';
+
+                                let tableHTML = `
+                                <table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
+
+                                let voltage = batteryVoltage ? `${batteryVoltage.toFixed(2)} V` : "0 V";
+                                let current = batteryCurrent ? `${batteryCurrent.toFixed(2)} A` : "0 A";
+
+                                tableHTML += `<tr><td style="padding: 5px; border-bottom: 1px solid #ddd;">Voltage: ${voltage}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">Current: ${current}</td></tr>`
+
+                                tableHTML += ` </tbody></table>`;
+
+                                extraDiv.innerHTML = tableHTML;
+                            }
+
+                            containerDiv.appendChild(chartDiv);
+                            containerDiv.appendChild(extraDiv);
+
+                            chartParent.appendChild(containerDiv);
 
                             Highcharts.chart(chartDiv.id, {
                                 chart: {
                                     type: 'area',
-                                    minHeight: 180,
-                                    maxHeight: 180,
+                                    height: 120,
                                     backgroundColor: 'rgb(255,255,255)',
-                                    margin: [80, 0, 0, 0],
-                                    linkColor: 'rgb(255,255,255)',
+                                    margin: [80, 0, 0, 0]
+                                },
+                                lang: {
+                                    decimalPoint: '.',
+                                    thousandsSep: ','
                                 },
                                 title: {
-                                    text: node.data('label') ,
+                                    text: node.data('label'),
                                     align: 'left',
                                     style: {
                                         color: 'rgb(58,58,58)',
-                                        fontSize:'12px',
+                                        fontSize: '12px',
                                         fontFamily: 'Inter,Helvetica,Arial,sans-serif',
                                         fontWeight: '300s',
-
                                     }
                                 },
+
+                                subtitle: {
+                                    text: `<div style="z-index: 10 !important;">${formatNumber(latestValue)} W</div>`,
+                                    useHTML: true,
+                                    align: 'left',
+                                    style: {
+                                        fontSize: '2.2em',
+                                        fontWeight: 'bold',
+                                        fontFamily: 'Inter, sans-serif',
+                                        color: '#333',
+                                    }
+                                },
+
 
                                 yAxis: [{
                                     visible: false,
@@ -1269,8 +1566,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                     type: 'datetime'
                                 }],
 
-                                legend:{ enabled:false },
-
+                                legend: { enabled: false },
 
                                 plotOptions: {
                                     area: {
@@ -1287,19 +1583,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                     }
                                 },
 
-                                series:
-                                    [
-                                        {
-                                            name: `${attributeDescription} (${attributeCode})`,
-                                            data: dataPoints,
-                                            tooltip: {
-                                                valueSuffix: ` ${unitFormat}`
-                                            }
-                                        }
-                                    ]
+
+                                series: series
                             });
                         });
-
 
 
                         loader.style.display = 'none';
@@ -1316,8 +1603,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         });
 
 
-
-                        // ✅ Espera a que todos los nodos sean añadidos antes de actualizar posiciones
                         setTimeout(() => {
                             updateAllChartPositions();
                             cy.on('render pan zoom', updateAllChartPositions);
@@ -1332,22 +1617,65 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         chartContainer.style.display = 'block';
                         console.error("❌ Error al obtener los dispositivos:", error);
                     });
+
+
+
             }
 
-
-
-            // Animación continua para simular flujo de agua
             let offset = 0;
 
             function animateEdges() {
-                setInvertingState();
+
+                if (stateCondition === "discharging"){
+                    setDischarginState();
+                } else if (stateCondition === "charging"){
+                    setCharginState();
+                } else {
+                    failureState();
+                }
+
                 offset += -1;
                 cy.edges().style('line-dash-offset', offset);
                 requestAnimationFrame(animateEdges);
             }
 
-            function setInvertingState(){
+            function setDischarginState() {
 
+                resetState();
+
+                cy.getElementById('mppt-root-bg').show();
+
+                cy.getElementById('battery-root-bg').show();
+                cy.getElementById('battery-root-fg').show();
+
+                cy.getElementById('root-loads-bg').show();
+                cy.getElementById('root-loads-fg').show();
+            }
+
+            function setCharginState() {
+
+                resetState();
+
+                cy.getElementById('mppt-root-fg').show();
+                cy.getElementById('mppt-root-fg').show();
+
+                cy.getElementById('mppt-battery-bg').show();
+                cy.getElementById('mppt-battery-fg').show();
+
+                cy.getElementById('root-loads-bg').show();
+                cy.getElementById('root-loads-fg').show();
+            }
+
+            function failureState() {
+                resetState();
+
+                cy.getElementById('root-mppt-bg').show();
+                cy.getElementById('mppt-battery-bg').show();
+                cy.getElementById('root-loads-bg').show();
+
+            }
+
+            function resetState() {
                 cy.getElementById('root-mppt-bg').hide();
                 cy.getElementById('root-mppt-fg').hide();
                 cy.getElementById('mppt-root-fg').hide();
@@ -1355,9 +1683,18 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
                 cy.getElementById('root-battery-bg').hide();
                 cy.getElementById('root-battery-fg').hide();
+                cy.getElementById('battery-root-bg').hide();
+                cy.getElementById('battery-root-fg').hide();
 
                 cy.getElementById('loads-root-bg').hide();
                 cy.getElementById('loads-root-fg').hide();
+                cy.getElementById('root-loads-bg').hide();
+                cy.getElementById('root-loads-fg').hide();
+
+                cy.getElementById('battery-mppt-bg').hide();
+                cy.getElementById('battery-mppt-fg').hide();
+                cy.getElementById('mppt-battery-bg').hide();
+                cy.getElementById('mppt-battery-fg').hide();
             }
 
 
@@ -1366,16 +1703,24 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
             function updateAllChartPositions() {
                 cy.nodes('[hasChart]').forEach(node => {
-                    const chartDiv = document.getElementById(`chart-${node.id()}`);
-                    if (!chartDiv) return; // Evitar errores si no existe
+                    const containerDiv = document.getElementById(`container-${node.id()}`);
+                    if (!containerDiv) return; // Evitar errores si no existe
 
                     const position = node.renderedPosition();
                     const zoom = cy.zoom();
 
-                    chartDiv.style.left = (position.x - 140) + 'px'; // Ajuste según tamaño
-                    chartDiv.style.top = (position.y - 100) + 'px';
-                    chartDiv.style.transform = `scale(${zoom})`;
+                    containerDiv.style.left = `${position.x - containerDiv.offsetWidth / 2}px`;
+                    containerDiv.style.top = `${position.y - containerDiv.offsetHeight / 2}px`;
+                    containerDiv.style.transform = `scale(${zoom})`;
+                    containerDiv.style.transformOrigin = 'center';
+
                 });
+            }
+
+            function formatNumber(value) {
+                return Number.isInteger(value)
+                    ? value
+                    : Highcharts.numberFormat(value, 2, '.', '');
             }
 
             // llama al iniciar
@@ -1521,6 +1866,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             chart = Highcharts.chart('container', {
                 chart: {
                     type: 'column'
+                },
+                lang: {
+                    decimalPoint: '.',
+                    thousandsSep: ','
                 },
                 title: '',
                 xAxis: {
@@ -1684,13 +2033,25 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
         function initWidgetsSegregation(attributesPerInstance, VRMSite, start, end) {
+            const InverterStateCode = new Set(["VSOC"]);
+
             const ACLoadCodes = new Set(["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9"]);
+            const ACLoadFrequency = new Set(["OF"]);
+
             const MPPTCodes = new Set(["PVP"]);
-            const BatteryVoltageCodes = new Set(["CV"]);
+            const MPPTInfoCodes = new Set(["PVV"]);
+
+            const BatteryVoltageCodes = new Set(["bv"]);
+            const BatteryCurrentCodes = new Set(["bc"]);
 
             let ACLoadData = [];
+            let ACLoadInfoData = [];
+
             let MPPTData = [];
+            let MPPTInfoData = [];
+
             let BatteryVoltageData = [];
+            let BatteryCurrentData = [];
 
             // Mapeamos todas las peticiones para obtener los datos de cada widget
             const fetchPromises = attributesPerInstance.map(({ idDataAttribute, code, instance }) => {
@@ -1699,10 +2060,16 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         if (graphData && graphData.data && Object.keys(graphData.data).length !== 0) {
                             if (ACLoadCodes.has(code)) {
                                 ACLoadData.push(graphData);
+                            } else if (ACLoadFrequency.has(code)) {
+                                ACLoadInfoData.push(graphData);
                             } else if (MPPTCodes.has(code)) {
                                 MPPTData.push(graphData);
+                            } else if (MPPTInfoCodes.has(code)) {
+                                MPPTInfoData.push(graphData);
                             } else if (BatteryVoltageCodes.has(code)) {
                                 BatteryVoltageData.push(graphData);
+                            } else if (BatteryCurrentCodes.has(code)) {
+                                BatteryCurrentData.push(graphData);
                             }
                         }
                     })
@@ -1712,7 +2079,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             // Esperar a que todas las llamadas a la API terminen antes de cargar el diagrama
             Promise.all(fetchPromises).then(() => {
                 console.log("✅ Datos de widgets obtenidos, ahora cargando el diagrama...");
-                chargeMainVRMDiagram(ACLoadData, MPPTData, BatteryVoltageData);
+                chargeMainVRMDiagram(ACLoadData, ACLoadInfoData, MPPTData, MPPTInfoData, BatteryVoltageData, BatteryCurrentData);
             }).catch(error => {
                 console.error("❌ Error en la carga de widgets:", error);
             });
