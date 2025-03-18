@@ -37,4 +37,55 @@ public class WeatherLinkService {
         return restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
     }
 
+
+
+    public ResponseEntity<Map> getCurrentData(String stationId, String apiKey, String apiSecret) {
+        // Construimos la URL base
+        String baseUrl = WL_BASE_URL + "/current/" + stationId;
+
+        // Añadimos los parámetros de forma segura
+        String url = UriComponentsBuilder.fromUriString(baseUrl)
+                .queryParam("api-key", apiKey)
+                .toUriString();
+
+        // Mostramos la URL final para verificarla
+        System.out.println("✅ WeatherLink URL final: " + url);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("x-api-secret", apiSecret);
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        // Realizamos la llamada GET al endpoint de WeatherLink
+        return restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
+    }
+
+
+
+    public ResponseEntity<Map> getSensorCatalog(String apiKey, String apiSecret) {
+        // Construimos la URL base
+        String baseUrl = WL_BASE_URL + "/sensor-catalog";
+
+        // Añadimos los parámetros de forma segura
+        String url = UriComponentsBuilder.fromUriString(baseUrl)
+                .queryParam("api-key", apiKey)
+                .toUriString();
+
+        // Mostramos la URL final para verificarla
+        System.out.println("✅ WeatherLink URL final: " + url);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("x-api-secret", apiSecret);
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        // Realizamos la llamada GET al endpoint de WeatherLink
+        return restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
+    }
+
+
+
+
 }

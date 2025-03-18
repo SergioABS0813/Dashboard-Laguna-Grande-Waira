@@ -406,9 +406,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <div class="container-fluid pb-2">
 
-        <div class="row">
+        <div class="row mb-1">
 
-            <div class="col-xl-8 col-md-12 mb-1 mt-2">
+            <div class="col-xl-8 col-lg-8 col-md-12 mb-1 mt-2">
                 <div class="card">
                     <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 600px;">
                         <span>Cargando dispositivos...</span>
@@ -425,7 +425,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 </div>
             </div>
 
-            <div class=" col-xl-4 col-lg-4 col-md-6 mb-1 mt-2">
+            <div class=" col-xl-4 col-lg-4 col-md-12 mb-1 mt-2">
 
                 <div class="card" style="height: 600px;">
 
@@ -436,6 +436,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -450,9 +451,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <div class="container-fluid py-2">
 
-        <div class="col-xl-8 col-md-7 mb-2">
-            <h3 class="mb-0 ms-3 h4 font-weight-bolder">Red Eléctrica</h3>
-            <p class="mb-0 ms-3">Datos de la instalación Victron</p>
+        <div class="col-xl-8 col-md-7 mb-3">
+            <h3 class="mb-0 ms-3 h4 font-weight-bolder">Sensores Climáticos</h3>
+            <p class="mb-0 ms-3">Datos de la instalación WeatherLink</p>
         </div>
 
         <div class="row">
@@ -1055,7 +1056,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
-    <!-- 1. Funciones para el mapa y edición de sitios -->
+
+
+
+
+        <!-- 1. Funciones para el mapa y edición de sitios -->
     <script th:inline="javascript">
         function chargeMapInstalations() {
             var mapMarkersData = /*[[${microNetworkList}]]*/ [];
@@ -1978,6 +1983,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
         function fetchDevicesAndAttributesVRM() {
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
+
             let start, end;
 
             // Si se ha definido un rango personalizado, se usa ese; de lo contrario, se usa el día actual
@@ -1987,7 +1993,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             } else {
                 var time = new Date();
                 const offset = +5; // Ajuste horario (según se requiera)
-                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
+                start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset - 36 , 0, 0) / 1000);
                 end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
             }
 
@@ -2024,7 +2030,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         }
 
         function initWidgetsSegregation(attributesPerInstance, VRMSite, start, end) {
-            const InverterStateCode = new Set(["VSOC"]);
+
             const ACLoadCodes = new Set(["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9"]);
             const ACLoadFrequency = new Set(["OF"]);
             const MPPTCodes = new Set(["PVP"]);
@@ -2092,7 +2098,93 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
         fetchDevicesAndAttributesVRM();
         chargeMapInstalations();
+
     </script>
+
+
+    <script th:inline="javascript">
+        var WLStation = /*[[${selectedMicroNetwork.getSiteWeatherLink()}]]*/ [];
+
+        var time = new Date();
+        const offset = +5; // Ajuste horario (según se requiera)
+        start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset , 0, 0) / 1000);
+        end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
+
+        fetch(`/api/weatherlink/sensors-aboard?stationId=${WLStation}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Sensores obtenidos:", data);
+
+            })
+            .catch(error => {
+                console.error("❌ Error al obtener los sensores:", error);
+            });
+
+
+        fetch(`/api/weatherlink/graph-historic?stationId=${WLStation}&startTimestamp=${start}&endTimestamp=${end}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Datos históricos obtenidos:", data);
+
+                function getStats(sensorData, isTemperature = false) {
+                    if (!sensorData || sensorData.length === 0) return { current: null, mean: null, max: null, min: null };
+
+                    let now = Date.now();
+                    let oneHourAgo = now - (60 * 60 * 1000); // Última hora en milisegundos
+                    let twentyFourHoursAgo = now - (24 * 60 * 60 * 1000); // Últimas 24 horas en milisegundos
+
+                    // Filtrar datos de la última hora para la media
+                    let recentData = sensorData.filter(d => d[0] >= oneHourAgo);
+                    let recentValues = recentData.map(d => d[1]);
+
+                    let mean = recentValues.length > 0 ? recentValues.reduce((a, b) => a + b, 0) / recentValues.length : null;
+
+                    // Filtrar datos de las últimas 24 horas para máximo y mínimo
+                    let dailyData = sensorData.filter(d => d[0] >= twentyFourHoursAgo);
+                    let dailyValues = dailyData.map(d => d[1]);
+
+                    let max = dailyValues.length > 0 ? Math.max(...dailyValues) : null;
+                    let min = dailyValues.length > 0 ? Math.min(...dailyValues) : null;
+
+                    let current = sensorData.length > 0 ? sensorData[sensorData.length - 1][1] : null;
+
+                    // Convertir de Fahrenheit a Celsius si es temperatura
+                    if (isTemperature) {
+                        mean = mean !== null ? ((mean - 32) * 5 / 9).toFixed(2) : null;
+                        max = max !== null ? ((max - 32) * 5 / 9).toFixed(2) : null;
+                        min = min !== null ? ((min - 32) * 5 / 9).toFixed(2) : null;
+                        current = current !== null ? ((current - 32) * 5 / 9).toFixed(2) : null;
+                    }
+
+                    return { current, mean, max, min };
+                }
+
+                // Buscar automáticamente la primera métrica disponible en cualquier sensor
+                function findFirstMetric(metric, isTemperature = false) {
+                    let key = Object.keys(data).find(k => k.endsWith(`.${metric}`));
+                    return key ? getStats(data[key], isTemperature) : { current: null, mean: null, max: null, min: null };
+                }
+
+                let temperature = findFirstMetric("temp_hi", true);  // ✅ Convierte a Celsius
+                let windSpeed = findFirstMetric("wind_speed_hi");
+                let windDirection = findFirstMetric("wind_speed_hi_dir");
+                let humidity = findFirstMetric("hum_hi");
+                let solarRadiation = findFirstMetric("solar_rad_avg");
+
+                console.log("🌡️ Temperatura (°C):", temperature);
+                console.log("🌬️ Velocidad del viento:", windSpeed);
+                console.log("🧭 Dirección del viento:", windDirection);
+                console.log("💦 Humedad:", humidity);
+                console.log("☀️ Radiación solar:", solarRadiation);
+            })
+            .catch(error => {
+                console.error("❌ Error al obtener los datos históricos:", error);
+            });
+
+
+
+    </script>
+
 
     <!-- 5. Inicialización de Scrollbar (solo para Windows) -->
     <script>
@@ -2104,6 +2196,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
     </script>
+
+
 
 
 
