@@ -1055,9 +1055,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
-
+    <!-- 1. Funciones para el mapa y edición de sitios -->
     <script th:inline="javascript">
-
         function chargeMapInstalations() {
             var mapMarkersData = /*[[${microNetworkList}]]*/ [];
             var mapMicroNetwork = /*[[${selectedMicroNetwork}]]*/ {};
@@ -1104,13 +1103,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             alert(`Editar sitio con ID: ${siteId}`);
             // Aquí puedes abrir un modal o redirigir a otra vista para configuración
         }
-
     </script>
 
-
+    <!-- 2. Funciones y lógica para el diagrama (Cytoscape.js + Highcharts) -->
     <script th:inline="javascript">
         function chargeMainVRMDiagram(ACLoadData, ACLoadInfoData, MPPTData, MPPTInfoData, BatteryVoltageData, BatteryCurrentData) {
-
             let stateCondition = null;
             let isAnimatingEdges = false;
             let animationFrameId = null;
@@ -1293,7 +1290,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             cy.layout({ name: 'preset' }).run();
                         } else {
                             // Opcional: actualizar datos de nodos/edges si han cambiado
-                            // En este ejemplo no se reconfigura toda la estructura, solo se actualiza el chart de cada nodo.
                         }
 
                         // Se actualiza o crea el contenedor de cada gráfico
@@ -1372,7 +1368,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                 // Si el contenedor ya existe, obtenemos sus hijos para actualizar
                                 chartDiv = document.getElementById(`chart-${node.id()}`);
                                 extraDiv = document.getElementById(`extra-${node.id()}`);
-                                // Se limpia el contenido de la tabla para volver a llenarlo
                                 extraDiv.innerHTML = '';
                             }
 
@@ -1558,7 +1553,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                 extraDiv.innerHTML = tableHTML;
                             }
 
-                            // Se crea o actualiza la gráfica usando Highcharts; en este ejemplo se destruye y recrea para reflejar la nueva data.
+                            // Se crea o actualiza la gráfica usando Highcharts; se destruye y recrea para reflejar la nueva data.
                             if (chartInstances[node.id()]) {
                                 chartInstances[node.id()].destroy();
                             }
@@ -1741,9 +1736,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         }
     </script>
 
-
-
-    <!-- Script para la los selectores de rango -->
+    <!-- 3. Selectores de rango (Flatpickr y asignación de rango personalizado) -->
     <script th:inline="javascript">
         // Variables globales para almacenar el rango seleccionado (en epoch segundos)
         var customStartEpoch = null;
@@ -1804,9 +1797,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         });
     </script>
 
-    <!-- Script para la gráfica (Highcharts) -->
+    <!-- 4. Gráfica principal (Highcharts) y funciones de consulta de datos -->
     <script th:inline="javascript">
-
         let chart;
         Highcharts.setOptions({
             time: {
@@ -1836,7 +1828,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 const offset = +5; // Ajuste horario (según se requiera)
                 start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
                 end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
-
             }
             console.log("Start epoch:", start);
             console.log("End epoch:", end);
@@ -1866,7 +1857,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         console.log('total_solar_yield:', data.totals.total_solar_yield);
                         console.log('total_consumption:', data.totals.total_consumption);
                     }
-
                 })
                 .catch(error => console.error('Error al actualizar la gráfica:', error));
         }
@@ -1986,7 +1976,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             });
         }
 
-
         function fetchDevicesAndAttributesVRM() {
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
             let start, end;
@@ -2000,25 +1989,20 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 const offset = +5; // Ajuste horario (según se requiera)
                 start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset, 0, 0) / 1000);
                 end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
-
             }
 
             fetch(`/api/devices-and-attributes?siteId=${VRMSite}`)
                 .then(response => response.json())
                 .then(data => {
-
                     const { devices, filteredAttributes } = data;
-
                     const attributesPerInstance = [];
                     const seenAttributes = new Set();
 
                     devices.forEach(device => {
                         const { instance } = device;
-
                         if (instance !== null && instance !== undefined) {
                             filteredAttributes.forEach(attr => {
                                 const key = `${attr.idDataAttribute}-${attr.code}-${instance}`;
-
                                 if (!seenAttributes.has(key)) {
                                     seenAttributes.add(key);
                                     attributesPerInstance.push({
@@ -2034,32 +2018,24 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     });
 
                     console.log("🗂 Atributos duplicados por instancia de cada dispositivo:", attributesPerInstance);
-
                     initWidgetsSegregation(attributesPerInstance, VRMSite, start, end)
-
                 })
                 .catch(error => console.error('Error al actualizar la gráfica:', error));
         }
 
-
         function initWidgetsSegregation(attributesPerInstance, VRMSite, start, end) {
             const InverterStateCode = new Set(["VSOC"]);
-
             const ACLoadCodes = new Set(["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9"]);
             const ACLoadFrequency = new Set(["OF"]);
-
             const MPPTCodes = new Set(["PVP"]);
             const MPPTInfoCodes = new Set(["PVV"]);
-
             const BatteryVoltageCodes = new Set(["bv"]);
             const BatteryCurrentCodes = new Set(["bc"]);
 
             let ACLoadData = [];
             let ACLoadInfoData = [];
-
             let MPPTData = [];
             let MPPTInfoData = [];
-
             let BatteryVoltageData = [];
             let BatteryCurrentData = [];
 
@@ -2093,9 +2069,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             }).catch(error => {
                 console.error("❌ Error en la carga de widgets:", error);
             });
-
         }
-
 
         function fetchWidgetsGraphVRM(idDataAttribute, code, instance, VRMSite, start, end) {
             return fetch(`/api/graph-widgets?siteId=${VRMSite}&attributeIds=${idDataAttribute}&instance=${instance}&start=${start}&end=${end}`)
@@ -2111,22 +2085,16 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 });
         }
 
-
-
         /* ACTIVA GRÁFICAS */
-
-
-
         createMainGraph();
         fetchMainGraphVRM();
         setInterval(fetchMainGraphVRM, 60000);
 
         fetchDevicesAndAttributesVRM();
         chargeMapInstalations();
-
     </script>
 
-
+    <!-- 5. Inicialización de Scrollbar (solo para Windows) -->
     <script>
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -2136,6 +2104,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
     </script>
+
 
 
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
