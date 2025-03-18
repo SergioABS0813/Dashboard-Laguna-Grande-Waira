@@ -449,6 +449,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
     <div class="container-fluid py-2">
+
+        <div class="col-xl-8 col-md-7 mb-2">
+            <h3 class="mb-0 ms-3 h4 font-weight-bolder">Red Eléctrica</h3>
+            <p class="mb-0 ms-3">Datos de la instalación Victron</p>
+        </div>
+
         <div class="row">
 
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -1103,14 +1109,13 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
     <script th:inline="javascript">
-
-
-
-        function chargeMainVRMDiagram(ACLoadData, ACLoadInfoData, MPPTData, MPPTInfoData, BatteryVoltageData, BatteryCurrentData){
+        function chargeMainVRMDiagram(ACLoadData, ACLoadInfoData, MPPTData, MPPTInfoData, BatteryVoltageData, BatteryCurrentData) {
 
             let stateCondition = null;
             let isAnimatingEdges = false;
             let animationFrameId = null;
+            // Objeto para almacenar las instancias de los gráficos
+            var chartInstances = {};
 
             var VRMSite = /*[[${selectedMicroNetwork.getSiteVRM()}]]*/ [];
             console.log("🔍 Site ID usado en Cytoscape.js:", VRMSite);
@@ -1120,12 +1125,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             const chartContainer = document.getElementById('orgChart');
 
             var cy = cytoscape({
-
                 container: chartContainer,
                 userZoomingEnabled: false,
                 userPanningEnabled: false,
                 boxSelectionEnabled: false,
-
                 autoungrabify: true,
                 style: [
                     {
@@ -1148,19 +1151,17 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             'shadow-offset-x': 0,
                             'shadow-offset-y': 4,
                             'border-radius': '1px',
-
-                            'user-select': 'none',   // Deshabilita selección
-                            'pointer-events': 'none', // Evita interacción del mouse
-                            'background-opacity': 1,  // Evita el sombreado
-                            'overlay-opacity': 0,      // 🔥 Evita la capa de selección cuando se mantiene presionado
+                            'user-select': 'none',
+                            'pointer-events': 'none',
+                            'background-opacity': 1,
+                            'overlay-opacity': 0,
                         }
                     },
-
                     {
                         selector: '.main-node',
                         style: {
                             'background-color': 'transparent',
-                            'background-image': 'url(/svg/main_node.svg)', // ruta al SVG que creaste
+                            'background-image': 'url(/svg/main_node.svg)',
                             'background-fit': 'contain',
                             'background-width': '100%',
                             'background-height': '100%',
@@ -1168,7 +1169,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             'width': 150,
                             'height': 170,
                             'shape': 'round-rectangle',
-                            'label': 'data(label)', // ← dinámico
+                            'label': 'data(label)',
                             'color': '#fff',
                             'text-valign': 'center',
                             'text-margin-y': '50px',
@@ -1178,12 +1179,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             'border-radius': '1px'
                         }
                     },
-
                     {
-                        selector: '.edge-bg', // edge de fondo (sombra)
+                        selector: '.edge-bg',
                         style: {
                             'width': 3,
-                            'line-color': '#e6e6e6', // color más oscuro o negro como borde
+                            'line-color': '#e6e6e6',
                             'target-arrow-shape': 'none',
                             'curve-style': 'taxi',
                             'taxi-direction': 'horizontal',
@@ -1191,7 +1191,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         }
                     },
                     {
-                        selector: '.edge-fg', // edge superior animado
+                        selector: '.edge-fg',
                         style: {
                             'width': 2,
                             'line-color': '#2A82DA',
@@ -1257,7 +1257,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             { id: "ac-loads", label: "AC Loads", x: 320, y: 0, hasChart: true, chartData: ACLoadData }
                         ];
 
-
                         specialNodes.forEach(node => {
                             nodes.push({
                                 data: { id: node.id, label: node.label, hasChart: node.hasChart, chartData: node.chartData },
@@ -1265,6 +1264,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             });
                             nodeIds.add(node.id);
 
+                            // Se agregan todas las conexiones (edges) entre nodos
                             edges.push({ data: { id: 'root-mppt-bg', source: rootId, target: "mppt-solar" }, classes: 'edge-bg' });
                             edges.push({ data: { id: 'root-mppt-fg', source: rootId, target: "mppt-solar" }, classes: 'edge-fg animado' });
                             edges.push({ data: { id: 'mppt-root-bg', source: "mppt-solar", target: rootId }, classes: 'edge-bg' });
@@ -1286,93 +1286,125 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             edges.push({ data: { id: 'battery-mppt-fg', source: "battery-node", target: "mppt-solar" }, classes: 'edge-fg animado' });
                         });
 
-                        cy.add([...nodes, ...edges]);
-                        cy.layout({ name: 'preset' }).run();
+                        // Si es la primera carga se agregan los nodos y edges,
+                        // de lo contrario se actualiza el contenido de los nodos (sin volver a agregarlos)
+                        if (cy.elements().length === 0) {
+                            cy.add([...nodes, ...edges]);
+                            cy.layout({ name: 'preset' }).run();
+                        } else {
+                            // Opcional: actualizar datos de nodos/edges si han cambiado
+                            // En este ejemplo no se reconfigura toda la estructura, solo se actualiza el chart de cada nodo.
+                        }
 
-                        // ⚠️ Verifica que el contenedor de los gráficos existe antes de agregar divs dinámicos
+                        // Se actualiza o crea el contenedor de cada gráfico
                         const chartParent = document.getElementById('chart-container');
                         if (!chartParent) {
                             console.error("❌ ERROR: 'chart-container' no encontrado en el DOM.");
                             return;
                         }
 
+                        // Variables para procesamiento de series e información adicional
+                        let sumSeriesACLoad = {};
+                        let ACLoadPowers = [];
+                        let ACLoadFreq = [];
+                        let sumSeriesMPPT = {};
+                        let MPPTVoltages = [];
+                        let MPPTPowers = [];
+                        let MPPTCurrents = [];
+                        let batteryVoltage, batteryCurrent, batteryPower;
+                        let unitFormat = null;
+
+                        // Procesamos info de AC Loads y MPPT
+                        if (data.devices && data.devices.length > 0) {
+                            ACLoadInfoData.forEach(entry => {
+                                if (!entry.data) return;
+                                Object.keys(entry.data).forEach(attributeId => {
+                                    ACLoadFreq[entry.instance] = entry.data[attributeId][entry.data[attributeId].length - 1][1];
+                                });
+                            });
+                            MPPTInfoData.forEach(entry => {
+                                if (!entry.data) return;
+                                Object.keys(entry.data).forEach(attributeId => {
+                                    MPPTVoltages[entry.instance] = entry.data[attributeId][entry.data[attributeId].length - 1][1];
+                                });
+                            });
+                        }
+
+                        // Recorremos cada nodo con gráfico
                         cy.nodes('[hasChart]').forEach(node => {
-                            const chartData = node.data('chartData');
+                            // Se determina si ya existe el contenedor; si existe se actualiza, de lo contrario se crea
+                            let containerDiv = document.getElementById(`container-${node.id()}`);
+                            let chartDiv, extraDiv;
+                            if (!containerDiv) {
+                                containerDiv = document.createElement('div');
+                                containerDiv.style.position = 'absolute';
+                                containerDiv.id = `container-${node.id()}`;
+                                containerDiv.style.display = 'flex';
+                                containerDiv.style.flexDirection = 'column';
+                                containerDiv.style.alignItems = 'center';
+                                containerDiv.style.maxWidth = '280px';
+                                containerDiv.style.marginBottom = '10px';
+                                containerDiv.style.borderRadius = '4px';
+                                containerDiv.style.borderStyle = 'solid';
+                                containerDiv.style.borderWidth = '0.1em';
+                                containerDiv.style.borderColor = 'rgb(191,191,191)';
 
-                            if ((!chartData || chartData.length === 0) && node.id() !== "battery-node") {
-                                console.warn(`⚠️ No hay datos para el nodo ${node.id()}`);
-                                return;
+                                chartDiv = document.createElement('div');
+                                chartDiv.id = `chart-${node.id()}`;
+                                chartDiv.style.padding = '1px';
+                                chartDiv.style.maxWidth = '280px';
+
+                                extraDiv = document.createElement('div');
+                                extraDiv.id = `extra-${node.id()}`;
+                                extraDiv.style.marginRight = '10px';
+                                extraDiv.style.width = '280px';
+                                extraDiv.style.maxHeight = '80px';
+                                extraDiv.style.overflowX = 'none';
+                                extraDiv.style.overflowY = 'auto';
+                                extraDiv.style.fontSize = '14px';
+                                extraDiv.style.color = '#333';
+                                extraDiv.style.textAlign = 'start';
+
+                                containerDiv.appendChild(chartDiv);
+                                containerDiv.appendChild(extraDiv);
+                                chartParent.appendChild(containerDiv);
+                            } else {
+                                // Si el contenedor ya existe, obtenemos sus hijos para actualizar
+                                chartDiv = document.getElementById(`chart-${node.id()}`);
+                                extraDiv = document.getElementById(`extra-${node.id()}`);
+                                // Se limpia el contenido de la tabla para volver a llenarlo
+                                extraDiv.innerHTML = '';
                             }
 
+                            // Variables locales para series
                             let series = [];
-
-                            let sumSeriesACLoad = {};
-                            let ACLoadPowers = [];
-                            let ACLoadFreq = [];
-
-                            let sumSeriesMPPT = {};
-                            let MPPTVoltages = [];
-                            let MPPTPowers = [];
-                            let MPPTCurrents = [];
-
-                            let batteryVoltage;
-                            let batteryCurrent;
-                            let batteryPower;
-
-                            let unitFormat = null;
-
-
-                            if (node.id() === "ac-loads") {
-                                ACLoadInfoData.forEach(entry => {
-                                    if (!entry.data) return;
-
-                                    Object.keys(entry.data).forEach(attributeId => {
-                                        ACLoadFreq[entry.instance] = entry.data[attributeId][entry.data[attributeId].length - 1][1];
-                                    });
-                                });
-                            }
-
-                            if (node.id() === "mppt-solar") {
-                                MPPTInfoData.forEach(entry => {
-                                    if (!entry.data) return;
-
-                                    Object.keys(entry.data).forEach(attributeId => {
-                                        MPPTVoltages[entry.instance] = entry.data[attributeId][entry.data[attributeId].length - 1][1];
-                                    });
-                                });
-                            }
 
                             if (node.id() === "battery-node") {
                                 BatteryVoltageData.forEach(entry => {
                                     if (!entry.data) return;
-
                                     Object.keys(entry.data).forEach(attributeId => {
                                         batteryVoltage = entry.data[attributeId][entry.data[attributeId].length - 1][1];
                                     });
                                 });
-
                                 BatteryCurrentData.forEach(entry => {
                                     if (!entry.data) return;
-
                                     Object.keys(entry.data).forEach(attributeId => {
                                         batteryCurrent = entry.data[attributeId][entry.data[attributeId].length - 1][1];
                                     });
                                 });
-
-                                batteryPower = batteryVoltage*batteryCurrent
+                                batteryPower = batteryVoltage * batteryCurrent;
                             }
 
-                            chartData.forEach(entry => {
+                            // Procesamos datos de cada entrada en chartData
+                            node.data('chartData').forEach(entry => {
                                 if (!entry.data) return;
-
                                 Object.entries(entry.data).forEach(([attributeId, dataValues]) => {
                                     const meta = entry.meta?.[attributeId] || {};
                                     let instance = entry.instance || 0;
                                     unitFormat = meta.formatWithUnit ? meta.formatWithUnit.split(" ").slice(1).join(" ") : '';
 
                                     let dataPoints = dataValues.map(([timestamp, value]) => {
-                                        let timeMs = timestamp * 1000; // 🔥 Convertimos segundos a milisegundos para Highcharts
-
+                                        let timeMs = timestamp * 1000;
                                         if (node.id() === "ac-loads") {
                                             sumSeriesACLoad[timeMs] = (sumSeriesACLoad[timeMs] || 0) + value;
                                             ACLoadPowers[instance] = dataValues[dataValues.length - 1][1];
@@ -1380,12 +1412,12 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                             sumSeriesMPPT[timeMs] = (sumSeriesMPPT[timeMs] || 0) + value;
                                             MPPTPowers[instance] = dataValues[dataValues.length - 1][1];
                                         }
-
                                         return [timeMs, value];
                                     });
                                 });
                             });
 
+                            // Determinar estado para battery-node
                             if (node.id() === "battery-node") {
                                 if (batteryPower < 0 || batteryCurrent < 0) {
                                     console.log("ESTADO DESCARGANDO");
@@ -1399,217 +1431,138 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                 }
                             }
 
-
+                            // Agregar series según cada nodo
                             if (node.id() === "battery-node") {
                                 let batteryVoltageSeries = [];
                                 let batteryCurrentSeries = [];
-
                                 BatteryVoltageData.forEach(entry => {
                                     if (!entry.data) return;
-
                                     Object.keys(entry.data).forEach(attributeId => {
                                         let dataPoints = entry.data[attributeId].map(([timestamp, value]) => [
                                             timestamp * 1000,
                                             value
                                         ]);
-
                                         batteryVoltageSeries.push({
                                             name: `Battery Voltage (${attributeId})`,
                                             data: dataPoints,
-                                            tooltip: {
-                                                valueSuffix: ` V`
-                                            }
+                                            tooltip: { valueSuffix: ` V` }
                                         });
                                     });
                                 });
-
                                 BatteryCurrentData.forEach(entry => {
                                     if (!entry.data) return;
-
                                     Object.keys(entry.data).forEach(attributeId => {
                                         let dataPoints = entry.data[attributeId].map(([timestamp, value]) => [
                                             timestamp * 1000,
                                             value
                                         ]);
-
                                         batteryCurrentSeries.push({
                                             name: `Battery Current (${attributeId})`,
                                             data: dataPoints,
-                                            tooltip: {
-                                                valueSuffix: ` A`
-                                            }
+                                            tooltip: { valueSuffix: ` A` }
                                         });
                                     });
                                 });
-
                                 series.push(...batteryVoltageSeries, ...batteryCurrentSeries);
                             }
-
                             if (node.id() === "ac-loads") {
                                 let sumDataPoints = Object.entries(sumSeriesACLoad).map(([timestamp, value]) => [
-                                    parseInt(timestamp),  // Convertir timestamp de string a número
+                                    parseInt(timestamp),
                                     value
                                 ]);
-
                                 series.push({
                                     name: "Total AC Load",
                                     data: sumDataPoints,
-                                    tooltip: {
-                                        valueSuffix: ` ${unitFormat}`
-                                    }
+                                    tooltip: { valueSuffix: ` ${unitFormat}` }
                                 });
                             }
-
                             if (node.id() === "mppt-solar") {
                                 let sumDataPoints = Object.entries(sumSeriesMPPT).map(([timestamp, value]) => [
-                                    parseInt(timestamp),  // Convertir timestamp de string a número
+                                    parseInt(timestamp),
                                     value
                                 ]);
-
                                 Object.keys(MPPTPowers).forEach(charger => {
-
-                                    console.log(MPPTPowers[charger])
-                                    console.log(MPPTVoltages[charger])
-
                                     if (MPPTVoltages[charger]) {
                                         MPPTCurrents[charger] = (MPPTPowers[charger] / MPPTVoltages[charger]).toFixed(2);
                                     } else {
                                         MPPTCurrents[charger] = "N/A";
                                     }
                                 });
-
                                 series.push({
                                     name: "Total MPPT",
                                     data: sumDataPoints,
-                                    tooltip: {
-                                        valueSuffix: ` ${unitFormat}`
-                                    }
+                                    tooltip: { valueSuffix: ` ${unitFormat}` }
                                 });
                             }
 
+                            // Se determina el valor a mostrar en el subtítulo
                             let latestValue;
-                            if (node.id() === "battery-node"){
+                            if (node.id() === "battery-node") {
                                 latestValue = batteryPower;
-
                             } else {
                                 latestValue = series.length > 0 ? series[series.length - 1].data[series[series.length - 1].data.length - 1][1] : '-';
                             }
 
-                            const containerDiv = document.createElement('div');
-                            containerDiv.style.position = 'absolute';
-                            containerDiv.id = `container-${node.id()}`;
-                            containerDiv.style.display = 'flex';
-                            containerDiv.style.flexDirection = 'column';
-                            containerDiv.style.alignItems = 'center';
-                            containerDiv.style.maxWidth = '280px';
-                            containerDiv.style.marginBottom = '10px';
-                            containerDiv.style.borderRadius = '4px';
-                            containerDiv.style.borderStyle = 'solid';
-                            containerDiv.style.borderWidth = '0.1em';
-                            containerDiv.style.borderColor = 'rgb(191,191,191)';
-
-                            const chartDiv = document.createElement('div');
-                            chartDiv.id = `chart-${node.id()}`;
-                            chartDiv.style.padding = '1px';
-                            chartDiv.style.maxWidth = '280px';
-
-                            const extraDiv = document.createElement('div');
-                            extraDiv.id = `extra-${node.id()}`;
-                            extraDiv.style.marginRight = '10px';
-                            extraDiv.style.width = '280px';
-                            extraDiv.style.maxHeight = '80px';
-                            extraDiv.style.overflowX = 'none';
-                            extraDiv.style.overflowY = 'auto';
-                            extraDiv.style.fontSize = '14px';
-                            extraDiv.style.color = '#333';
-                            extraDiv.style.textAlign = 'start';
-
+                            // Actualizar el extraDiv (tabla de info) según cada nodo
                             if (node.id() === "ac-loads") {
-
                                 extraDiv.style.marginTop = '10px';
                                 extraDiv.style.marginBottom = '10px';
                                 extraDiv.style.paddingLeft = '15px';
                                 extraDiv.style.paddingRight = '10px';
-
-                                let tableHTML = `
-                                <table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
-
+                                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
                                 Object.keys(ACLoadPowers).forEach(load => {
-
                                     let lastFreqValue = ACLoadFreq.filter(v => v !== undefined).pop();
-                                    console.log(lastFreqValue);
-
                                     let freq = lastFreqValue ? `${lastFreqValue.toFixed(2)} Hz` : "N/A";
                                     let power = ACLoadPowers[load] ? `${ACLoadPowers[load]} W` : "0 W";
-
                                     tableHTML += `
                                     <tr>
                                         <td style="padding: 5px; border-bottom: 1px solid #ddd;">L${Number(load) + 1}</td>
                                         <td style="padding: 5px; border-bottom: 1px solid #ddd;">${power}</td>
                                         <td style="padding: 5px; border-bottom: 1px solid #ddd;">${freq}</td>
-                                    </tr>`;});
-
-                                tableHTML += ` </tbody></table>`;
-
+                                    </tr>`;
+                                });
+                                tableHTML += `</tbody></table>`;
                                 extraDiv.innerHTML = tableHTML;
                             }
-
-
-
                             if (node.id() === "mppt-solar") {
-
                                 extraDiv.style.marginTop = '10px';
                                 extraDiv.style.marginBottom = '10px';
                                 extraDiv.style.paddingLeft = '15px';
                                 extraDiv.style.paddingRight = '10px';
-
-                                let tableHTML = `
-                                <table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
-
+                                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
                                 Object.keys(MPPTPowers).forEach(charger => {
                                     let voltage = MPPTVoltages[charger] ? `${MPPTVoltages[charger].toFixed(2)} V` : "0 V";
                                     let current = MPPTCurrents[charger] ? `${MPPTCurrents[charger]} A` : "0 A";
                                     let power = MPPTPowers[charger] ? `${MPPTPowers[charger]} W` : "0 W";
-
                                     tableHTML += `
                                     <tr>
                                         <td style="padding: 5px; border-bottom: 1px solid #ddd;">MPPT-${charger}</td>
                                         <td style="padding: 5px; border-bottom: 1px solid #ddd;">${voltage}</td>
                                         <td style="padding: 5px; border-bottom: 1px solid #ddd;">${current}</td>
                                         <td style="padding: 5px; border-bottom: 1px solid #ddd;">${power}</td>
-                                    </tr>`;});
-
-                                tableHTML += ` </tbody></table>`;
-
+                                    </tr>`;
+                                });
+                                tableHTML += `</tbody></table>`;
                                 extraDiv.innerHTML = tableHTML;
                             }
-
                             if (node.id() === "battery-node") {
-
                                 extraDiv.style.marginTop = '10px';
                                 extraDiv.style.marginBottom = '10px';
                                 extraDiv.style.paddingLeft = '15px';
                                 extraDiv.style.paddingRight = '10px';
-
-                                let tableHTML = `
-                                <table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
-
+                                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 11px;"><thead></thead><tbody>`;
                                 let voltage = batteryVoltage ? `${batteryVoltage.toFixed(2)} V` : "0 V";
                                 let current = batteryCurrent ? `${batteryCurrent.toFixed(2)} A` : "0 A";
-
-                                tableHTML += `<tr><td style="padding: 5px; border-bottom: 1px solid #ddd;">Voltage: ${voltage}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">Current: ${current}</td></tr>`
-
-                                tableHTML += ` </tbody></table>`;
-
+                                tableHTML += `<tr><td style="padding: 5px; border-bottom: 1px solid #ddd;">Voltage: ${voltage}</td><td style="padding: 5px; border-bottom: 1px solid #ddd;">Current: ${current}</td></tr>`;
+                                tableHTML += `</tbody></table>`;
                                 extraDiv.innerHTML = tableHTML;
                             }
 
-                            containerDiv.appendChild(chartDiv);
-                            containerDiv.appendChild(extraDiv);
-
-                            chartParent.appendChild(containerDiv);
-
-                            Highcharts.chart(chartDiv.id, {
+                            // Se crea o actualiza la gráfica usando Highcharts; en este ejemplo se destruye y recrea para reflejar la nueva data.
+                            if (chartInstances[node.id()]) {
+                                chartInstances[node.id()].destroy();
+                            }
+                            chartInstances[node.id()] = Highcharts.chart(chartDiv.id, {
                                 chart: {
                                     type: 'area',
                                     height: 120,
@@ -1630,10 +1583,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                         fontWeight: '300s',
                                     }
                                 },
-
                                 subtitle: {
                                     text: `<div>${formatNumber(latestValue)} W</div>`,
-                                    // useHTML: false,
                                     align: 'left',
                                     style: {
                                         fontSize: '2.2em',
@@ -1643,49 +1594,34 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                         zIndex: 10
                                     }
                                 },
-
-
                                 yAxis: [{
                                     visible: false,
                                     gridLineWidth: 0,
                                     startOnTick: false,
                                     endOnTick: false
                                 }],
-
                                 xAxis: [{
                                     visible: false,
                                     type: 'datetime'
                                 }],
-
                                 tooltip: {
-                                useHTML:true,
-                                    style:{
-                                    zIndex:15
-                                }
+                                    useHTML: true,
+                                    style: { zIndex: 15 }
                                 },
-
                                 legend: { enabled: false },
-
                                 plotOptions: {
                                     area: {
                                         marker: {
                                             enabled: false,
                                             symbol: 'circle',
                                             radius: 2,
-                                            states: {
-                                                hover: {
-                                                    enabled: true
-                                                }
-                                            }
+                                            states: { hover: { enabled: true } }
                                         }
                                     }
                                 },
-
-
                                 series: series
                             });
                         });
-
 
                         if (stateCondition !== null) {
                             loader.style.display = 'none';
@@ -1693,9 +1629,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             chartContainer.style.display = 'block';
                         }
 
-
                         cy.resize();
-                        cy.fit(undefined, 20);
+                        cy.fit(undefined, 10);
 
                         window.addEventListener('resize', () => {
                             cy.resize();
@@ -1704,7 +1639,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                         });
 
                         restartAnimation();
-
                         console.log("✅ Organigrama generado correctamente con Cytoscape.js.");
                     })
                     .catch(error => {
@@ -1717,15 +1651,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             }
 
             let offset = 0;
-
-
             function animateEdges() {
-                if (isAnimatingEdges) return; // ✅ Si ya está en ejecución, salir
+                if (isAnimatingEdges) return;
                 isAnimatingEdges = true;
-
                 function animate() {
                     resetState();
-
                     if (stateCondition === "discharging") {
                         setDischarginState();
                     } else if (stateCondition === "charging") {
@@ -1733,114 +1663,84 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     } else {
                         failureState();
                     }
-
                     offset -= 1;
                     cy.edges().style('line-dash-offset', offset);
-                    animationFrameId = requestAnimationFrame(animate); // 🔁 Animación continua
+                    animationFrameId = requestAnimationFrame(animate);
                 }
-
                 animate();
             }
-
             function restartAnimation() {
                 if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId); // 🚫 Detener animación actual
-                    isAnimatingEdges = false; // Permitir que se reinicie
+                    cancelAnimationFrame(animationFrameId);
+                    isAnimatingEdges = false;
                 }
-                animateEdges(); // 🔄 Iniciar de nuevo
+                animateEdges();
             }
-
             function setDischarginState() {
-
                 resetState();
-
                 cy.getElementById('mppt-root-bg').show();
-
                 cy.getElementById('battery-root-bg').show();
                 cy.getElementById('battery-root-fg').show();
-
                 cy.getElementById('root-loads-bg').show();
                 cy.getElementById('root-loads-fg').show();
             }
-
             function setCharginState() {
-
                 resetState();
-
                 cy.getElementById('mppt-root-fg').show();
                 cy.getElementById('mppt-root-fg').show();
-
                 cy.getElementById('mppt-battery-bg').show();
                 cy.getElementById('mppt-battery-fg').show();
-
                 cy.getElementById('root-loads-bg').show();
                 cy.getElementById('root-loads-fg').show();
             }
-
             function failureState() {
                 resetState();
-
                 cy.getElementById('root-mppt-bg').show();
                 cy.getElementById('mppt-battery-bg').show();
                 cy.getElementById('root-loads-bg').show();
-
             }
-
             function resetState() {
                 cy.getElementById('root-mppt-bg').hide();
                 cy.getElementById('root-mppt-fg').hide();
                 cy.getElementById('mppt-root-fg').hide();
                 cy.getElementById('mppt-root-fg').hide();
-
                 cy.getElementById('root-battery-bg').hide();
                 cy.getElementById('root-battery-fg').hide();
                 cy.getElementById('battery-root-bg').hide();
                 cy.getElementById('battery-root-fg').hide();
-
                 cy.getElementById('loads-root-bg').hide();
                 cy.getElementById('loads-root-fg').hide();
                 cy.getElementById('root-loads-bg').hide();
                 cy.getElementById('root-loads-fg').hide();
-
                 cy.getElementById('battery-mppt-bg').hide();
                 cy.getElementById('battery-mppt-fg').hide();
                 cy.getElementById('mppt-battery-bg').hide();
                 cy.getElementById('mppt-battery-fg').hide();
             }
-
-
             function updateAllChartPositions() {
                 cy.nodes('[hasChart]').forEach(node => {
                     const containerDiv = document.getElementById(`container-${node.id()}`);
-                    if (!containerDiv) return; // Evitar errores si no existe
-
+                    if (!containerDiv) return;
                     const position = node.renderedPosition();
                     const zoom = cy.zoom();
-
                     containerDiv.style.left = `${position.x - containerDiv.offsetWidth / 2}px`;
                     containerDiv.style.top = `${position.y - containerDiv.offsetHeight / 2}px`;
                     containerDiv.style.transform = `scale(${zoom})`;
                     containerDiv.style.transformOrigin = 'center';
-
                 });
             }
-
             function formatNumber(value) {
                 return Number.isInteger(value)
                     ? value
                     : Highcharts.numberFormat(value, 2, '.', '');
             }
 
-
-
             loadDevices();
-            setInterval(loadDevices, 10000);
-
-            // Llama en interacciones para actualizar automáticamente
+            setInterval(loadDevices, 60000);
             cy.on('render pan zoom', updateAllChartPositions);
         }
-
     </script>
+
 
 
     <!-- Script para la los selectores de rango -->
