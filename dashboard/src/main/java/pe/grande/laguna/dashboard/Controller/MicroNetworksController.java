@@ -184,7 +184,7 @@ public class MicroNetworksController {
         // Agregamos el status: ACTIVO por default
         microNetwork.setStatus("ACTIVO");
 
-        // Guardamos en DB :D
+        // Guardamos en DB
         microNetworkRepository.save(microNetwork);
 
         // Flash Attribute

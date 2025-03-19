@@ -9,11 +9,19 @@ import pe.grande.laguna.dashboard.Dto.ResponsesJSON.VRMGraphResponse;
 import pe.grande.laguna.dashboard.Dto.ResponsesJSON.VRMInstallationRecord;
 import pe.grande.laguna.dashboard.Dto.ResponsesJSON.VRMInstallationsResponse;
 import pe.grande.laguna.dashboard.Dto.VRMMeasurement;
+import pe.grande.laguna.dashboard.Entity.MicroNetwork;
+import pe.grande.laguna.dashboard.Entity.Notification;
 import pe.grande.laguna.dashboard.Entity.Settings;
+import pe.grande.laguna.dashboard.Entity.User;
+import pe.grande.laguna.dashboard.Repository.MicroNetworkRepository;
+import pe.grande.laguna.dashboard.Repository.NotificationRepository;
 import pe.grande.laguna.dashboard.Repository.SettingsRepository;
+import pe.grande.laguna.dashboard.Repository.UsersRepository;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,10 +34,19 @@ public class VRMService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final EmailService emailService;
     private final SettingsRepository settingsRepository;
+    private final MicroNetworkRepository microNetworkRepository;
+    private final UsersRepository usersRepository;
+    private final NotificationRepository notificationRepository;
 
-    public VRMService(EmailService emailService, SettingsRepository settingsRepository) {
+    public VRMService(EmailService emailService, SettingsRepository settingsRepository,
+                      MicroNetworkRepository microNetworkRepository,
+                      UsersRepository usersRepository,
+                      NotificationRepository notificationRepository) {
         this.emailService = emailService;
         this.settingsRepository = settingsRepository;
+        this.microNetworkRepository = microNetworkRepository;
+        this.usersRepository = usersRepository;
+        this.notificationRepository = notificationRepository;
     }
 
 
@@ -226,9 +243,6 @@ public class VRMService {
         return new VRMMeasurement(siteId, lastVoltage);
     }
 
-
-
-
     @Scheduled(fixedRate = 60000) // Cada 1 minutos
     public void checkVoltagesPeriodically() {
         try {
@@ -256,21 +270,40 @@ public class VRMService {
 
                 // 5) Enviar alerta con la condición de (< 46.0)
                 Double voltage = measurement.getVoltage();
-                if (voltage != null && voltage < 46.0) {
+                if (voltage != null && voltage > 46.0) {
+                    String nombreMicrored = obtenerNombreSite(idUser, siteId, tokenVRM);
+                    //Consulta a DB para extraer la micronetwork mediante siteVRM
+                    Optional optMicronetwork = microNetworkRepository.findBySiteVRM(siteId);
+                    MicroNetwork microNetworkchosen = (MicroNetwork) optMicronetwork.get();
+                    //Extraer de DB los correosReceptoresArray que tienen el id de la micronetworkchosen
+                    System.out.println(microNetworkchosen.getId());
+                    List<User> listaUsuariosChosen = usersRepository.findByMicronetworkList(microNetworkchosen.getId());
+                    System.out.println(listaUsuariosChosen.get(0).getEmail());
+                    //Hacer un for:each en el arreglo
+                    for (User userChosen: listaUsuariosChosen){
+                        String correoReceptor = userChosen.getEmail();
+                        // Enviamos correo
+                        emailService.sendAlertEmailBateriaBaja(
+                                correoReceptor,
+                                nombreMicrored,
+                                voltage
+                        );
 
-                    String nombreMicrored = obtenerNombreSite(idUser, siteId, tokenVRM); //Sería hacer una consulta a la API VRM
+                    }
+                    //Obtener la fecha/hora actual en esa zona
+                    LocalDateTime localNow = LocalDateTime.now(peruZone);
+                    // Convertir LocalDateTime -> Instant -> Date
+                    Instant instant = localNow.atZone(peruZone).toInstant();
+                    Date peruDate = Date.from(instant);
+                    // Creamos la notificación y la guardamos en DB
+                    Notification notification = new Notification();
+                    notification.setDescription("Se ha detectado un nivel de voltaje bajo: " + voltage + " V");
+                    notification.setTimeCreation(peruDate);
+                    notification.setType("BATERÍA BAJA");
+                    notification.setIdMicronetwork(microNetworkchosen.getId());
+                    notificationRepository.save(notification);
 
-                    String correoReceptor = "a20213170@pucp.edu.pe"; // FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA MANDAR CORREO A TODOS LOS USUARIOS QUE TENGAN ASIGNADO EL SITE
-
-                    // Enviamos correo
-                    emailService.sendAlertEmailBateriaBaja(
-                            correoReceptor,
-                            nombreMicrored,
-                            voltage
-                    );
                 }
-
-                // FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA CREAR LAS NOTIFICACIONES Y COLOCARLAS A BD
             }
 
         } catch (Exception e) {
