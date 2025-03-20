@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,7 +80,7 @@ public class AdminController {
 
     @PostMapping("/user_managment/create")
     public String createUser(
-            @Valid @ModelAttribute("user") User user,
+            @Validated(User.OnCreate.class) @ModelAttribute("user") User user,
             BindingResult bindingResult,
             @RequestParam("confirmPassword") String confirmPassword,
             RedirectAttributes redirectAttributes, Model model) {
@@ -154,8 +155,9 @@ public class AdminController {
 
     @PostMapping("/user_managment/edit")
     public String editUser(
-            @Valid @ModelAttribute("user") User userEdited,
+            @Validated(User.OnUpdate.class) @ModelAttribute("user") User userEdited,
             BindingResult bindingResult,
+            @RequestParam("confirmPassword") String confirmPassword,
             RedirectAttributes redirectAttributes) {
 
         // Si tuvieras validaciones con @Valid, revisa si hay errores:
@@ -169,11 +171,20 @@ public class AdminController {
         if (userEdited.getPassword().equals("") || userEdited.getPassword() == null || userEdited.getPassword().isBlank()){
             //El usuario no ha cambiado contraseña
             userEdited.setPassword(userOriginal.getPassword());
-
         }else {
             //encriptar la nueva contraseña
-            //Validar contraseñas iguales
             userEdited.setPassword(passwordEncoder.encode(userEdited.getPassword()));
+        }
+
+        if (!userEdited.getPassword().equals(confirmPassword)) {
+            // Rechazamos manualmente y devolvemos al formulario
+            bindingResult.rejectValue(
+                    "password",
+                    "error.user",
+                    "Las contraseñas no coinciden"
+            );
+
+            return "users_managment/edit_user";
         }
 
         // Ajusta campos por defecto, si aplica:

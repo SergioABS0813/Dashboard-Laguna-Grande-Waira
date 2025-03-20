@@ -17,16 +17,22 @@ import java.util.Date;
 @Document(collection = "users")
 public class User implements Serializable {
 
+    //Grupos de interface para Crear y Editar. Las reglas son diferentes.
+
+    public interface OnCreate {}   // Para alta
+    public interface OnUpdate {}   // Para edición
+
+
     @Id
     @NonNull
     private String id;
 
     @Field(value = "email")
-    @NotBlank(message = "El correo es un campo obligatorio")
+    @NotBlank(message = "El correo es un campo obligatorio", groups = { OnCreate.class, OnUpdate.class })
     private String email;
 
     @Field(value = "password")
-    @NotBlank(message = "La contraseña es un campo obligatorio")
+    @NotBlank(message = "La contraseña es un campo obligatorio", groups = { OnCreate.class})
     private String password;
 
     @Field(value = "role")
@@ -36,15 +42,15 @@ public class User implements Serializable {
     private boolean active = true;
 
     @Field(value = "phone")
-    @NotBlank(message = "El número de celular es un campo obligatorio")
+    @NotBlank(message = "El número de celular es un campo obligatorio", groups = { OnCreate.class, OnUpdate.class })
     private String phone;
 
     @Field(value = "name")
-    @NotBlank(message = "El nombre de usuario es un campo obligatorio")
+    @NotBlank(message = "El nombre de usuario es un campo obligatorio", groups = { OnCreate.class, OnUpdate.class })
     private String name;
 
     @Field(value = "lastname")
-    @NotBlank(message = "El apellido de usuario es un campo obligatorio")
+    @NotBlank(message = "El apellido de usuario es un campo obligatorio", groups = { OnCreate.class, OnUpdate.class })
     private String lastname;
 
     @Field(value = "creationTime")
