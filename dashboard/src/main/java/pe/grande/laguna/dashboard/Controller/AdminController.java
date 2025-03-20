@@ -1,6 +1,7 @@
 package pe.grande.laguna.dashboard.Controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,13 +79,30 @@ public class AdminController {
 
     @PostMapping("/user_managment/create")
     public String createUser(
-            @ModelAttribute("user") User user,
+            @Valid @ModelAttribute("user") User user,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            @RequestParam("confirmPassword") String confirmPassword,
+            RedirectAttributes redirectAttributes, Model model) {
 
         // Si tuvieras validaciones con @Valid, revisa si hay errores:
         if (bindingResult.hasErrors()) {
+
+            ArrayList<MicroNetwork> listaInstalaciones = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+            model.addAttribute("listaInstalaciones", listaInstalaciones);
+
             return "users_managment/add_user"; // vuelve al formulario
+        }
+
+        if (!user.getPassword().equals(confirmPassword)) {
+            // Rechazamos manualmente y devolvemos al formulario
+            bindingResult.rejectValue(
+                    "password",
+                    "error.user",
+                    "Las contraseñas no coinciden"
+            );
+            ArrayList<MicroNetwork> listaInstalaciones = (ArrayList<MicroNetwork>) microNetworkRepository.findAll();
+            model.addAttribute("listaInstalaciones", listaInstalaciones);
+            return "users_managment/add_user";
         }
 
         // Ajusta campos por defecto, si aplica:
@@ -132,6 +150,44 @@ public class AdminController {
 
         // 4. Redirigir a la lista de usuarios
         return "users_managment/edit_user";
+    }
+
+    @PostMapping("/user_managment/edit")
+    public String editUser(
+            @Valid @ModelAttribute("user") User userEdited,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        // Si tuvieras validaciones con @Valid, revisa si hay errores:
+        if (bindingResult.hasErrors()) {
+            return "users_managment/edit_user"; // vuelve al formulario
+        }
+
+        User userOriginal = usersRepository.findById(userEdited.getId())
+                .orElseThrow(() -> new RuntimeException("No se encontró el usuario"));
+
+        if (userEdited.getPassword().equals("") || userEdited.getPassword() == null || userEdited.getPassword().isBlank()){
+            //El usuario no ha cambiado contraseña
+            userEdited.setPassword(userOriginal.getPassword());
+
+        }else {
+            //encriptar la nueva contraseña
+            //Validar contraseñas iguales
+            userEdited.setPassword(passwordEncoder.encode(userEdited.getPassword()));
+        }
+
+        // Ajusta campos por defecto, si aplica:
+        userEdited.setRole("USER");
+        userEdited.setActive(true);
+
+        // Guardar en MongoDB
+        usersRepository.save(userEdited);
+
+        // Agregar un mensaje de éxito (opcional)
+        redirectAttributes.addFlashAttribute("successMessageUser", "Usuario editado exitosamente");
+
+        // Redirigir a alguna lista de usuarios, o donde gustes
+        return "redirect:/users_managment";
     }
 
     /*START POST: Guardar Alertas en base de datos para usuarios no ADMIN*/

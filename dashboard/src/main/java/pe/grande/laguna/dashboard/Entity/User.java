@@ -1,5 +1,7 @@
 package pe.grande.laguna.dashboard.Entity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -20,9 +22,11 @@ public class User implements Serializable {
     private String id;
 
     @Field(value = "email")
+    @NotBlank(message = "El correo es un campo obligatorio")
     private String email;
 
     @Field(value = "password")
+    @NotBlank(message = "La contraseña es un campo obligatorio")
     private String password;
 
     @Field(value = "role")
@@ -32,12 +36,15 @@ public class User implements Serializable {
     private boolean active = true;
 
     @Field(value = "phone")
+    @NotBlank(message = "El número de celular es un campo obligatorio")
     private String phone;
 
     @Field(value = "name")
+    @NotBlank(message = "El nombre de usuario es un campo obligatorio")
     private String name;
 
     @Field(value = "lastname")
+    @NotBlank(message = "El apellido de usuario es un campo obligatorio")
     private String lastname;
 
     @Field(value = "creationTime")
@@ -54,8 +61,6 @@ public class User implements Serializable {
 
     @Field(value = "alertsWhatsapp")
     private boolean alertsWhatsapp;
-
-
 
     public User() {}
 

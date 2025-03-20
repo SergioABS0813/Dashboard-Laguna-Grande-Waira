@@ -270,7 +270,7 @@ public class VRMService {
 
                 // 5) Enviar alerta con la condición de (< 46.0)
                 Double voltage = measurement.getVoltage();
-                if (voltage != null && voltage > 46.0) {
+                if (voltage != null && voltage < 46.0) {
                     String nombreMicrored = obtenerNombreSite(idUser, siteId, tokenVRM);
                     //Consulta a DB para extraer la micronetwork mediante siteVRM
                     Optional optMicronetwork = microNetworkRepository.findBySiteVRM(siteId);
