@@ -12,6 +12,7 @@ public class Notification implements Serializable {
     private String description;
     private String type; // "BATERIA BAJA", "MEDIDOR INOPERATIVO", "SOBRECARGA", "CORTE DE SERVICIO"
     private String idMicronetwork;
+    private String nameMicronetwork;
 
     public String getIdMicronetwork() {
         return idMicronetwork;
@@ -27,6 +28,14 @@ public class Notification implements Serializable {
         this.description = description;
         this.type = type;
         this.idMicronetwork = idMicronetwork;
+    }
+
+    public String getNameMicronetwork() {
+        return nameMicronetwork;
+    }
+
+    public void setNameMicronetwork(String nameMicronetwork) {
+        this.nameMicronetwork = nameMicronetwork;
     }
 
     public Notification() {

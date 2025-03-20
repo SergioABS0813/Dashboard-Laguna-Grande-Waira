@@ -301,6 +301,7 @@ public class VRMService {
                     notification.setTimeCreation(peruDate);
                     notification.setType("BATERÍA BAJA");
                     notification.setIdMicronetwork(microNetworkchosen.getId());
+                    notification.setNameMicronetwork(microNetworkchosen.getAlias());
                     notificationRepository.save(notification);
 
                 }
