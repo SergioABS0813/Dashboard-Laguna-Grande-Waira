@@ -283,11 +283,16 @@ public class VRMService {
                     for (User userChosen: listaUsuariosChosen){
                         String correoReceptor = userChosen.getEmail();
                         // Enviamos correo
-                        emailService.sendAlertEmailBateriaBaja(
-                                correoReceptor,
-                                nombreMicrored,
-                                voltage
-                        );
+                        if(userChosen.isAlertsEmail()){
+                            emailService.sendAlertEmailBateriaBaja(
+                                    correoReceptor,
+                                    nombreMicrored,
+                                    voltage
+                            );
+                        }
+                        else {
+                            System.out.println("El usuario " + userChosen.getName() + "no tiene habilitado el envío en correos");
+                        }
 
                     }
                     //Obtener la fecha/hora actual en esa zona
