@@ -29,6 +29,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+
 
 
     <!-- Fonts -->
@@ -62,6 +64,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <!-- AwesomeMarkers Icons -->
     <link th:href="@{/css/leaflet.awesome-markers.css}" rel="stylesheet" />
 
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -88,6 +95,37 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         }
     </style>
 
+
+    <!-- DataTables Custom Styles -->
+    <style>
+        .dataTables_wrapper .dataTables_scrollBody table.dataTable tbody td {
+            white-space: nowrap;      /* No permitir salto de línea */
+            overflow: hidden;         /* Ocultar texto sobrante */
+            text-overflow: ellipsis;  /* Añadir "..." si el texto es muy largo */
+        }
+
+        .dataTables_filter {
+            margin-right: 18px !important;
+        }
+
+        .dataTables_length {
+            margin-left: 18px !important;
+        }
+
+        .dataTables_info {
+            margin-left: 18px !important;
+            font-size: 15px;
+        }
+
+        .paginate_button {
+            font-size: 15px;
+        }
+
+        .leaflet-control-attribution {
+            display: none !important;
+        }
+
+    </style>
 
     <style>
         .highcharts-credits {
@@ -144,7 +182,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand px-4 py-3 m-0" th:href="@{/micronetworks}">
-            <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
+            <img th:src="@{/svg/logo_main.png}"  class="navbar-brand-img" width="26" height="26" alt="main_logo">
             <span class="ms-1 text-sm text-dark">Dashboard</span>
         </a>
     </div>
@@ -206,8 +244,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     </div>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
         <div class="mx-3">
-            <a class="btn btn-outline-dark mt-4 w-100" href="https://www.creative-tim.com/learning-lab/bootstrap/overview/material-dashboard?ref=sidebarfree" type="button">Documentation</a>
-            <a class="btn bg-gradient-dark w-100" href="https://www.creative-tim.com/product/material-dashboard-pro?ref=sidebarfree" type="button">Upgrade to pro</a>
+
         </div>
     </div>
 </aside>
@@ -458,491 +495,189 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
         <div class="row">
 
-            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
                 <div class="card">
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Producción Solar</p>
-                                <h4 class="mb-0">$53k</h4>
-                            </div>
-                            <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                                <i class="material-symbols-rounded opacity-10">weekend</i>
+                                <p class="text-sm mb-0 text-capitalize">Temperatura Interna</p>
                             </div>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
-                    <div class="card-footer p-2 ps-3">
-                        <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span>than last week</p>
-                    </div>
+
+                    <div id="THWIndexGauge"></div>
+
+                    <div style="height: 10px !important;"></div>
+
                 </div>
             </div>
 
 
-            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+
+            <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
                 <div class="card">
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Consumo Eléctrico</p>
-                                <h4 class="mb-0">2300</h4>
-                            </div>
-                            <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                                <i class="material-symbols-rounded opacity-10">person</i>
+                                <p class="text-sm mb-0 text-capitalize">Temperatura Externa</p>
                             </div>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
-                    <div class="card-footer p-2 ps-3">
-                        <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+3% </span>than last month</p>
-                    </div>
+
+                    <div id="THSWIndexGauge"></div>
+
+                    <div style="height: 10px !important;"></div>
+
                 </div>
             </div>
-            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+
+
+            <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
                 <div class="card">
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Ads Views</p>
-                                <h4 class="mb-0">3,462</h4>
-                            </div>
-                            <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                                <i class="material-symbols-rounded opacity-10">leaderboard</i>
+                                <p class="text-sm mb-0 text-capitalize">Humedad</p>
                             </div>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
-                    <div class="card-footer p-2 ps-3">
-                        <p class="mb-0 text-sm"><span class="text-danger font-weight-bolder">-2% </span>than yesterday</p>
-                    </div>
+
+                    <div id="HumidityGauge"></div>
+
+                    <div style="height: 10px !important;"></div>
+
                 </div>
             </div>
-            <div class="col-xl-3 col-sm-6">
+
+            <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
                 <div class="card">
                     <div class="card-header p-2 ps-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <p class="text-sm mb-0 text-capitalize">Sales</p>
-                                <h4 class="mb-0">$103,430</h4>
-                            </div>
-                            <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                                <i class="material-symbols-rounded opacity-10">weekend</i>
+                                <p class="text-sm mb-0 text-capitalize">Radiación Solar</p>
                             </div>
                         </div>
                     </div>
                     <hr class="dark horizontal my-0">
-                    <div class="card-footer p-2 ps-3">
-                        <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+5% </span>than yesterday</p>
-                    </div>
+
+                    <div id="SolarRadiationGauge"></div>
+
+                    <div style="height: 10px !important;"></div>
+
                 </div>
             </div>
+
+            <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
+                <div class="card">
+                    <div class="card-header p-2 ps-3">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="text-sm mb-0 text-capitalize">Velocidad del Viento</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+
+                    <div id="windSpeedGauge"></div>
+
+                    <div style="height: 10px !important;"></div>
+
+                </div>
+            </div>
+
+
+            <div class="col-xl-2 col-sm-4 mb-xl-0 mb-4">
+                <div class="card">
+                    <div class="card-header p-2 ps-3">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="text-sm mb-0 text-capitalize">Dirección del Viento</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+
+                    <div id="windDirectionMap"></div>
+
+                    <div style="height: 10px !important;"></div>
+
+                </div>
+            </div>
+
+
+
         </div>
+
+
+    </div>
+
+
+
+
+    <div class="container-fluid py-3">
+
+        <div class="col-xl-8 col-md-7 mb-3">
+            <h3 class="mb-0 ms-3 h4 font-weight-bolder">Información sobre Abonados</h3>
+            <p class="mb-0 ms-3">Datos de la red de medidores SparkMeter</p>
+        </div>
+
         <div class="row">
-            <div class="col-lg-4 col-md-6 mt-4 mb-4">
+
+            <div class="col-xl-12 col-sm-12 mb-xl-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
-                        <h6 class="mb-0 ">Website Views</h6>
-                        <p class="text-sm ">Last Campaign Performance</p>
-                        <div class="pe-2">
-                            <div class="chart">
-                                <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
-                            </div>
-                        </div>
-                        <hr class="dark horizontal">
-                        <div class="d-flex ">
-                            <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                            <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
-                        </div>
+
+                    <div class="table-responsive p-0">
+                        <table id="sparkmeter-table" class="table align-items-center mb-0">
+                            <thead>
+                            <tr>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">C</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">M</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">G</th>
+
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ABONADO</th>
+
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">MEDIDOR</th>
+
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ÚLTIMA COMUNICACIÓN</th>
+
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">SALDO RESTANTE</th>
+
+
+                            </tr>
+                            </thead>
+                            <tbody>
+
+
+                            </tbody>
+                        </table>
                     </div>
+
+
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 mt-4 mb-4">
-                <div class="card ">
-                    <div class="card-body">
-                        <h6 class="mb-0 "> Daily Sales </h6>
-                        <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales. </p>
-                        <div class="pe-2">
-                            <div class="chart">
-                                <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
-                            </div>
-                        </div>
-                        <hr class="dark horizontal">
-                        <div class="d-flex ">
-                            <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                            <p class="mb-0 text-sm"> updated 4 min ago </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 mt-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="mb-0 ">Completed Tasks</h6>
-                        <p class="text-sm ">Last Campaign Performance</p>
-                        <div class="pe-2">
-                            <div class="chart">
-                                <canvas id="chart-line-tasks" class="chart-canvas" height="170"></canvas>
-                            </div>
-                        </div>
-                        <hr class="dark horizontal">
-                        <div class="d-flex ">
-                            <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                            <p class="mb-0 text-sm">just updated</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+
         </div>
-        <div class="row mb-4">
-            <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
-                <div class="card">
-                    <div class="card-header pb-0">
-                        <div class="row">
-                            <div class="col-lg-6 col-7">
-                                <h6>Projects</h6>
-                                <p class="text-sm mb-0">
-                                    <i class="fa fa-check text-info" aria-hidden="true"></i>
-                                    <span class="font-weight-bold ms-1">30 done</span> this month
-                                </p>
-                            </div>
-                            <div class="col-lg-6 col-5 my-auto text-end">
-                                <div class="dropdown float-lg-end pe-4">
-                                    <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-v text-secondary"></i>
-                                    </a>
-                                    <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
-                                        <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
-                                        <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
-                                        <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body px-0 pb-2">
-                        <div class="table-responsive">
-                            <table class="table align-items-center mb-0">
-                                <thead>
-                                <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Companies</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Members</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Budget</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Completion</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3" alt="xd">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Material XD Version</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-1.jpg" alt="team1">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-2.jpg" alt="team2">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                                                <img src="../assets/img/team-3.jpg" alt="team3">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-4.jpg" alt="team4">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $14,000 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">60%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-atlassian.svg" class="avatar avatar-sm me-3" alt="atlassian">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Add Progress Track</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-2.jpg" alt="team5">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-4.jpg" alt="team6">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $3,000 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">10%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-10" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-slack.svg" class="avatar avatar-sm me-3" alt="team7">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Fix Platform Errors</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-3.jpg" alt="team8">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-1.jpg" alt="team9">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> Not set </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">100%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-spotify.svg" class="avatar avatar-sm me-3" alt="spotify">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Launch our Mobile App</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-4.jpg" alt="user1">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-3.jpg" alt="user2">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                                                <img src="../assets/img/team-4.jpg" alt="user3">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-1.jpg" alt="user4">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $20,500 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">100%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-jira.svg" class="avatar avatar-sm me-3" alt="jira">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Add the New Pricing Page</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-4.jpg" alt="user5">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $500 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">25%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-25" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="25"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-invision.svg" class="avatar avatar-sm me-3" alt="invision">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Redesign New Online Shop</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-1.jpg" alt="user6">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-4.jpg" alt="user7">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $2,000 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">40%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-40" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="40"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="card h-100">
-                    <div class="card-header pb-0">
-                        <h6>Orders overview</h6>
-                        <p class="text-sm">
-                            <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-                            <span class="font-weight-bold">24%</span> this month
-                        </p>
-                    </div>
-                    <div class="card-body p-3">
-                        <div class="timeline timeline-one-side">
-                            <div class="timeline-block mb-3">
-                  <span class="timeline-step">
-                    <i class="material-symbols-rounded text-success text-gradient">notifications</i>
-                  </span>
-                                <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">$2400, Design changes</h6>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">22 DEC 7:20 PM</p>
-                                </div>
-                            </div>
-                            <div class="timeline-block mb-3">
-                  <span class="timeline-step">
-                    <i class="material-symbols-rounded text-danger text-gradient">code</i>
-                  </span>
-                                <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">New order #1832412</h6>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 11 PM</p>
-                                </div>
-                            </div>
-                            <div class="timeline-block mb-3">
-                  <span class="timeline-step">
-                    <i class="material-symbols-rounded text-info text-gradient">shopping_cart</i>
-                  </span>
-                                <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">Server payments for April</h6>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 9:34 PM</p>
-                                </div>
-                            </div>
-                            <div class="timeline-block mb-3">
-                  <span class="timeline-step">
-                    <i class="material-symbols-rounded text-warning text-gradient">credit_card</i>
-                  </span>
-                                <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">New card added for order #4395133</h6>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">20 DEC 2:20 AM</p>
-                                </div>
-                            </div>
-                            <div class="timeline-block mb-3">
-                  <span class="timeline-step">
-                    <i class="material-symbols-rounded text-primary text-gradient">key</i>
-                  </span>
-                                <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">Unlock packages for development</h6>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">18 DEC 4:54 AM</p>
-                                </div>
-                            </div>
-                            <div class="timeline-block">
-                  <span class="timeline-step">
-                    <i class="material-symbols-rounded text-dark text-gradient">payments</i>
-                  </span>
-                                <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">New order #9583120</h6>
-                                    <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">17 DEC</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+
+    </div>
+
+
+
+
+    <div class="container-fluid py-2">
+
         <footer class="footer py-4  ">
+
             <div class="container-fluid">
                 <div class="row align-items-center justify-content-lg-between">
                     <div class="col-lg-6 mb-lg-0 mb-4">
-                       <div class="copyright text-center text-sm text-muted text-lg-start">
+                        <div class="copyright text-center text-sm text-muted text-lg-start">
                             © <script> document.write(new Date().getFullYear()) </script>,
                             by
                             <a class="font-weight-bold" target="_blank">Alonso Escobedo</a>
@@ -975,80 +710,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
 </main>
-<div class="fixed-plugin">
-    <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
-        <i class="material-symbols-rounded py-2">settings</i>
-    </a>
-    <div class="card shadow-lg">
-        <div class="card-header pb-0 pt-3">
-            <div class="float-start">
-                <h5 class="mt-3 mb-0">Material UI Configurator</h5>
-                <p>See our dashboard options.</p>
-            </div>
-            <div class="float-end mt-4">
-                <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
-                    <i class="material-symbols-rounded">clear</i>
-                </button>
-            </div>
-            <!-- End Toggle Button -->
-        </div>
-        <hr class="horizontal dark my-1">
-        <div class="card-body pt-sm-3 pt-0">
-            <!-- Sidebar Backgrounds -->
-            <div>
-                <h6 class="mb-0">Sidebar Colors</h6>
-            </div>
-            <a href="javascript:void(0)" class="switch-trigger background-color">
-                <div class="badge-colors my-2 text-start">
-                    <span class="badge filter bg-gradient-primary" data-color="primary" onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-dark active" data-color="dark" onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-info" data-color="info" onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-success" data-color="success" onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-warning" data-color="warning" onclick="sidebarColor(this)"></span>
-                    <span class="badge filter bg-gradient-danger" data-color="danger" onclick="sidebarColor(this)"></span>
-                </div>
-            </a>
-            <!-- Sidenav Type -->
-            <div class="mt-3">
-                <h6 class="mb-0">Sidenav Type</h6>
-                <p class="text-sm">Choose between different sidenav types.</p>
-            </div>
-            <div class="d-flex">
-                <button class="btn bg-gradient-dark px-3 mb-2" data-class="bg-gradient-dark" onclick="sidebarType(this)">Dark</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarType(this)">Transparent</button>
-                <button class="btn bg-gradient-dark px-3 mb-2  active ms-2" data-class="bg-white" onclick="sidebarType(this)">White</button>
-            </div>
-            <p class="text-sm d-xl-none d-block mt-2">You can change the sidenav type just on desktop view.</p>
-            <!-- Navbar Fixed -->
-            <div class="mt-3 d-flex">
-                <h6 class="mb-0">Navbar Fixed</h6>
-                <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="navbarFixed(this)">
-                </div>
-            </div>
-            <hr class="horizontal dark my-3">
-            <div class="mt-2 d-flex">
-                <h6 class="mb-0">Light / Dark</h6>
-                <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onclick="darkMode(this)">
-                </div>
-            </div>
-            <hr class="horizontal dark my-sm-4">
-            <a class="btn bg-gradient-info w-100" href="https://www.creative-tim.com/product/material-dashboard-pro">Free Download</a>
-            <a class="btn btn-outline-dark w-100" href="https://www.creative-tim.com/learning-lab/bootstrap/overview/material-dashboard">View documentation</a>
-            <div class="w-100 text-center">
-                <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
-                <h6 class="mt-3">Thank you for sharing!</h6>
-                <a href="https://twitter.com/intent/tweet?text=Check%20Material%20UI%20Dashboard%20made%20by%20%40CreativeTim%20%23webdesign%20%23dashboard%20%23bootstrap5&amp;url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fsoft-ui-dashboard" class="btn btn-dark mb-0 me-2" target="_blank">
-                    <i class="fab fa-twitter me-1" aria-hidden="true"></i> Tweet
-                </a>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/material-dashboard" class="btn btn-dark mb-0 me-2" target="_blank">
-                    <i class="fab fa-facebook-square me-1" aria-hidden="true"></i> Share
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+
+
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/popper.min.js}"></script>
 <script th:src="@{/js/core/bootstrap.min.js}"></script>
@@ -2105,12 +1768,27 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <script th:inline="javascript">
         var WLStation = /*[[${selectedMicroNetwork.getSiteWeatherLink()}]]*/ [];
 
-        var time = new Date();
-        const offset = +5; // Ajuste horario (según se requiera)
-        start = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), offset , 0, 0) / 1000);
-        end = Math.floor(Date.UTC(time.getFullYear(), time.getMonth(), time.getDate(), 23 + offset, 59, 59) / 1000);
+        // Convertir la fecha actual a UTC con el offset
+        var end = Math.floor(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()) / 1000);
+
+        // Definir start como 24 horas antes de `end`
+        var start = end - (24 * 60 * 60); // Restar 24 horas en segundos
+
+        console.log("🕒 Start:", new Date(start * 1000).toISOString());
+        console.log("🕒 End:", new Date(end * 1000).toISOString());
 
         fetch(`/api/weatherlink/sensors-aboard?stationId=${WLStation}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Sensores obtenidos:", data);
+
+            })
+            .catch(error => {
+                console.error("❌ Error al obtener los sensores:", error);
+            });
+
+
+        fetch(`/api/weatherlink/current?stationId=${WLStation}`)
             .then(response => response.json())
             .then(data => {
                 console.log("✅ Sensores obtenidos:", data);
@@ -2126,63 +1804,417 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             .then(data => {
                 console.log("✅ Datos históricos obtenidos:", data);
 
-                function getStats(sensorData, isTemperature = false) {
-                    if (!sensorData || sensorData.length === 0) return { current: null, mean: null, max: null, min: null };
+                console.log("✅ START TIMESTAMP:", start);
+                console.log("✅ END TIMESTAMP:", end);
 
-                    let now = Date.now();
-                    let oneHourAgo = now - (60 * 60 * 1000); // Última hora en milisegundos
-                    let twentyFourHoursAgo = now - (24 * 60 * 60 * 1000); // Últimas 24 horas en milisegundos
 
-                    // Filtrar datos de la última hora para la media
-                    let recentData = sensorData.filter(d => d[0] >= oneHourAgo);
-                    let recentValues = recentData.map(d => d[1]);
+                // 🌡️ Conversión de Fahrenheit a Celsius
+                function fahrenheitToCelsius(f) {
+                    return ((f - 32) * 5 / 9).toFixed(2);
+                }
 
-                    let mean = recentValues.length > 0 ? recentValues.reduce((a, b) => a + b, 0) / recentValues.length : null;
+                // 💨 Conversión de millas/hora a metros/segundo
+                function mphToMps(mph) {
+                    return (mph * 0.44704).toFixed(2);
+                }
 
-                    // Filtrar datos de las últimas 24 horas para máximo y mínimo
-                    let dailyData = sensorData.filter(d => d[0] >= twentyFourHoursAgo);
-                    let dailyValues = dailyData.map(d => d[1]);
+                // 🔍 Procesar datos de métricas individuales
+                function processMetric(metricName, conversionFn = null) {
+                    // Buscar todas las claves que contienen el nombre de la métrica deseada (independientemente del sensor)
+                    let metricKeys = Object.keys(data).filter(key => key.endsWith(`.${metricName}`));
 
-                    let max = dailyValues.length > 0 ? Math.max(...dailyValues) : null;
-                    let min = dailyValues.length > 0 ? Math.min(...dailyValues) : null;
+                    if (metricKeys.length === 0) {
+                        console.warn(`⚠️ Métrica ${metricName} no encontrada.`);
+                        return { current: null, mean: null, max: null, min: null };
+                    }
 
-                    let current = sensorData.length > 0 ? sensorData[sensorData.length - 1][1] : null;
+                    let allValues = [];
 
-                    // Convertir de Fahrenheit a Celsius si es temperatura
-                    if (isTemperature) {
-                        mean = mean !== null ? ((mean - 32) * 5 / 9).toFixed(2) : null;
-                        max = max !== null ? ((max - 32) * 5 / 9).toFixed(2) : null;
-                        min = min !== null ? ((min - 32) * 5 / 9).toFixed(2) : null;
-                        current = current !== null ? ((current - 32) * 5 / 9).toFixed(2) : null;
+                    metricKeys.forEach(key => {
+                        let sensorData = data[key];
+
+                        if (!sensorData || sensorData.length === 0) return;
+
+                        allValues.push(...sensorData.map(d => d[1]));  // 🔍 Obtener solo los valores de la métrica
+                    });
+
+                    if (allValues.length === 0) {
+                        return { current: null, mean: null, max: null, min: null };
+                    }
+
+                    let mean = allValues.reduce((a, b) => a + b, 0) / allValues.length;
+                    let max = Math.max(...allValues);
+                    let min = Math.min(...allValues);
+                    let current = allValues[allValues.length - 1];
+
+                    // 🔥 Aplicar conversión si es necesario
+                    if (conversionFn) {
+                        mean = mean !== null ? conversionFn(mean) : null;
+                        max = max !== null ? conversionFn(max) : null;
+                        min = min !== null ? conversionFn(min) : null;
+                        current = current !== null ? conversionFn(current) : null;
                     }
 
                     return { current, mean, max, min };
                 }
 
-                // Buscar automáticamente la primera métrica disponible en cualquier sensor
-                function findFirstMetric(metric, isTemperature = false) {
-                    let key = Object.keys(data).find(k => k.endsWith(`.${metric}`));
-                    return key ? getStats(data[key], isTemperature) : { current: null, mean: null, max: null, min: null };
+                // 🔍 Procesar datos de métricas individuales
+                function processTempHum(metricHi, metricLo, conversionFn = null) {
+                    // Buscar todas las claves que contienen el nombre de la métrica deseada (independientemente del sensor)
+                    let metricHiKeys = Object.keys(data).filter(key => key.endsWith(`.${metricHi}`));
+                    let metricLoKeys = Object.keys(data).filter(key => key.endsWith(`.${metricLo}`));
+
+
+                    if (metricHiKeys.length === 0) {
+                        console.warn(`⚠️ Métrica ${metricHiKeys} no encontrada.`);
+                        return { current: null, mean: null, max: null, min: null };
+                    }
+
+                    if (metricLoKeys.length === 0) {
+                        console.warn(`⚠️ Métrica ${metricLoKeys} no encontrada.`);
+                        return { current: null, mean: null, max: null, min: null };
+                    }
+
+                    let allValuesHi = [];
+                    let allValuesLo = [];
+
+                    metricHiKeys.forEach(key => {
+                        let sensorData = data[key];
+                        if (!sensorData || sensorData.length === 0) return;
+                        allValuesHi.push(...sensorData.map(d => d[1]));
+                    });
+                    if (allValuesHi.length === 0) { return { current: null, mean: null, max: null, min: null };}
+
+                    metricLoKeys.forEach(key => {
+                        let sensorData = data[key];
+                        if (!sensorData || sensorData.length === 0) return;
+                        allValuesLo.push(...sensorData.map(d => d[1]));
+                    });
+                    if (allValuesLo.length === 0) { return { current: null, mean: null, max: null, min: null };}
+
+
+                    let mean = allValuesHi.reduce((a, b) => a + b, 0) / allValuesHi.length;
+                    let max = allValuesHi.length > 0 ? Math.max(...allValuesHi) : null;
+                    let min = allValuesLo.length > 0 ? Math.min(...allValuesLo) : null;
+                    let current = allValuesHi.length > 0 ? allValuesHi[allValuesHi.length - 1] : null;
+
+                    // 🔥 Aplicar conversión si es necesario
+                    if (conversionFn) {
+                        mean = mean !== null ? conversionFn(mean) : null;
+                        max = max !== null ? conversionFn(max) : null;
+                        min = min !== null ? conversionFn(min) : null;
+                        current = current !== null ? conversionFn(current) : null;
+                    }
+
+                    return { current, mean, max, min };
                 }
 
-                let temperature = findFirstMetric("temp_hi", true);  // ✅ Convierte a Celsius
-                let windSpeed = findFirstMetric("wind_speed_hi");
-                let windDirection = findFirstMetric("wind_speed_hi_dir");
-                let humidity = findFirstMetric("hum_hi");
-                let solarRadiation = findFirstMetric("solar_rad_avg");
+                // 📊 Procesar métricas individuales (sin importar ID del sensor)
+                let windSpeed = processMetric("wind_speed_avg", mphToMps);  // 💨 Velocidad en m/s
+                let windDirection = processMetric("wind_speed_hi_dir");  // 🧭 Dirección del viento
+                let solarRadiation = processMetric("solar_rad_avg");  // ☀️ Radiación solar
 
-                console.log("🌡️ Temperatura (°C):", temperature);
-                console.log("🌬️ Velocidad del viento:", windSpeed);
-                console.log("🧭 Dirección del viento:", windDirection);
-                console.log("💦 Humedad:", humidity);
-                console.log("☀️ Radiación solar:", solarRadiation);
+                let humidity = processTempHum("hum_hi", "hum_lo");  // 💦 Humedad (máx/mín)
+                let THSWIndex = processTempHum("thsw_index_hi", "thsw_index_lo", fahrenheitToCelsius);  // Temperatura Externa
+                let THWIndex = processTempHum("thw_index_hi", "thw_index_lo", fahrenheitToCelsius);  // 🌡️ Temperatura Interna
+
+
+                console.log("🌬️ Velocidad del viento (m/s): ", windSpeed);
+                console.log("🧭 Dirección del viento: ", windDirection);
+                console.log("☀️ Radiación solar: ", solarRadiation);
+
+                console.log("🌡️ THSW Temperatura Externa (C°): ", THSWIndex);
+                console.log("🌡️ THW Temperatura Interna (C°): ", THWIndex);
+                console.log("🌡️ Humedad porcentual (%): ", humidity);
+
+
+
+                createGauge('THWIndexGauge', 'Temperatura Interna (THW)', THWIndex, 40, '°C');
+
+                createGauge('THSWIndexGauge', 'Temperatura Externa (THSW)', THSWIndex, 40, '°C');
+
+                createGauge('HumidityGauge', 'Humedad', humidity, 100, '%');
+
+                createGauge('SolarRadiationGauge', 'Radiación Solar', solarRadiation, 2000, 'W/m²');
+
+                createGauge('windSpeedGauge', 'Velocidad del Viento', windSpeed, 24, 'm/s');
+
+                createWindDirectionGauge('windDirectionMap', windDirection.current);
+
+
             })
             .catch(error => {
                 console.error("❌ Error al obtener los datos históricos:", error);
             });
 
 
+        // 🔍 Función para crear un gráfico Solid Gauge
+        function createGauge(containerId, title, data, maxRange, unit) {
 
+
+
+            let dataSerie = [];
+
+            if  (!data) {
+                dataSerie.push({
+                    name: 'Datos no disponilbes',
+                    data: '0'
+                });
+            } else {
+                dataSerie.push({
+                    name: title,
+                    data: [parseFloat(data.current)]
+                });
+            }
+
+
+            Highcharts.chart(containerId, {
+                chart: {
+                    type: 'solidgauge',
+                    height: '80%',
+                },
+                lang: {
+                    decimalPoint: '.',
+                    thousandsSep: ','
+                },
+                title: null,
+                pane: {
+                    center: ['50%', '75%'],
+                    size: '120%',
+                    startAngle: -90,
+                    endAngle: 90,
+                    background: {
+                        innerRadius: '60%',
+                        outerRadius: '100%',
+                        shape: 'arc'
+                    }
+                },
+                exporting: {
+                    enabled: false
+                },
+                tooltip: {
+                    enabled: false
+                },
+                yAxis: {
+                    min: 0,
+                    max: maxRange,
+                    stops: [
+                        [0.1, '#55BF3B'], // Verde
+                        [0.5, '#DDDF0D'], // Amarillo
+                        [0.9, '#DF5353']  // Rojo
+                    ],
+                    lineWidth: 0,
+                    tickWidth: 0,
+                    minorTickInterval: null,
+                    tickAmount: 2,
+                    labels: {
+                        y: 16
+                    }
+                },
+                plotOptions: {
+                    solidgauge: {
+                        dataLabels: {
+                            y: 0,
+                            borderWidth: 0,
+                            useHTML: true,
+                            format: `<div style="display:flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <span style="font-size:18px; font-family: Inter,serif;">{y}</span>
+                                <span style="font-size:12px; font-family: Inter,serif;">${unit}</span>
+                             </div>`
+                        }
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                series: dataSerie,
+            });
+        }
+
+
+        // 📌 Función para generar datos de dirección del viento
+        function generateWindData(direction) {
+            const data = Array(16).fill(0);  // Inicializar con ceros
+
+            console.log("DIRECTION:", direction);
+
+            // Asegúrate que direction es un número
+            direction = Number(direction);
+
+            if (isNaN(direction)) {
+                console.error("❌ Error: Dirección no válida.");
+                return data;
+            }
+
+            // Encontrar el índice correspondiente en la rosa de vientos
+            const index = Math.round(direction / 22.5) % 16;
+            console.log("Index:", index);
+
+            // Colocar el valor de la dirección REAL en el índice correspondiente
+            data[index] = direction;
+
+            return data;
+        }
+
+        // 📌 Función para crear el gráfico de Dirección del Viento
+        function createWindDirectionGauge(containerId, windDirection) {
+            Highcharts.chart(containerId, {
+                chart: {
+                    polar: true,
+                    type: 'column',
+                    height: '80%',
+                },
+                title: null,
+                pane: {
+                    center: ['50%', '50%'],
+                    size: '70%',
+                },
+                xAxis: {
+                    categories: ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'],
+                    tickmarkPlacement: 'on',
+                    lineWidth: 0
+                },
+                yAxis: {
+                    min: 0,
+                    max: 360,  // El rango máximo es 360 porque es un ángulo (dirección del viento)
+                    endOnTick: false,
+                    showLastLabel: true,
+                    labels: { enabled: false }
+                },
+                legend: { enabled: false },
+                plotOptions: {
+                    series: {
+                        stacking: 'normal',
+                        shadow: false,
+                        groupPadding: 0,
+                        pointPlacement: 'on'
+                    },
+                    column: {
+                        pointPadding: 0,
+                        borderWidth: 0,
+                        groupPadding: 0
+                    }
+                },
+                series: [{
+                    name: 'Dirección del Viento',
+                    data: generateWindData(windDirection),  // Datos generados para la dirección específica
+                    pointPlacement: 'on',
+                    color: '#007bff'
+                }],
+                credits: { enabled: false },
+                exporting: { enabled: false }
+            });
+        }
+
+
+    </script>
+
+
+
+    <script th:inline="javascript">
+        var SPStation = /*[[${selectedMicroNetwork.getSiteSparkMeter()}]]*/ [];
+
+        let customerList = [];
+
+        // Llamar a la API para obtener los datos
+        fetch(`/api/sparkmeter/get-customers?siteId=${SPStation}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ CUSTOMERS obtenidos:", data);
+                customerList = data;
+
+                // Llenar la tabla con la información recibida
+                populateTable(customerList);
+            })
+            .catch(error => {
+                console.error("❌ Error al obtener los sensores:", error);
+            });
+
+        // Función para llenar la tabla
+        function populateTable(customers) {
+            const tableBody = document.querySelector('#sparkmeter-table tbody');
+
+            // Limpiar el contenido anterior de la tabla
+            tableBody.innerHTML = '';
+
+            customers.forEach(customer => {
+                const row = document.createElement('tr');
+                row.style.backgroundColor = '#f6f8f8';
+                row.style.borderBottom = '1px solid #ddd';
+
+                console.log(customer);
+
+                row.innerHTML = `
+
+<td class="align-middle text-center">
+    <span class="pt-2  material-symbols-rounded" style="color: ${customer.meters?.[0]?.serial ? 'green' : 'red'}; font-size: 20px;">
+        ${customer.meters?.[0]?.serial ? 'check_circle' : 'cancel'}
+    </span>
+</td>
+
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">${customer.lastPlanRenewal || 'Sin Comunicación'}</span>
+                </td>
+
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">${customer.serviceAreaId || 'N/A'}</span>
+                </td>
+
+                <td>
+                    <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">${customer.name || 'Alias no disponible'}</h6>
+                        </div>
+                    </div>
+                </td>
+
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">${customer.meters?.[0]?.serial || 'Sin Medidor'}</span>
+                </td>
+
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">${customer.id || 'N/A'}</span>
+                </td>
+
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">${customer.balances?.credit?.value} ${customer.balances?.credit?.currency || ''}</span>
+                </td>
+            `;
+
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+
+
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $('#sparkmeter-table').DataTable({
+                "paging": true,         // Habilita la paginación
+                "searching": true,      // Habilita la barra de búsqueda
+                "ordering": true,       // Habilita la ordenación por columnas
+                "info": true,           // Muestra información sobre la tabla
+                "lengthChange": true,   // Permite cambiar el número de registros mostrados
+                "pageLength": 5,       // Número de registros mostrados por página
+                "scrollResize": true,
+                "scrollY": 540,
+                "scrollCollapse": false,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
+                },
+                "drawCallback": function (settings) {
+                    var api = this.api();
+                    var pageInfo = api.page.info();
+
+                    // Oculta la paginación si no es necesaria
+                    if (pageInfo.pages <= 1) {
+                        $('.dataTables_paginate').hide();
+                    } else {
+                        $('.dataTables_paginate').show();
+                    }
+                }
+            });
+        });
     </script>
 
 
