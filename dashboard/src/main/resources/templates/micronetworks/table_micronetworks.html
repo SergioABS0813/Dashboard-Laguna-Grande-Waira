@@ -552,7 +552,18 @@
 
 </script>
 
-    <!-- Start: Alerta para eliminar usuario -->
+    <!-- Start: Alerta para eliminar micronetwork -->
+
+    <style>
+        /* Asegura que el overlay de SweetAlert2 esté por encima de tu sidebar */
+        .swal2-container {
+            z-index: 999999 !important; /* número muy alto para sobrepasar el sidebar */
+        }
+        /* Opcional: oscurecer más el fondo al mostrar la alerta */
+        .swal2-container.swal2-backdrop-show {
+            background: rgba(0, 0, 0, 0.7) !important; /* más opaco que el default */
+        }
+    </style>
 
     <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function() {

@@ -11,12 +11,31 @@ public class Notification implements Serializable {
     private Date timeCreation;
     private String description;
     private String type; // "BATERIA BAJA", "MEDIDOR INOPERATIVO", "SOBRECARGA", "CORTE DE SERVICIO"
+    private String idMicronetwork;
+    private String nameMicronetwork;
 
-    public Notification(String id, Date timeCreation, String description, String type) {
+    public String getIdMicronetwork() {
+        return idMicronetwork;
+    }
+
+    public void setIdMicronetwork(String idMicronetwork) {
+        this.idMicronetwork = idMicronetwork;
+    }
+
+    public Notification(String id, Date timeCreation, String description, String type, String idMicronetwork) {
         this.id = id;
         this.timeCreation = timeCreation;
         this.description = description;
         this.type = type;
+        this.idMicronetwork = idMicronetwork;
+    }
+
+    public String getNameMicronetwork() {
+        return nameMicronetwork;
+    }
+
+    public void setNameMicronetwork(String nameMicronetwork) {
+        this.nameMicronetwork = nameMicronetwork;
     }
 
     public Notification() {

@@ -257,7 +257,7 @@
                     <div class="col-lg-8 col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Nueva Microred</h4>
+                                <h4 class="card-title">Editar Microred</h4>
                             </div>
                             <div class="card-body">
                                 <!-- Objeto microNetwork en el modelo -->
@@ -291,7 +291,8 @@
                                                     <!-- Recorremos la lista de opciones -->
                                                     <option th:each="op : ${vrmOptions}"
                                                             th:value="${op.idSite}"
-                                                            th:text="${op.nombre}">
+                                                            th:text="${op.nombre}"
+                                                            th:selected="${op.idSite} == *{siteVRM}">
                                                     </option>
                                                 </select>
                                             </div>
@@ -331,7 +332,8 @@
                                                     <!-- Recorremos la lista de opciones -->
                                                     <option th:each="op : ${weatherLinkOptions}"
                                                             th:value="${op.idSite}"
-                                                            th:text="${op.nombre}">
+                                                            th:text="${op.nombre}"
+                                                            th:selected="${op.idSite} == *{siteWeatherLink}">
                                                     </option>
                                                 </select>
                                             </div>
@@ -370,7 +372,8 @@
                                                     <option value="">Seleccione un site en Sparkmeter...</option>
                                                     <option th:each="op : ${sparkMeterOptions}"
                                                             th:value="${op.idSite}"
-                                                            th:text="${op.nombre}">
+                                                            th:text="${op.nombre}"
+                                                            th:selected="${op.idSite} == *{siteSparkMeter}">
                                                     </option>
                                                 </select>
                                             </div>
