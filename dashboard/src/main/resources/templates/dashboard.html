@@ -64,13 +64,14 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <!-- AwesomeMarkers Icons -->
     <link th:href="@{/css/leaflet.awesome-markers.css}" rel="stylesheet" />
 
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- CSS de DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+
+    <!-- JavaScript de DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 
     <!-- FlatPickr -->
@@ -125,6 +126,17 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             display: none !important;
         }
 
+    </style>
+
+    <style>
+
+        .dataTables_scrollHeadInner {
+            width: 100% !important;
+        }
+
+        .dataTable {
+            width: 100% !important;
+        }
     </style>
 
     <style>
@@ -631,38 +643,34 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             <div class="col-xl-12 col-sm-12 mb-xl-4 mb-4">
                 <div class="card">
 
-                    <div class="table-responsive p-0">
-                        <table id="sparkmeter-table" class="table align-items-center mb-0">
-                            <thead>
-                            <tr>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">C</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">M</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">G</th>
-
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ABONADO</th>
-
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">MEDIDOR</th>
-
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ÚLTIMA COMUNICACIÓN</th>
-
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">SALDO RESTANTE</th>
-
-
-                            </tr>
-                            </thead>
-                            <tbody>
-
-
-                            </tbody>
-                        </table>
+                    <!-- Loader visible al inicio -->
+                    <div id="loader-table"  class="table-responsive d-flex align-items-center justify-content-center">
+                        <div class="spinner-border text-secondary" role="status">
+                            <span class="visually-hidden">Cargando tabla...</span>
+                        </div>
                     </div>
 
+                    <!-- Tabla oculta inicialmente -->
+                    <div id="table-container" class="table-responsive pt-3 pb-1" style="display: none;">
+                        <table style="width: 100% !important;" id="sparkmeter-table" class="table align-items-center mb-0">
+                            <thead style="width: 100% !important;">
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ABONADO</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STATUS</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">MEDIDOR</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ÚLTIMA COMUNICACIÓN</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">SALDO RESTANTE</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
 
                 </div>
             </div>
 
-
         </div>
+
 
 
     </div>
@@ -2113,8 +2121,23 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <script th:inline="javascript">
         var SPStation = /*[[${selectedMicroNetwork.getSiteSparkMeter()}]]*/ [];
-
         let customerList = [];
+
+        // Mostrar el loader
+        function showLoader() {
+            document.getElementById('loader-table').style.cssText = 'display: flex !important;';
+            document.getElementById('loader-table').style.cssText = 'height: 370px !important;';
+            document.getElementById('table-container').style.cssText = 'display: none !important;';
+        }
+
+        // Ocultar el loader y mostrar la tabla
+        function hideLoader() {
+            document.getElementById('loader-table').style.cssText = 'display: none !important;';
+            document.getElementById('table-container').style.cssText = 'display: block !important;';
+        }
+
+        // Iniciar con el loader visible
+        showLoader();
 
         // Llamar a la API para obtener los datos
         fetch(`/api/sparkmeter/get-customers?siteId=${SPStation}`)
@@ -2128,9 +2151,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             })
             .catch(error => {
                 console.error("❌ Error al obtener los sensores:", error);
+                hideLoader();  // En caso de error, se oculta el loader
             });
 
-        // Función para llenar la tabla
         function populateTable(customers) {
             const tableBody = document.querySelector('#sparkmeter-table tbody');
 
@@ -2142,81 +2165,64 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 row.style.backgroundColor = '#f6f8f8';
                 row.style.borderBottom = '1px solid #ddd';
 
-                console.log(customer);
-
                 row.innerHTML = `
-
-<td class="align-middle text-center">
-    <span class="pt-2  material-symbols-rounded" style="color: ${customer.meters?.[0]?.serial ? 'green' : 'red'}; font-size: 20px;">
-        ${customer.meters?.[0]?.serial ? 'check_circle' : 'cancel'}
-    </span>
-</td>
-
-                <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold">${customer.lastPlanRenewal || 'Sin Comunicación'}</span>
-                </td>
-
-                <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold">${customer.serviceAreaId || 'N/A'}</span>
-                </td>
-
-                <td>
-                    <div class="d-flex px-2 py-1">
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">${customer.name || 'Alias no disponible'}</h6>
-                        </div>
+            <td>
+                <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">${customer.name || 'Alias no disponible'}</h6>
                     </div>
-                </td>
-
-                <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold">${customer.meters?.[0]?.serial || 'Sin Medidor'}</span>
-                </td>
-
-                <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold">${customer.id || 'N/A'}</span>
-                </td>
-
-                <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold">${customer.balances?.credit?.value} ${customer.balances?.credit?.currency || ''}</span>
-                </td>
-            `;
-
+                </div>
+            </td>
+            <td class="align-middle text-center">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                    <span class="material-symbols-rounded"
+                          style="color: ${customer.meters?.[0]?.operatingMode === 'off' ? 'red' : 'green'}; font-size: 20px;">
+                        ${customer.meters?.[0]?.operatingMode === 'off' ? 'cancel' : 'check_circle'}
+                    </span>
+                    <span class="text-secondary text-xs font-weight-bold">
+                        ${customer.meters?.[0]?.operatingMode?.toUpperCase() || 'N/A'}
+                    </span>
+                </div>
+            </td>
+            <td class="align-middle text-center">
+                <span class="text-secondary text-xs font-weight-bold">${customer.meters?.[0]?.serial || 'Sin Medidor'}</span>
+            </td>
+            <td class="align-middle text-center">
+                <span class="text-secondary text-xs font-weight-bold">${customer.id || 'N/A'}</span>
+            </td>
+            <td class="align-middle text-center">
+                <span class="text-secondary text-xs font-weight-bold">${customer.balances?.credit?.value || 'N/A'} ${customer.balances?.credit?.currency || ''}</span>
+            </td>
+        `;
                 tableBody.appendChild(row);
             });
-        }
-    </script>
 
+            // Destruir DataTable anterior si existe
+            if ($.fn.DataTable.isDataTable('#sparkmeter-table')) {
+                $('#sparkmeter-table').DataTable().destroy();
+            }
 
-    <script th:inline="javascript">
-        $(document).ready(function () {
+            // Inicializar DataTable después de llenar la tabla
             $('#sparkmeter-table').DataTable({
-                "paging": true,         // Habilita la paginación
-                "searching": true,      // Habilita la barra de búsqueda
-                "ordering": true,       // Habilita la ordenación por columnas
-                "info": true,           // Muestra información sobre la tabla
-                "lengthChange": true,   // Permite cambiar el número de registros mostrados
-                "pageLength": 5,       // Número de registros mostrados por página
-                "scrollResize": true,
-                "scrollY": 540,
-                "scrollCollapse": false,
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
-                },
-                "drawCallback": function (settings) {
-                    var api = this.api();
-                    var pageInfo = api.page.info();
-
-                    // Oculta la paginación si no es necesaria
-                    if (pageInfo.pages <= 1) {
-                        $('.dataTables_paginate').hide();
-                    } else {
-                        $('.dataTables_paginate').show();
-                    }
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                lengthChange: true,
+                pageLength: 5,
+                scrollY: "540px",
+                scrollCollapse: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
                 }
             });
-        });
-    </script>
 
+            // 🔥 Esconder el loader después de un pequeño retardo (para asegurar que DataTable termine su proceso de renderizado)
+            setTimeout(hideLoader, 500);
+        }
+
+
+    </script>
 
     <!-- 5. Inicialización de Scrollbar (solo para Windows) -->
     <script>
