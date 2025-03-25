@@ -56,6 +56,11 @@ public class ProfileController {
     @GetMapping("/profileAdmin")
     public String profileAdmin(Model model) { //se colocan datos de la cuenta y las notificaciones
 
+        //Al superadmin le deben llegar todas las notificaciones de todas las microredes
+        List<Notification> listaNotificaciones = notificationRepository.findAll();
+        model.addAttribute("listaNotificaciones", listaNotificaciones);
+
+
         return "profileAdmin";
     }
 }

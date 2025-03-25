@@ -295,146 +295,110 @@
                     <div class="row">
                         <div class="row">
 
-                            <div class="col-12 col-xl-4">
+                            <div class="col-12 col-xl-3">
                                 <div class="card card-plain h-100">
-                                    <div class="card-header pb-0 p-3">
-                                        <div class="row">
-                                            <div class="col-md-8 d-flex align-items-center">
-                                                <h6 class="mb-0">Profile Information</h6>
-                                            </div>
-                                            <div class="col-md-4 text-end">
-                                                <a href="javascript:;">
-                                                    <i class="fas fa-user-edit text-secondary text-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Profile"></i>
-                                                </a>
-                                            </div>
+
+                                    <div class="card-header p-0 position-relative mt-n0 mx-3 z-index-2">
+                                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
+                                            <h6 class="text-white text-capitalize ps-3 d-inline-block">Información del Usuario</h6>
                                         </div>
                                     </div>
+
+
                                     <div class="card-body p-3">
-                                        <ul class="list-group">
-                                            <li class="list-group-item border-0 ps-0 pt-0 text-sm">
-                                                <strong class="text-dark">Nombre completo:</strong> &nbsp;
-                                                <span th:text="${session.user.name} + ' ' + ${session.user.lastname}"></span>
-                                            </li>
-                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Número de celular:</strong> <span th:text="${session.user.phone}"></span></li>
-                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Correo electrónico:</strong> &nbsp<span th:text="${session.user.email}"></span> </li>
-                                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Rol:</strong> <span th:text="${session.user.role}"></span></li>
-                                        </ul>
+                                        <div class="card-body px-0 pb-2">
+                                            <ul class="list-group">
+                                                <li class="list-group-item border-0 ps-0 pt-0 text-sm">
+                                                    <strong class="text-dark">Nombre completo:</strong> &nbsp;
+                                                    <span th:text="${session.user.name} + ' ' + ${session.user.lastname}"></span>
+                                                </li>
+                                                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Número de celular:</strong> <span th:text="${session.user.phone}"></span></li>
+                                                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Correo electrónico:</strong> &nbsp<span th:text="${session.user.email}"></span> </li>
+                                                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Rol:</strong> <span th:text="${session.user.role}"></span></li>
+                                            </ul>
+
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-xl-4">
+                            <div class="col-12 col-xl-9">
                                 <div class="card card-plain h-100">
-                                    <div class="card-header pb-0 p-3">
-                                        <h6 class="mb-0">Conversations</h6>
+                                    <div class="card-header p-0 position-relative mt-n0 mx-3 z-index-2">
+                                        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 position-relative">
+                                            <h6 class="text-white text-capitalize ps-3 d-inline-block">Notificaciones</h6>
+
+                                        </div>
+
                                     </div>
                                     <div class="card-body p-3">
-                                        <ul class="list-group">
-                                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2 pt-0">
-                                                <div class="avatar me-3">
-                                                    <img src="../assets/img/kal-visuals-square.jpg" alt="kal" class="border-radius-lg shadow">
-                                                </div>
-                                                <div class="d-flex align-items-start flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Sophie B.</h6>
-                                                    <p class="mb-0 text-xs">Hi! I need more information..</p>
-                                                </div>
-                                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                                            </li>
-                                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                                                <div class="avatar me-3">
-                                                    <img src="../assets/img/marie.jpg" alt="kal" class="border-radius-lg shadow">
-                                                </div>
-                                                <div class="d-flex align-items-start flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Anne Marie</h6>
-                                                    <p class="mb-0 text-xs">Awesome work, can you..</p>
-                                                </div>
-                                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                                            </li>
-                                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                                                <div class="avatar me-3">
-                                                    <img src="../assets/img/ivana-square.jpg" alt="kal" class="border-radius-lg shadow">
-                                                </div>
-                                                <div class="d-flex align-items-start flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Ivanna</h6>
-                                                    <p class="mb-0 text-xs">About files I can..</p>
-                                                </div>
-                                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                                            </li>
-                                            <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                                                <div class="avatar me-3">
-                                                    <img src="../assets/img/team-4.jpg" alt="kal" class="border-radius-lg shadow">
-                                                </div>
-                                                <div class="d-flex align-items-start flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Peterson</h6>
-                                                    <p class="mb-0 text-xs">Have a great afternoon..</p>
-                                                </div>
-                                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                                            </li>
-                                            <li class="list-group-item border-0 d-flex align-items-center px-0">
-                                                <div class="avatar me-3">
-                                                    <img src="../assets/img/team-3.jpg" alt="kal" class="border-radius-lg shadow">
-                                                </div>
-                                                <div class="d-flex align-items-start flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">Nick Daniel</h6>
-                                                    <p class="mb-0 text-xs">Hi! I need more information..</p>
-                                                </div>
-                                                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto w-25 w-md-auto" href="javascript:;">Reply</a>
-                                            </li>
-                                        </ul>
+
+                                        <div class="card-body px-0 pb-2">
+                                            <!-- Flash attribute de Edit -->
+                                            <div th:if="${successMessageEdit}" class="alert alert-info alert-dismissible fade show" role="alert">
+                                                <span th:text="${successMessageEdit}"></span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+
+                                            <!-- Flash attribute de Create -->
+                                            <div th:if="${successMessageCreate}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                                <span th:text="${successMessageCreate}"></span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+
+                                            <!-- Flash attribute de Delete -->
+                                            <div th:if="${successMessageDelete}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                                <span th:text="${successMessageDelete}"></span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+
+                                            <!-- Flash attribute de Error de ingreso a crear nueva instalación -->
+
+                                            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show text-white" role="alert">
+                                                <span th:text="${errorMessage}"></span>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+
+                                            <div class="table-responsive p-0">
+                                                <table id="micronets-table" class="table align-items-center mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Microred</th>
+                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tipo</th>
+                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hora detectada</th>
+                                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Descripción</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr  style="background-color: #f6f8f8; border-bottom: 1px solid #ddd;" th:each="notificacion : ${listaNotificaciones}">
+                                                            <td>
+                                                                <div class="d-flex px-2 py-1">
+                                                                    <div class="d-flex flex-column justify-content-center">
+                                                                        <h6 class="mb-0 text-sm" th:text="${notificacion.getNameMicronetwork()}">Microred</h6>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="align-middle text-center">
+                                                                <span class="text-secondary text-xs font-weight-bold" th:text="${notificacion.getType()}">Tipo</span>
+                                                            </td>
+
+                                                            <td class="align-middle text-center">
+                                                                <span class="text-secondary text-xs font-weight-bold" th:text="${#dates.format(notificacion.getTimeCreation(), 'dd/MM/yyyy HH:mm')}">Hora</span>
+                                                            </td>
+                                                            <td class="align-middle text-center">
+                                                                <span class="text-secondary text-xs font-weight-bold" th:text="${notificacion.getDescription()}">Descripción</span>
+                                                            </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-12 col-xl-4">
-                                <div class="card card-plain h-100">
-                                    <div class="card-header pb-0 p-3">
-                                        <h6 class="mb-0">Configuración</h6>
-                                    </div>
-                                    <div class="card-body p-3">
-                                        <h6 class="text-uppercase text-body text-xs font-weight-bolder">Account</h6>
-                                        <ul class="list-group">
-                                            <li class="list-group-item border-0 px-0">
-                                                <div class="form-check form-switch ps-0">
-                                                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" checked>
-                                                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault">Email me when someone follows me</label>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item border-0 px-0">
-                                                <div class="form-check form-switch ps-0">
-                                                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault1">
-                                                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault1">Email me when someone answers on my post</label>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item border-0 px-0">
-                                                <div class="form-check form-switch ps-0">
-                                                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault2" checked>
-                                                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault2">Email me when someone mentions me</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <h6 class="text-uppercase text-body text-xs font-weight-bolder mt-4">Application</h6>
-                                        <ul class="list-group">
-                                            <li class="list-group-item border-0 px-0">
-                                                <div class="form-check form-switch ps-0">
-                                                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault3">
-                                                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault3">New launches and projects</label>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item border-0 px-0">
-                                                <div class="form-check form-switch ps-0">
-                                                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault4" checked>
-                                                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault4">Monthly product updates</label>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item border-0 px-0 pb-0">
-                                                <div class="form-check form-switch ps-0">
-                                                    <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault5">
-                                                    <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault5">Subscribe to newsletter</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
 
 
 
@@ -557,6 +521,40 @@
         <script th:src="@{/js/core/smooth-scrollbar.min.js}"></script>
         <script th:src="@{/js/core/chartjs.min.js}"></script>
 
+        <!--  START: Datatable Notificaciones ADMIN  -->
+
+        <script th:inline="javascript">
+            $(document).ready(function () {
+                $('#micronets-table').DataTable({
+                    "paging": true,         // Habilita la paginación
+                    "searching": true,      // Habilita la barra de búsqueda
+                    "ordering": true,       // Habilita la ordenación por columnas
+                    "info": true,           // Muestra información sobre la tabla
+                    "lengthChange": true,   // Permite cambiar el número de registros mostrados
+                    "pageLength": 5,       // Número de registros mostrados por página
+                    "scrollResize": true,
+                    "scrollY": 540,
+                    "scrollCollapse": false,
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Traducción al español
+                    },
+                    "drawCallback": function (settings) {
+                        var api = this.api();
+                        var pageInfo = api.page.info();
+
+                        // Oculta la paginación si no es necesaria
+                        if (pageInfo.pages <= 1) {
+                            $('.dataTables_paginate').hide();
+                        } else {
+                            $('.dataTables_paginate').show();
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <!--  END: Datatable Notificaciones ADMIN  -->
+
 
         <script>
             var win = navigator.platform.indexOf('Win') > -1;
@@ -571,7 +569,6 @@
         <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 
         <script th:src="@{/js/core/material-dashboard.min.js}"></script>
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <!-- Start: Loader JS -->
         <script th:src="@{/js/plugins/loader.js}"></script>
         <!-- End: Loader JS -->
