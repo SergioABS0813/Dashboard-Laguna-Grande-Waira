@@ -38,8 +38,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <!-- Nucleo Icons -->
     <link th:href="@{/css/nucleo-icons.css}" rel="stylesheet" />
     <link th:href="@{/css/nucleo-svg.css}" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- Material Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!-- CSS Files -->
@@ -49,7 +47,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     <!-- cytoscape GRAPHICS -->
     <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
-    <script src="https://unpkg.com/cytoscape-animated-edges/cytoscape-animated-edges.js"></script>
 
 
     <!-- Leaflet MAP -->
@@ -194,7 +191,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand px-4 py-3 m-0" th:href="@{/micronetworks}">
-            <img th:src="@{/svg/logo_main.png}"  class="navbar-brand-img" width="26" height="26" alt="main_logo">
+            <img th:src="@{/media/main_logo.png}" class="navbar-brand-img" width="81" height="13" alt="main_logo">
             <span class="ms-1 text-sm text-dark">Dashboard</span>
         </a>
     </div>
@@ -261,115 +258,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         <div class="container-fluid py-1 px-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Páginas</a></li>
+                    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark">Páginas</a></li>
                     <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
                 </ol>
             </nav>
-            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                    <div class="input-group input-group-outline">
-                        <label class="form-label">Type here...</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <ul class="navbar-nav d-flex align-items-center  justify-content-end">
-                    <li class="nav-item d-flex align-items-center">
-                        <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://www.creative-tim.com/builder?ref=navbar-material-dashboard">Online Builder</a>
-                    </li>
-                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                            <div class="sidenav-toggler-inner">
-                                <i class="sidenav-toggler-line"></i>
-                                <i class="sidenav-toggler-line"></i>
-                                <i class="sidenav-toggler-line"></i>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="nav-item px-3 d-flex align-items-center">
-                        <a href="javascript:;" class="nav-link text-body p-0">
-                            <i class="material-symbols-rounded fixed-plugin-button-nav">settings</i>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown pe-3 d-flex align-items-center">
-                        <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="material-symbols-rounded">notifications</i>
-                        </a>
-                        <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                            <li class="mb-2">
-                                <a class="dropdown-item border-radius-md" href="javascript:;">
-                                    <div class="d-flex py-1">
-                                        <div class="my-auto">
-                                            <img src="../assets/img/team-2.jpg" class="avatar avatar-sm  me-3 ">
-                                        </div>
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="text-sm font-weight-normal mb-1">
-                                                <span class="font-weight-bold">New message</span> from Laur
-                                            </h6>
-                                            <p class="text-xs text-secondary mb-0">
-                                                <i class="fa fa-clock me-1"></i>
-                                                13 minutes ago
-                                            </p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="mb-2">
-                                <a class="dropdown-item border-radius-md" href="javascript:;">
-                                    <div class="d-flex py-1">
-                                        <div class="my-auto">
-                                            <img src="../assets/img/small-logos/logo-spotify.svg" class="avatar avatar-sm bg-gradient-dark  me-3 ">
-                                        </div>
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="text-sm font-weight-normal mb-1">
-                                                <span class="font-weight-bold">New album</span> by Travis Scott
-                                            </h6>
-                                            <p class="text-xs text-secondary mb-0">
-                                                <i class="fa fa-clock me-1"></i>
-                                                1 day
-                                            </p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item border-radius-md" href="javascript:;">
-                                    <div class="d-flex py-1">
-                                        <div class="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
-                                            <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                <title>credit-card</title>
-                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                    <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF" fill-rule="nonzero">
-                                                        <g transform="translate(1716.000000, 291.000000)">
-                                                            <g transform="translate(453.000000, 454.000000)">
-                                                                <path class="color-background" d="M43,10.7482083 L43,3.58333333 C43,1.60354167 41.3964583,0 39.4166667,0 L3.58333333,0 C1.60354167,0 0,1.60354167 0,3.58333333 L0,10.7482083 L43,10.7482083 Z" opacity="0.593633743"></path>
-                                                                <path class="color-background" d="M0,16.125 L0,32.25 C0,34.2297917 1.60354167,35.8333333 3.58333333,35.8333333 L39.4166667,35.8333333 C41.3964583,35.8333333 43,34.2297917 43,32.25 L43,16.125 L0,16.125 Z M19.7083333,26.875 L7.16666667,26.875 L7.16666667,23.2916667 L19.7083333,23.2916667 L19.7083333,26.875 Z M35.8333333,26.875 L28.6666667,26.875 L28.6666667,23.2916667 L35.8333333,23.2916667 L35.8333333,26.875 Z"></path>
-                                                            </g>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </svg>
-                                        </div>
-                                        <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="text-sm font-weight-normal mb-1">
-                                                Payment successfully completed
-                                            </h6>
-                                            <p class="text-xs text-secondary mb-0">
-                                                <i class="fa fa-clock me-1"></i>
-                                                2 days
-                                            </p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item d-flex align-items-center">
-                        <a href="../pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
-                            <i class="material-symbols-rounded">account_circle</i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
         </div>
     </nav>
     <!-- End Navbar -->
@@ -1767,201 +1659,168 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
     </script>
 
-
     <script th:inline="javascript">
         var WLStation = /*[[${selectedMicroNetwork.getSiteWeatherLink()}]]*/ [];
 
-        // Convertir la fecha actual a UTC con el offset
-        var end = Math.floor(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()) / 1000);
+        // Función principal para cargar datos y actualizar gráficos
+        function loadWeatherLinkData() {
+            var now = new Date();
+            var end = Math.floor(Date.UTC(
+                now.getUTCFullYear(),
+                now.getUTCMonth(),
+                now.getUTCDate(),
+                now.getUTCHours(),
+                now.getUTCMinutes(),
+                now.getUTCSeconds()
+            ) / 1000);
+            var start = end - (24 * 60 * 60); // Últimas 24 horas
 
-        // Definir start como 24 horas antes de `end`
-        var start = end - (24 * 60 * 60); // Restar 24 horas en segundos
+            console.log("🕒 Start:", new Date(start * 1000).toISOString());
+            console.log("🕒 End:", new Date(end * 1000).toISOString());
 
-        console.log("🕒 Start:", new Date(start * 1000).toISOString());
-        console.log("🕒 End:", new Date(end * 1000).toISOString());
+            // Fetch: Sensores a bordo
+            fetch(`/api/weatherlink/sensors-aboard?stationId=${WLStation}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("✅ Sensores obtenidos:", data);
+                })
+                .catch(error => {
+                    console.error("❌ Error al obtener los sensores:", error);
+                });
 
-        fetch(`/api/weatherlink/sensors-aboard?stationId=${WLStation}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log("✅ Sensores obtenidos:", data);
+            // Fetch: Datos actuales
+            fetch(`/api/weatherlink/current?stationId=${WLStation}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("✅ Datos actuales obtenidos:", data);
+                })
+                .catch(error => {
+                    console.error("❌ Error al obtener los datos actuales:", error);
+                });
 
-            })
-            .catch(error => {
-                console.error("❌ Error al obtener los sensores:", error);
-            });
+            // Fetch: Datos históricos
+            fetch(`/api/weatherlink/graph-historic?stationId=${WLStation}&startTimestamp=${start}&endTimestamp=${end}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("✅ Datos históricos obtenidos:", data);
+                    console.log("✅ START TIMESTAMP:", start);
+                    console.log("✅ END TIMESTAMP:", end);
 
-
-        fetch(`/api/weatherlink/current?stationId=${WLStation}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log("✅ Sensores obtenidos:", data);
-
-            })
-            .catch(error => {
-                console.error("❌ Error al obtener los sensores:", error);
-            });
-
-
-        fetch(`/api/weatherlink/graph-historic?stationId=${WLStation}&startTimestamp=${start}&endTimestamp=${end}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log("✅ Datos históricos obtenidos:", data);
-
-                console.log("✅ START TIMESTAMP:", start);
-                console.log("✅ END TIMESTAMP:", end);
-
-
-                // 🌡️ Conversión de Fahrenheit a Celsius
-                function fahrenheitToCelsius(f) {
-                    return ((f - 32) * 5 / 9).toFixed(2);
-                }
-
-                // 💨 Conversión de millas/hora a metros/segundo
-                function mphToMps(mph) {
-                    return (mph * 0.44704).toFixed(2);
-                }
-
-                // 🔍 Procesar datos de métricas individuales
-                function processMetric(metricName, conversionFn = null) {
-                    // Buscar todas las claves que contienen el nombre de la métrica deseada (independientemente del sensor)
-                    let metricKeys = Object.keys(data).filter(key => key.endsWith(`.${metricName}`));
-
-                    if (metricKeys.length === 0) {
-                        console.warn(`⚠️ Métrica ${metricName} no encontrada.`);
-                        return { current: null, mean: null, max: null, min: null };
+                    // Funciones de conversión
+                    function fahrenheitToCelsius(f) {
+                        return ((f - 32) * 5 / 9).toFixed(2);
+                    }
+                    function mphToMps(mph) {
+                        return (mph * 0.44704).toFixed(2);
                     }
 
-                    let allValues = [];
-
-                    metricKeys.forEach(key => {
-                        let sensorData = data[key];
-
-                        if (!sensorData || sensorData.length === 0) return;
-
-                        allValues.push(...sensorData.map(d => d[1]));  // 🔍 Obtener solo los valores de la métrica
-                    });
-
-                    if (allValues.length === 0) {
-                        return { current: null, mean: null, max: null, min: null };
+                    // Función para procesar métricas individuales
+                    function processMetric(metricName, conversionFn = null) {
+                        let metricKeys = Object.keys(data).filter(key => key.endsWith(`.${metricName}`));
+                        if (metricKeys.length === 0) {
+                            console.warn(`⚠️ Métrica ${metricName} no encontrada.`);
+                            return { current: null, mean: null, max: null, min: null };
+                        }
+                        let allValues = [];
+                        metricKeys.forEach(key => {
+                            let sensorData = data[key];
+                            if (!sensorData || sensorData.length === 0) return;
+                            allValues.push(...sensorData.map(d => d[1]));
+                        });
+                        if (allValues.length === 0) {
+                            return { current: null, mean: null, max: null, min: null };
+                        }
+                        let mean = allValues.reduce((a, b) => a + b, 0) / allValues.length;
+                        let max = Math.max(...allValues);
+                        let min = Math.min(...allValues);
+                        let current = allValues[allValues.length - 1];
+                        if (conversionFn) {
+                            mean = mean !== null ? conversionFn(mean) : null;
+                            max = max !== null ? conversionFn(max) : null;
+                            min = min !== null ? conversionFn(min) : null;
+                            current = current !== null ? conversionFn(current) : null;
+                        }
+                        return { current, mean, max, min };
                     }
 
-                    let mean = allValues.reduce((a, b) => a + b, 0) / allValues.length;
-                    let max = Math.max(...allValues);
-                    let min = Math.min(...allValues);
-                    let current = allValues[allValues.length - 1];
-
-                    // 🔥 Aplicar conversión si es necesario
-                    if (conversionFn) {
-                        mean = mean !== null ? conversionFn(mean) : null;
-                        max = max !== null ? conversionFn(max) : null;
-                        min = min !== null ? conversionFn(min) : null;
-                        current = current !== null ? conversionFn(current) : null;
+                    // Función para procesar métricas que involucran valores altos y bajos
+                    function processTempHum(metricHi, metricLo, conversionFn = null) {
+                        let metricHiKeys = Object.keys(data).filter(key => key.endsWith(`.${metricHi}`));
+                        let metricLoKeys = Object.keys(data).filter(key => key.endsWith(`.${metricLo}`));
+                        if (metricHiKeys.length === 0) {
+                            console.warn(`⚠️ Métrica ${metricHi} no encontrada.`);
+                            return { current: null, mean: null, max: null, min: null };
+                        }
+                        if (metricLoKeys.length === 0) {
+                            console.warn(`⚠️ Métrica ${metricLo} no encontrada.`);
+                            return { current: null, mean: null, max: null, min: null };
+                        }
+                        let allValuesHi = [];
+                        let allValuesLo = [];
+                        metricHiKeys.forEach(key => {
+                            let sensorData = data[key];
+                            if (!sensorData || sensorData.length === 0) return;
+                            allValuesHi.push(...sensorData.map(d => d[1]));
+                        });
+                        if (allValuesHi.length === 0) {
+                            return { current: null, mean: null, max: null, min: null };
+                        }
+                        metricLoKeys.forEach(key => {
+                            let sensorData = data[key];
+                            if (!sensorData || sensorData.length === 0) return;
+                            allValuesLo.push(...sensorData.map(d => d[1]));
+                        });
+                        if (allValuesLo.length === 0) {
+                            return { current: null, mean: null, max: null, min: null };
+                        }
+                        let mean = allValuesHi.reduce((a, b) => a + b, 0) / allValuesHi.length;
+                        let max = allValuesHi.length > 0 ? Math.max(...allValuesHi) : null;
+                        let min = allValuesLo.length > 0 ? Math.min(...allValuesLo) : null;
+                        let current = allValuesHi.length > 0 ? allValuesHi[allValuesHi.length - 1] : null;
+                        if (conversionFn) {
+                            mean = mean !== null ? conversionFn(mean) : null;
+                            max = max !== null ? conversionFn(max) : null;
+                            min = min !== null ? conversionFn(min) : null;
+                            current = current !== null ? conversionFn(current) : null;
+                        }
+                        return { current, mean, max, min };
                     }
 
-                    return { current, mean, max, min };
-                }
+                    // Procesar métricas individuales
+                    let windSpeed = processMetric("wind_speed_avg", mphToMps);
+                    let windDirection = processMetric("wind_speed_hi_dir");
+                    let solarRadiation = processMetric("solar_rad_avg");
+                    let humidity = processTempHum("hum_hi", "hum_lo");
+                    let THSWIndex = processTempHum("thsw_index_hi", "thsw_index_lo", fahrenheitToCelsius);
+                    let THWIndex = processTempHum("thw_index_hi", "thw_index_lo", fahrenheitToCelsius);
 
-                // 🔍 Procesar datos de métricas individuales
-                function processTempHum(metricHi, metricLo, conversionFn = null) {
-                    // Buscar todas las claves que contienen el nombre de la métrica deseada (independientemente del sensor)
-                    let metricHiKeys = Object.keys(data).filter(key => key.endsWith(`.${metricHi}`));
-                    let metricLoKeys = Object.keys(data).filter(key => key.endsWith(`.${metricLo}`));
+                    console.log("🌬️ Velocidad del viento (m/s): ", windSpeed);
+                    console.log("🧭 Dirección del viento: ", windDirection);
+                    console.log("☀️ Radiación solar: ", solarRadiation);
+                    console.log("🌡️ THSW Temperatura Externa (C°): ", THSWIndex);
+                    console.log("🌡️ THW Temperatura Interna (C°): ", THWIndex);
+                    console.log("🌡️ Humedad porcentual (%): ", humidity);
 
+                    // Crear gráficos
+                    createGauge('THWIndexGauge', 'Temperatura Interna (THW)', THWIndex, 40, '°C');
+                    createGauge('THSWIndexGauge', 'Temperatura Externa (THSW)', THSWIndex, 40, '°C');
+                    createGauge('HumidityGauge', 'Humedad', humidity, 100, '%');
+                    createGauge('SolarRadiationGauge', 'Radiación Solar', solarRadiation, 2000, 'W/m²');
+                    createGauge('windSpeedGauge', 'Velocidad del Viento', windSpeed, 24, 'm/s');
+                    createWindDirectionGauge('windDirectionMap', windDirection.current);
+                })
+                .catch(error => {
+                    console.error("❌ Error al obtener los datos históricos:", error);
+                });
+        }
 
-                    if (metricHiKeys.length === 0) {
-                        console.warn(`⚠️ Métrica ${metricHiKeys} no encontrada.`);
-                        return { current: null, mean: null, max: null, min: null };
-                    }
-
-                    if (metricLoKeys.length === 0) {
-                        console.warn(`⚠️ Métrica ${metricLoKeys} no encontrada.`);
-                        return { current: null, mean: null, max: null, min: null };
-                    }
-
-                    let allValuesHi = [];
-                    let allValuesLo = [];
-
-                    metricHiKeys.forEach(key => {
-                        let sensorData = data[key];
-                        if (!sensorData || sensorData.length === 0) return;
-                        allValuesHi.push(...sensorData.map(d => d[1]));
-                    });
-                    if (allValuesHi.length === 0) { return { current: null, mean: null, max: null, min: null };}
-
-                    metricLoKeys.forEach(key => {
-                        let sensorData = data[key];
-                        if (!sensorData || sensorData.length === 0) return;
-                        allValuesLo.push(...sensorData.map(d => d[1]));
-                    });
-                    if (allValuesLo.length === 0) { return { current: null, mean: null, max: null, min: null };}
-
-
-                    let mean = allValuesHi.reduce((a, b) => a + b, 0) / allValuesHi.length;
-                    let max = allValuesHi.length > 0 ? Math.max(...allValuesHi) : null;
-                    let min = allValuesLo.length > 0 ? Math.min(...allValuesLo) : null;
-                    let current = allValuesHi.length > 0 ? allValuesHi[allValuesHi.length - 1] : null;
-
-                    // 🔥 Aplicar conversión si es necesario
-                    if (conversionFn) {
-                        mean = mean !== null ? conversionFn(mean) : null;
-                        max = max !== null ? conversionFn(max) : null;
-                        min = min !== null ? conversionFn(min) : null;
-                        current = current !== null ? conversionFn(current) : null;
-                    }
-
-                    return { current, mean, max, min };
-                }
-
-                // 📊 Procesar métricas individuales (sin importar ID del sensor)
-                let windSpeed = processMetric("wind_speed_avg", mphToMps);  // 💨 Velocidad en m/s
-                let windDirection = processMetric("wind_speed_hi_dir");  // 🧭 Dirección del viento
-                let solarRadiation = processMetric("solar_rad_avg");  // ☀️ Radiación solar
-
-                let humidity = processTempHum("hum_hi", "hum_lo");  // 💦 Humedad (máx/mín)
-                let THSWIndex = processTempHum("thsw_index_hi", "thsw_index_lo", fahrenheitToCelsius);  // Temperatura Externa
-                let THWIndex = processTempHum("thw_index_hi", "thw_index_lo", fahrenheitToCelsius);  // 🌡️ Temperatura Interna
-
-
-                console.log("🌬️ Velocidad del viento (m/s): ", windSpeed);
-                console.log("🧭 Dirección del viento: ", windDirection);
-                console.log("☀️ Radiación solar: ", solarRadiation);
-
-                console.log("🌡️ THSW Temperatura Externa (C°): ", THSWIndex);
-                console.log("🌡️ THW Temperatura Interna (C°): ", THWIndex);
-                console.log("🌡️ Humedad porcentual (%): ", humidity);
-
-
-
-                createGauge('THWIndexGauge', 'Temperatura Interna (THW)', THWIndex, 40, '°C');
-
-                createGauge('THSWIndexGauge', 'Temperatura Externa (THSW)', THSWIndex, 40, '°C');
-
-                createGauge('HumidityGauge', 'Humedad', humidity, 100, '%');
-
-                createGauge('SolarRadiationGauge', 'Radiación Solar', solarRadiation, 2000, 'W/m²');
-
-                createGauge('windSpeedGauge', 'Velocidad del Viento', windSpeed, 24, 'm/s');
-
-                createWindDirectionGauge('windDirectionMap', windDirection.current);
-
-
-            })
-            .catch(error => {
-                console.error("❌ Error al obtener los datos históricos:", error);
-            });
-
-
-        // 🔍 Función para crear un gráfico Solid Gauge
+        // Función para crear un gráfico Solid Gauge
         function createGauge(containerId, title, data, maxRange, unit) {
-
-
-
             let dataSerie = [];
-
-            if  (!data) {
+            if (!data || data.current === null) {
                 dataSerie.push({
-                    name: 'Datos no disponilbes',
-                    data: '0'
+                    name: 'Datos no disponibles',
+                    data: [0]
                 });
             } else {
                 dataSerie.push({
@@ -1969,12 +1828,10 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     data: [parseFloat(data.current)]
                 });
             }
-
-
             Highcharts.chart(containerId, {
                 chart: {
                     type: 'solidgauge',
-                    height: '80%',
+                    height: '80%'
                 },
                 lang: {
                     decimalPoint: '.',
@@ -2002,9 +1859,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     min: 0,
                     max: maxRange,
                     stops: [
-                        [0.1, '#55BF3B'], // Verde
-                        [0.5, '#DDDF0D'], // Amarillo
-                        [0.9, '#DF5353']  // Rojo
+                        [0.1, '#55BF3B'],
+                        [0.5, '#DDDF0D'],
+                        [0.9, '#DF5353']
                     ],
                     lineWidth: 0,
                     tickWidth: 0,
@@ -2021,56 +1878,46 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             borderWidth: 0,
                             useHTML: true,
                             format: `<div style="display:flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <span style="font-size:18px; font-family: Inter,serif;">{y}</span>
-                                <span style="font-size:12px; font-family: Inter,serif;">${unit}</span>
-                             </div>`
+                                    <span style="font-size:18px; font-family: Inter,serif;">{y}</span>
+                                    <span style="font-size:12px; font-family: Inter,serif;">${unit}</span>
+                                 </div>`
                         }
                     }
                 },
                 credits: {
                     enabled: false
                 },
-                series: dataSerie,
+                series: dataSerie
             });
         }
 
-
-        // 📌 Función para generar datos de dirección del viento
+        // Función para generar datos de dirección del viento
         function generateWindData(direction) {
-            const data = Array(16).fill(0);  // Inicializar con ceros
-
+            const data = Array(16).fill(0);
             console.log("DIRECTION:", direction);
-
-            // Asegúrate que direction es un número
             direction = Number(direction);
-
             if (isNaN(direction)) {
                 console.error("❌ Error: Dirección no válida.");
                 return data;
             }
-
-            // Encontrar el índice correspondiente en la rosa de vientos
             const index = Math.round(direction / 22.5) % 16;
             console.log("Index:", index);
-
-            // Colocar el valor de la dirección REAL en el índice correspondiente
             data[index] = direction;
-
             return data;
         }
 
-        // 📌 Función para crear el gráfico de Dirección del Viento
+        // Función para crear el gráfico de Dirección del Viento
         function createWindDirectionGauge(containerId, windDirection) {
             Highcharts.chart(containerId, {
                 chart: {
                     polar: true,
                     type: 'column',
-                    height: '80%',
+                    height: '80%'
                 },
                 title: null,
                 pane: {
                     center: ['50%', '50%'],
-                    size: '70%',
+                    size: '70%'
                 },
                 xAxis: {
                     categories: ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'],
@@ -2079,7 +1926,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 },
                 yAxis: {
                     min: 0,
-                    max: 360,  // El rango máximo es 360 porque es un ángulo (dirección del viento)
+                    max: 360,
                     endOnTick: false,
                     showLastLabel: true,
                     labels: { enabled: false }
@@ -2100,7 +1947,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 },
                 series: [{
                     name: 'Dirección del Viento',
-                    data: generateWindData(windDirection),  // Datos generados para la dirección específica
+                    data: generateWindData(windDirection),
                     pointPlacement: 'on',
                     color: '#007bff'
                 }],
@@ -2109,20 +1956,22 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             });
         }
 
-
+        // Cargar datos al inicio
+        loadWeatherLinkData();
+        // Actualizar datos cada minuto
+        setInterval(loadWeatherLinkData, 60000);
     </script>
 
 
-
     <script th:inline="javascript">
+
         var SPStation = /*[[${selectedMicroNetwork.getSiteSparkMeter()}]]*/ [];
         let customerList = [];
 
         // Mostrar el loader
         function showLoader() {
-            document.getElementById('loader-table').style.cssText = 'display: flex !important;';
-            document.getElementById('loader-table').style.cssText = 'height: 370px !important;';
-            document.getElementById('table-container').style.cssText = 'display: none !important;';
+            document.getElementById('loader-table').style.cssText = 'display: flex !important; height: 370px !important;';
+            document.getElementById('table-container').style.cssText = 'display: none !important';
         }
 
         // Ocultar el loader y mostrar la tabla
@@ -2134,21 +1983,26 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         // Iniciar con el loader visible
         showLoader();
 
-        // Llamar a la API para obtener los datos
-        fetch(`/api/sparkmeter/get-customers?siteId=${SPStation}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log("✅ CUSTOMERS obtenidos:", data);
-                customerList = data;
+        // Función para cargar datos y actualizar la tabla
+        function loadTableData() {
+            showLoader();  // Mostrar el loader antes de hacer la solicitud
 
-                // Llenar la tabla con la información recibida
-                populateTable(customerList);
-            })
-            .catch(error => {
-                console.error("❌ Error al obtener los sensores:", error);
-                hideLoader();  // En caso de error, se oculta el loader
-            });
+            fetch(`/api/sparkmeter/get-customers?siteId=${SPStation}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("✅ CUSTOMERS obtenidos:", data);
+                    customerList = data;
 
+                    // Llenar la tabla con la información recibida
+                    populateTable(customerList);
+                })
+                .catch(error => {
+                    console.error("❌ Error al obtener los sensores:", error);
+                    hideLoader();  // En caso de error, se oculta el loader
+                });
+        }
+
+        // Función para poblar la tabla
         function populateTable(customers) {
             const tableBody = document.querySelector('#sparkmeter-table tbody');
 
@@ -2212,9 +2066,16 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 }
             });
 
-            // 🔥 Esconder el loader después de un pequeño retardo (para asegurar que DataTable termine su proceso de renderizado)
-            setTimeout(hideLoader, 500);
+            // 🔥 Esconder el loader después de un pequeño retardo
+            setTimeout(hideLoader, 300);
         }
+
+        // Primera carga de la tabla
+        loadTableData();
+
+        // Recargar la tabla automáticamente cada minuto (60000 ms)
+        setInterval(loadTableData, 60000);
+
 
 
     </script>
