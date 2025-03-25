@@ -30,4 +30,7 @@ public class SparkMeterService {
         return restTemplate.exchange(finalUrl, HttpMethod.GET, request, Map.class);
     }
 
+    // Falta implementar la funcion SCHEDULE para tareas periódicas para ver lo de los meters
+
+
 }

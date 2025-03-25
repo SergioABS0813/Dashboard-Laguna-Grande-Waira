@@ -219,12 +219,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     <span class="nav-link-text ms-1">Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" href="../pages/notifications.html">
-                    <i class="material-symbols-rounded opacity-5">notifications</i>
-                    <span class="nav-link-text ms-1">Notifications</span>
-                </a>
-            </li>
+
             <li class="nav-item" th:if="${session.user != null and session.user.role == 'ADMIN'}">
                 <a class="nav-link text-dark" th:href="@{/settings}">
                     <i class="material-symbols-rounded opacity-5">settings</i>
