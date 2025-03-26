@@ -78,10 +78,6 @@ public class SparkMeterService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
             String untilParam = formatter.format(now.atZone(ZoneId.of("America/Lima")).toLocalDateTime());
             String sinceParam = formatter.format(fiveMinutesAgo.atZone(ZoneId.of("America/Lima")).toLocalDateTime());
-            //Actualizar para prueba:
-            untilParam = "2025-02-19T22:01:00";
-            sinceParam = "2025-02-19T22:00:00";
-
             System.out.println("SINCE: " + sinceParam);
             System.out.println("UNTIL: " + untilParam);
 
@@ -137,7 +133,7 @@ public class SparkMeterService {
                         String severity  = alert.getSeverity();
                         String idCustomer  = alert.getCustomer_id();
 
-                        //Deseo hacer una consulta con el "idCustomer"
+                        // Consultamos en base al id del Customer
                         String urlCustomer = "https://www.sparkmeter.cloud/api/v1/customers/" + idCustomer;
 
                         // Hacer la llamada
