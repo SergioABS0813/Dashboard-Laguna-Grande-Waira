@@ -263,6 +263,51 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 </ol>
             </nav>
         </div>
+
+
+        <div
+                th:with="
+    emptyList=${T(java.util.ArrayList)()},
+    list=${(microNetworkList == null) ? emptyList : microNetworkList},
+    currentIndex=${#lists.indexOf(list, selectedMicroNetwork)},
+    prevNetwork=${(currentIndex > 0) ? list[currentIndex - 1] : null},
+    nextNetwork=${(currentIndex < list.size() - 1) ? list[currentIndex + 1] : null}
+  "
+        >
+            <div class="collapse navbar-collapse pe-md-0 mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar" style="margin-left: 15px !important;">
+                <div class="ms-md-auto d-flex align-items-center">
+                    <div class="d-flex align-items-center">
+
+                        <!-- Botón "Atrás": solo aparece si existe una microred previa -->
+                        <a class="btn btn-dark mb-0"
+                           style="padding: 6px 10px !important; font-size: 0.85rem !important; margin: 0 !important;"
+                           th:if="${prevNetwork != null}"
+                           th:href="@{'/dashboard/' + ${prevNetwork.id}}">
+                            &larr;
+                        </a>
+
+                        <!-- Nombre de la microred actual -->
+                        <span class="mx-2" style="font-size: 0.85rem;"
+                              th:text="${selectedMicroNetwork.name}">
+          Nombre de la instalación actual
+        </span>
+
+                        <!-- Botón "Adelante": solo aparece si existe una microred siguiente -->
+                        <a class="btn btn-dark mb-0"
+                           style="padding: 6px 10px !important; font-size: 0.85rem !important; margin: 0 !important;"
+                           th:if="${nextNetwork != null}"
+                           th:href="@{'/dashboard/' + ${nextNetwork.id}}">
+                            &rarr;
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
     </nav>
     <!-- End Navbar -->
 
