@@ -70,6 +70,9 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
     <!-- JavaScript de DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
+    <!-- Incluye estas librerías en el head o antes de cerrar el body -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <!-- FlatPickr -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -245,6 +248,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 </a>
             </li>
         </ul>
+        <div class="sidenav-footer position-absolute w-100 bottom-0 ">
+            <div class="mx-3">
+                <a class="btn bg-gradient-dark w-100" id="btnExportarPDF" type="button">Exportar a PDF</a>
+            </div>
+        </div>
     </div>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
         <div class="mx-3">
@@ -263,6 +271,11 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 </ol>
             </nav>
         </div>
+
+
+
+
+
     </nav>
     <!-- End Navbar -->
 
@@ -581,22 +594,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                             for Innovatel
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-                            <li class="nav-item">
-                                <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative Tim</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted" target="_blank">About Us</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://www.creative-tim.com/blog" class="nav-link text-muted" target="_blank">Blog</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted" target="_blank">License</a>
-                            </li>
-                        </ul>
-                    </div>
+
                 </div>
             </div>
         </footer>
@@ -615,6 +613,33 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
 
+    <script th:inline="javascript">
+        document.getElementById("btnExportarPDF").addEventListener("click", function() {
+            // Selecciona el contenedor que quieres exportar. En este ejemplo, se exporta todo el <main>.
+            const dashboardElement = document.querySelector('main');
+
+            html2canvas(dashboardElement, {
+                scale: 2  // Opcional: aumenta la resolución
+            }).then(canvas => {
+                // Convierte el canvas a imagen
+                const imgData = canvas.toDataURL("image/png");
+
+                // Crea el PDF con jsPDF (se usa la versión ES6 del módulo jsPDF)
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF("p", "mm", "a4");
+
+                // Calcula el ancho y alto de la imagen para adaptarlo al PDF
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                // Agrega la imagen al PDF y lo descarga
+                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+                pdf.save("dashboard.pdf");
+            }).catch(error => {
+                console.error("Error al exportar el PDF:", error);
+            });
+        });
+    </script>
 
 
 
