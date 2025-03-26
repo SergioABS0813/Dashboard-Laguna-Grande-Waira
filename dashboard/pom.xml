@@ -109,6 +109,13 @@
             <artifactId>spring-boot-starter-mail</artifactId>
             <version>3.4.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.18.2</version> <!-- Sirve para poder parsear JSON a Objetos -->
+        </dependency>
+
+
 
 
 

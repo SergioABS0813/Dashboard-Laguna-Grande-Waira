@@ -223,12 +223,536 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
-
-
-
-
     /* END Alerta: Sobrecarga */
 
+    /* CORREOS SPARKMETER: ACERCA DE LOS MEDIDORES*/
 
+    /* START Alerta: site_sync_delayed */
+
+    public void sendAlertEmailSiteSyncDelayed(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Sincronización del Sitio Retrasada");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #d32f2f; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Sincronización del Sitio Retrasada</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado un retraso en la sincronización de la instalación: <strong>%s</strong>.
+                    <br />
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>. Por favor, revise la conexión y la configuración de sincronización para evitar posibles interrupciones.
+                  </p>
+                  <p style="font-size: 16px;">
+                    Le recomendamos verificar la conectividad y los dispositivos asociados.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplaza los placeholders: %s para el nombre de la instalación y %s para el nivel de consumo
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    /* END Alerta: site_sync_delayed */
+
+    public void sendAlertEmailCustomerLowBalance(String correoReceptor, String nombreMicrored, String saldoCustomer, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Saldo Bajo del Cliente");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #d32f2f; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Saldo Bajo del Cliente</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado que el saldo del cliente para la instalación <strong>%s</strong> es bajo.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Saldo actual: <strong>%s</strong>.
+                  </p>
+                  <p style="font-size: 16px;">
+                    Le recomendamos revisar y, en caso necesario, proceder con la recarga o ajustes correspondientes.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Se reemplazan los placeholders: el primer %s es el nombre de la instalación y el segundo es el saldo del cliente
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer , saldoCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailCustomerPaymentPending(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Pago Pendiente del Cliente");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #d32f2f; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Pago Pendiente del Cliente</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado que para la instalación <strong>%s</strong> existe un pago pendiente.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                  </p>
+                  <p style="font-size: 16px;">
+                    Por favor, verifique la situación y gestione el pago correspondiente a la brevedad.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Se reemplazan los placeholders: el primero es el nombre de la instalación y el segundo el monto pendiente.
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailMeterStateDiscrepancy(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Discrepancia en el Estado del Medidor");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #d32f2f; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Discrepancia en el Estado del Medidor</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado que en la instalación <strong>%s</strong> existe una discrepancia en el estado del medidor.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, verifique el medidor y realice las acciones necesarias.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailMeterStateProtectError(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Error de Protección en el Estado del Medidor");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #ff9800; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Error de Protección en el Estado del Medidor</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado un error de protección en el estado del medidor en la instalación <strong>%s</strong>.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, revise el medidor y realice las acciones necesarias para garantizar la seguridad del sistema.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailMeterStateTamperError(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Posible Manipulación en el Medidor");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #f44336; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Posible Manipulación en el Medidor</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado una posible manipulación en el medidor de la instalación <strong>%s</strong>.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, verifique la seguridad del medidor y tome las medidas necesarias para proteger la instalación.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailMeterStateThrottleError(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Error de Limitación en el Medidor");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #9c27b0; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Error de Limitación en el Medidor</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado un error de limitación en el medidor de la instalación <strong>%s</strong>.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, revise el medidor y tome las medidas necesarias para garantizar su correcto funcionamiento.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailMeterSyncDelayed(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Sincronización del Medidor Retrasada");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #03a9f4; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Sincronización del Medidor Retrasada</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    Se ha detectado que la sincronización del medidor en la instalación <strong>%s</strong> está retrasada.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, revise la conexión y asegúrese de que el sistema esté sincronizado correctamente.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailMeterWithoutReadings(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Medidor sin Lecturas");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #ff5722; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Medidor sin Lecturas</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    El medidor en la instalación <strong>%s</strong> no ha reportado lecturas recientemente.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, revise la conexión o el estado del medidor para garantizar su correcto funcionamiento.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailCustomerDailyEnergyLimitReached(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Límite Diario de Energía Alcanzado");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #ff9800; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Límite Diario de Energía Alcanzado</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    El cliente en la instalación <strong>%s</strong> ha alcanzado su límite diario de consumo de energía.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, verifique el consumo o actualice el límite asignado si es necesario.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendAlertEmailGridMonitorSyncDelayed(String correoReceptor, String nombreMicrored, String nombreCustomer)
+            throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(correoReceptor);
+        helper.setSubject("Alerta: Sincronización del Monitor de Red Retrasada");
+
+        String htmlContent = """
+        <html>
+          <body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+            <table align="center" width="600" style="border-collapse: collapse;">
+              <tr>
+                <td style="background-color: #607d8b; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 24px;">Alerta: Sincronización del Monitor de Red Retrasada</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; background-color: #ffffff; color: #333333;">
+                  <p style="font-size: 16px;">Estimado usuario,</p>
+                  <p style="font-size: 16px;">
+                    La sincronización del monitor de red en la instalación <strong>%s</strong> está retrasada.
+                    El medidor donde se detectó esta falla es correspondiente al usuario: <strong>%s</strong>.
+                    <br />
+                    Por favor, asegúrese de que la sincronización se realice adecuadamente para evitar interrupciones en el monitoreo.
+                  </p>
+                  <p style="font-size: 16px;">Gracias,</p>
+                  <p style="font-size: 16px;"><em>Su equipo de monitoreo</em></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f5f5f5; color: #888888; padding: 10px; text-align: center; font-size: 12px;">
+                  Este es un correo automático, por favor no responda.
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """;
+
+        // Reemplazar %s por el nombre de la instalación
+        htmlContent = String.format(htmlContent, nombreMicrored, nombreCustomer);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
 
 }
