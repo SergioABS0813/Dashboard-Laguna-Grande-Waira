@@ -11,6 +11,8 @@ public interface MicroNetworkRepository extends MongoRepository<MicroNetwork, St
     // Extraer el micronetwork que tenga un siteVRM en específico
     Optional<MicroNetwork> findBySiteVRM(Integer siteVRM);
 
+    Optional<MicroNetwork> findBySiteSparkMeter(String siteSparkmeter);
+
 
 
 

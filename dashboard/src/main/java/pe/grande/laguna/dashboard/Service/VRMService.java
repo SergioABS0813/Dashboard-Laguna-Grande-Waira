@@ -304,7 +304,7 @@ public class VRMService {
                     Notification notification = new Notification();
                     notification.setDescription("Se ha detectado un nivel de voltaje bajo: " + voltage + " V");
                     notification.setTimeCreation(peruDate);
-                    notification.setType("BATERÍA BAJA");
+                    notification.setType("Batería Baja");
                     notification.setIdMicronetwork(microNetworkchosen.getId());
                     notification.setNameMicronetwork(microNetworkchosen.getAlias());
                     notificationRepository.save(notification);
