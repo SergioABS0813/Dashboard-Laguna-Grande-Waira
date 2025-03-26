@@ -20,6 +20,7 @@ import pe.grande.laguna.dashboard.Repository.UsersRepository;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -74,10 +75,19 @@ public class SparkMeterService {
             Instant now = Instant.now();
             Instant fiveMinutesAgo = now.minus(5, ChronoUnit.MINUTES);
 
-            // Formatear en ISO-8601
+            // Convertir a ZonedDateTime en Lima (UTC-5)
+            ZonedDateTime limaNow = now.atZone(ZoneId.of("America/Lima"));
+            ZonedDateTime limaFiveMinutesAgo = fiveMinutesAgo.atZone(ZoneId.of("America/Lima"));
+
+            // Convertir las horas de Lima a UTC
+            ZonedDateTime utcNow = limaNow.withZoneSameInstant(ZoneId.of("UTC"));
+            ZonedDateTime utcFiveMinutesAgo = limaFiveMinutesAgo.withZoneSameInstant(ZoneId.of("UTC"));
+
+            // Formatear en ISO-8601 (para Sparkmeter)
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-            String untilParam = formatter.format(now.atZone(ZoneId.of("America/Lima")).toLocalDateTime());
-            String sinceParam = formatter.format(fiveMinutesAgo.atZone(ZoneId.of("America/Lima")).toLocalDateTime());
+            String untilParam = formatter.format(utcNow);
+            String sinceParam = formatter.format(utcFiveMinutesAgo);
+
             System.out.println("SINCE: " + sinceParam);
             System.out.println("UNTIL: " + untilParam);
 
