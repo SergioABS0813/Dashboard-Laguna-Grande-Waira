@@ -6,12 +6,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import pe.grande.laguna.dashboard.Dto.ResponsesJSON.VRMGraphResponse;
+import pe.grande.laguna.dashboard.Dto.ResponsesJSON.VRMInstallationRecord;
 import pe.grande.laguna.dashboard.Dto.ResponsesJSON.VRMInstallationsResponse;
 import pe.grande.laguna.dashboard.Dto.VRMMeasurement;
+import pe.grande.laguna.dashboard.Entity.MicroNetwork;
+import pe.grande.laguna.dashboard.Entity.Notification;
+import pe.grande.laguna.dashboard.Entity.Settings;
+import pe.grande.laguna.dashboard.Entity.User;
+import pe.grande.laguna.dashboard.Repository.MicroNetworkRepository;
+import pe.grande.laguna.dashboard.Repository.NotificationRepository;
 import pe.grande.laguna.dashboard.Repository.SettingsRepository;
+import pe.grande.laguna.dashboard.Repository.UsersRepository;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,10 +34,19 @@ public class VRMService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final EmailService emailService;
     private final SettingsRepository settingsRepository;
+    private final MicroNetworkRepository microNetworkRepository;
+    private final UsersRepository usersRepository;
+    private final NotificationRepository notificationRepository;
 
-    public VRMService(EmailService emailService, SettingsRepository settingsRepository) {
+    public VRMService(EmailService emailService, SettingsRepository settingsRepository,
+                      MicroNetworkRepository microNetworkRepository,
+                      UsersRepository usersRepository,
+                      NotificationRepository notificationRepository) {
         this.emailService = emailService;
         this.settingsRepository = settingsRepository;
+        this.microNetworkRepository = microNetworkRepository;
+        this.usersRepository = usersRepository;
+        this.notificationRepository = notificationRepository;
     }
 
 
@@ -221,54 +243,115 @@ public class VRMService {
         return new VRMMeasurement(siteId, lastVoltage);
     }
 
-
-
-
     @Scheduled(fixedRate = 60000) // Cada 1 minutos
     public void checkVoltagesPeriodically() {
         try {
-
-            String token = "6e23e410c0b8981b5362f844004770f7c71480949bec44f320a3c6155d45846e"; // Recuperar desde BD o configuración (FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
-            int idUser = 543462;
+            List<Settings> optSettings = settingsRepository.findAll();
+            Settings settings = optSettings.get(0);
+            String tokenVRM = settings.getTokenVRM();
+            System.out.println(tokenVRM);
+            int idUser = 543462; //ID del usuario
 
             // 1) Obtener todos los idSites del usuario
-            List<Integer> idSites = obtenerIdSites(idUser, token);
+            List<Integer> idSites = obtenerIdSites(idUser, tokenVRM);
 
             // 2) Calcular timestamps start y end (en UNIX seg).
-            // Falta setear para que sea hora peruana FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-            long now = System.currentTimeMillis() / 1000; // Actual en seg
-            long fourMinutesAgo = now - 240;             // 4 min en seg
+            ZoneId peruZone = ZoneId.of("America/Lima");
+
+            long now = Instant.now().atZone(peruZone).toEpochSecond(); // Timestamp en segundos con zona de Perú
+            long fourMinutesAgo = now - 240; // 4 minutos en segundos
 
             for (Integer siteId : idSites) {
                 // 3) Llamar a la API de VRM para extraer voltaje
-                VRMGraphResponse graphResp = obtenerGraphData(siteId, fourMinutesAgo, now, token);
+                VRMGraphResponse graphResp = obtenerGraphData(siteId, fourMinutesAgo, now, tokenVRM);
 
                 // 4) Parsear el voltaje
                 VRMMeasurement measurement = parseLastVoltage(graphResp, siteId);
 
-                // 5) Si el voltaje excede cierto umbral, enviar alerta
+                // 5) Enviar alerta con la condición de (< 46.0)
                 Double voltage = measurement.getVoltage();
-                if (voltage != null && voltage > 50.0) { //FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA CORREGIR LA ALERTA VALOR DE VOLTAJE
+                if (voltage != null && voltage < 46.0) {
+                    String nombreMicrored = obtenerNombreSite(idUser, siteId, tokenVRM);
+                    //Consulta a DB para extraer la micronetwork mediante siteVRM
+                    Optional optMicronetwork = microNetworkRepository.findBySiteVRM(siteId);
+                    MicroNetwork microNetworkchosen = (MicroNetwork) optMicronetwork.get();
+                    //Extraer de DB los correosReceptoresArray que tienen el id de la micronetworkchosen
+                    System.out.println(microNetworkchosen.getId());
+                    List<User> listaUsuariosChosen = usersRepository.findByMicronetworkList(microNetworkchosen.getId());
+                    System.out.println(listaUsuariosChosen.get(0).getEmail());
+                    //Hacer un for:each en el arreglo
+                    for (User userChosen: listaUsuariosChosen){
+                        String correoReceptor = userChosen.getEmail();
+                        // Enviamos correo
+                        if(userChosen.isAlertsEmail()){
+                            emailService.sendAlertEmailBateriaBaja(
+                                    correoReceptor,
+                                    nombreMicrored,
+                                    voltage
+                            );
+                        }
+                        else {
+                            System.out.println("El usuario " + userChosen.getName() + "no tiene habilitado el envío en correos");
+                        }
 
-                    String nombreMicrored = "Laguna Grande"; //Sería hacer una consulta a la API VRM
-                    //String nombreMicrored = obtenerNombreMicrored(siteId);
+                    }
+                    //Obtener la fecha/hora actual en esa zona
+                    LocalDateTime localNow = LocalDateTime.now(peruZone);
+                    // Convertir LocalDateTime -> Instant -> Date
+                    Instant instant = localNow.atZone(peruZone).toInstant();
+                    Date peruDate = Date.from(instant);
+                    // Creamos la notificación y la guardamos en DB
+                    Notification notification = new Notification();
+                    notification.setDescription("Se ha detectado un nivel de voltaje bajo: " + voltage + " V");
+                    notification.setTimeCreation(peruDate);
+                    notification.setType("Batería Baja");
+                    notification.setIdMicronetwork(microNetworkchosen.getId());
+                    notification.setNameMicronetwork(microNetworkchosen.getAlias());
+                    notificationRepository.save(notification);
 
-                    String correoReceptor = "a20213170@pucp.edu.pe"; // FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA MANDAR CORREO A TODOS LOS USUARIOS QUE TENGAN ASIGNADO EL SITE
-
-                    // Enviamos correo
-                    emailService.sendAlertEmailBateriaBaja(
-                            correoReceptor,
-                            nombreMicrored,
-                            voltage
-                    );
                 }
-
-                // FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA CREAR LAS NOTIFICACIONES Y COLOCARLAS A BD
             }
 
         } catch (Exception e) {
             // Manejo de errores
             System.err.println("Error al verificar voltajes: " + e.getMessage());
+        }
+    }
+
+    public String obtenerNombreSite(int idUser, int idSite, String token) throws Exception {
+        // Construir la URL del endpoint
+        String url = String.format("https://vrmapi.victronenergy.com/v2/users/%d/installations", idUser);
+
+        // Configurar las cabeceras (aquí se utiliza "x-authorization" con el token)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("x-authorization", "Token " + token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        // Realizar la llamada al endpoint
+        ResponseEntity<VRMInstallationsResponse> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                VRMInstallationsResponse.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            VRMInstallationsResponse body = response.getBody();
+            if (body != null && body.isSuccess()) {
+                // Recorrer la lista de instalaciones y buscar la que tenga el idSite indicado
+                for (VRMInstallationRecord installation : body.getRecords()) {
+                    if (installation.getIdSite() == idSite) {
+                        return installation.getName();
+                    }
+                }
+                throw new Exception("No se encontró instalación con idSite: " + idSite);
+            } else {
+                throw new Exception("La respuesta no fue exitosa o está vacía.");
+            }
+        } else {
+            throw new Exception("Error al llamar al endpoint: " + response.getStatusCode());
         }
     }
 

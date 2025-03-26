@@ -20,4 +20,11 @@ public interface UsersRepository extends MongoRepository<User, String> {
     // Verificar si un usuario con un email específico existe
     boolean existsByEmail(String email);
 
+    //Extraer todos los usuarios que tengan un micronetwork por ID en micronetworkList
+    List<User> findByMicronetworkList(String microNetworkId);
+
+
+
+
+
 }

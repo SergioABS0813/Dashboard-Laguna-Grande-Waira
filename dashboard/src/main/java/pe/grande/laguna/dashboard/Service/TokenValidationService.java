@@ -116,8 +116,11 @@ public class TokenValidationService {
     public ArrayList<InstalacionDTO> obtenerListaInstalaciones(String tokenVRM) throws JsonProcessingException {
         ArrayList<InstalacionDTO> listaInstalaciones = new ArrayList<>();
 
-        // URL de la API
-        String url = "https://vrmapi.victronenergy.com/v2/users/543462/installations";
+        // Crear RestTemplate
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL para obtener el idUser
+        String urlUser = "https://vrmapi.victronenergy.com/v2/users/me";
 
         // Construir los headers
         HttpHeaders headers = new HttpHeaders();
@@ -126,21 +129,36 @@ public class TokenValidationService {
         // Crear la entidad que representa la solicitud (sin body, solo headers)
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
-        // Usar exchange con método GET para incluir los headers
-        ResponseEntity<String> response = restTemplate.exchange(
-                url,
+        // Obtener el idUser
+        ResponseEntity<String> responseUser = restTemplate.exchange(
+                urlUser,
+                HttpMethod.GET,
+                requestEntity,
+                String.class
+        );
+
+        // Parsear la respuesta JSON para obtener el idUser
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode userRoot = mapper.readTree(responseUser.getBody());
+
+        int idUser = userRoot.path("user").path("id").asInt();
+
+        // URL de la API con idUser dinámico
+        String urlInstallations = "https://vrmapi.victronenergy.com/v2/users/" + idUser + "/installations";
+
+        // Obtener la lista de instalaciones
+        ResponseEntity<String> responseInstallations = restTemplate.exchange(
+                urlInstallations,
                 HttpMethod.GET,
                 requestEntity,
                 String.class
         );
 
         // Parsear la respuesta JSON
-        String jsonBody = response.getBody();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(jsonBody);
+        JsonNode installationsRoot = mapper.readTree(responseInstallations.getBody());
 
         // Extraer el nodo "records" y recorrer
-        JsonNode records = root.get("records");
+        JsonNode records = installationsRoot.get("records");
         for (JsonNode record : records) {
             int idSite = record.get("idSite").asInt();
             String name = record.get("name").asText();

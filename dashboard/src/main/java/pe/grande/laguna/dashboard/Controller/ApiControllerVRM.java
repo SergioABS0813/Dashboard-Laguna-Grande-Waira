@@ -147,11 +147,6 @@ public class ApiControllerVRM {
 
 
 
-
-
-
-
-
     private Map<String, Object> processDataMainGraph(Map installationData) {
         Map<String, Object> graphData = new HashMap<>();
 

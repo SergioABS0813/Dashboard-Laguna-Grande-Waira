@@ -104,12 +104,7 @@
                             <span class="nav-link-text ms-1">Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="../pages/notifications.html">
-                            <i class="material-symbols-rounded opacity-5">notifications</i>
-                            <span class="nav-link-text ms-1">Notifications</span>
-                        </a>
-                    </li>
+
                     <li class="nav-item" th:if="${session.user != null and session.user.role == 'ADMIN'}">
                         <a class="nav-link text-dark" th:href="@{/settings}">
                             <i class="material-symbols-rounded opacity-5">settings</i>
@@ -274,21 +269,34 @@
                             </div>
                             <div class="card-body">
                                 <!-- Asume que en tu controlador envías al modelo un objeto "microNetwork" -->
-                                <form id="editUserForm" th:action="@{/micronetworks/create}"  th:object="${user}" method="post">
+                                <form id="editUserForm" th:action="@{/user_managment/edit}"  th:object="${user}" method="post">
+                                    <input th:field="*{id}" hidden="hidden">
                                     <!-- Fila 1 -->
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="form-label">Nombre</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <label class="form-label" >Ingrese el nombre del usuario</label>
-                                                <input type="text" th:field="*{name}" class="form-control">
+                                            <div class="input-group input-group-outline" th:classappend="${#fields.hasErrors('name')} ? ' is-invalid'">
+                                                <input type="text" th:field="*{name}" class="form-control" placeholder="Ingrese el nombre del usuario">
+                                            </div>
+                                            <!-- Mensaje de error inmediatamente debajo -->
+                                            <div th:if="${#fields.hasErrors('name')}" class="text-danger">
+                                                <!-- Ícono de exclamación de Material Icons -->
+                                                <span class="material-symbols-rounded align-middle">error</span>
+                                                <!-- Mensaje de error -->
+                                                <span th:errors="*{name}"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Apellido</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <label class="form-label" >Ingrese el apellido del usuario</label>
-                                                <input type="text" th:field="*{lastname}" class="form-control">
+                                            <div class="input-group input-group-outline " th:classappend="${#fields.hasErrors('lastname')} ? ' is-invalid'">
+                                                <input type="text" th:field="*{lastname}" class="form-control" placeholder="Ingrese el apellido del usuario">
+                                            </div>
+                                            <!-- Mensaje de error inmediatamente debajo -->
+                                            <div th:if="${#fields.hasErrors('lastname')}" class="text-danger">
+                                                <!-- Ícono de exclamación de Material Icons -->
+                                                <span class="material-symbols-rounded align-middle">error</span>
+                                                <!-- Mensaje de error -->
+                                                <span th:errors="*{lastname}"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -296,16 +304,28 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="form-label">Correo electrónico</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <label class="form-label" >Ingrese el correo del usuario</label>
-                                                <input type="text" th:field="*{email}" class="form-control">
+                                            <div class="input-group input-group-outline " th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'">
+                                                <input type="text" th:field="*{email}" class="form-control" placeholder="Ingrese el correo del usuario">
+                                            </div>
+                                            <!-- Mensaje de error inmediatamente debajo -->
+                                            <div th:if="${#fields.hasErrors('email')}" class="text-danger">
+                                                <!-- Ícono de exclamación de Material Icons -->
+                                                <span class="material-symbols-rounded align-middle">error</span>
+                                                <!-- Mensaje de error -->
+                                                <span th:errors="*{email}"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Número de Celular</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <label class="form-label" >Ingrese el número celular</label>
-                                                <input type="text" th:field="*{phone}" class="form-control">
+                                            <div class="input-group input-group-outline " th:classappend="${#fields.hasErrors('phone')} ? ' is-invalid'">
+                                                <input type="text" th:field="*{phone}" class="form-control" placeholder="Ingrese el número celular">
+                                            </div>
+                                            <!-- Mensaje de error inmediatamente debajo -->
+                                            <div th:if="${#fields.hasErrors('phone')}" class="text-danger">
+                                                <!-- Ícono de exclamación de Material Icons -->
+                                                <span class="material-symbols-rounded align-middle">error</span>
+                                                <!-- Mensaje de error -->
+                                                <span th:errors="*{phone}"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -313,16 +333,21 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="form-label">Contraseña</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <label class="form-label" >Ingrese la contraseña del usuario</label>
-                                                <input type="text" th:field="*{password}" class="form-control">
+                                            <div class="input-group input-group-outline " th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'">
+                                                <input type="password" th:field="*{password}" class="form-control" placeholder="Ingrese la contraseña del usuario">
+                                            </div>
+                                            <!-- Mensaje de error inmediatamente debajo -->
+                                            <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                                <!-- Ícono de exclamación de Material Icons -->
+                                                <span class="material-symbols-rounded align-middle">error</span>
+                                                <!-- Mensaje de error -->
+                                                <span th:errors="*{password}"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Confirmar contraseña</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <label class="form-label" >Confirmar la contraseña del usuario</label>
-                                                <input type="text" class="form-control">
+                                            <div class="input-group input-group-outline ">
+                                                <input type="password"  name="confirmPassword" class="form-control" placeholder="Confirmar la contraseña del usuario">
                                             </div>
                                         </div>
                                     </div>
