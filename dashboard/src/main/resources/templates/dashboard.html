@@ -272,18 +272,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             </nav>
         </div>
 
-
-
-
-
     </nav>
     <!-- End Navbar -->
-
-
-
-
-
-
 
 
     <div id="container-siteId" class="highcharts-negative" style="display: none" th:text="${selectedMicroNetwork.getSiteVRM()}"></div>
@@ -337,7 +327,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         </div>
 
         <div class="col-12 mb-1 mt-2">
-            <div class="card">
+            <div  class="card">
 
                 <!-- Contenedor de la gráfica. Se incluye un atributo data para inyectar el siteId -->
                 <div id="container" data-site-id="[[${selectedMicroNetwork.id}]]" style="width: 100%; height: 500px; padding-top: 30px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px"></div>
@@ -358,7 +348,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         <div class="row mb-1">
 
             <div class="col-xl-8 col-lg-8 col-md-12 mb-1 mt-2">
-                <div class="card">
+                <div  class="card">
                     <div id="loader" style="display: flex; align-items: center; justify-content: center; height: 600px;">
                         <span>Cargando dispositivos...</span>
                     </div>
@@ -613,37 +603,164 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 <script th:src="@{/js/core/chartjs.min.js}"></script>
 
 
+
+
     <script th:inline="javascript">
-        document.getElementById("btnExportarPDF").addEventListener("click", function() {
-            // Selecciona el contenedor que quieres exportar. En este ejemplo, se exporta todo el <main>.
-            const dashboardElement = document.querySelector('main');
+        // --- Función para generar el reporte HTML ---
+        function generarReporteHTML() {
+            // Verificar que la tabla de abonados esté cargada.
+            if (!(window.customerList && window.customerList.data && window.customerList.data.length > 0)) {
+                return;
+            }
 
-            html2canvas(dashboardElement, {
-                scale: 2  // Opcional: aumenta la resolución
-            }).then(canvas => {
-                // Convierte el canvas a imagen
-                const imgData = canvas.toDataURL("image/png");
+            // 0. Preparar datos de la instalación y fecha/hora actual
+            let currentDateTime = new Date();
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
 
-                // Crea el PDF con jsPDF (se usa la versión ES6 del módulo jsPDF)
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF("p", "mm", "a4");
+            // Asumimos que window.installationData ya está definida
+            window.installationData = /*[[${selectedMicroNetwork}]]*/ {};
 
-                // Calcula el ancho y alto de la imagen para adaptarlo al PDF
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            let installationTableHTML = "";
+            if (window.installationData) {
+                installationTableHTML = '<table style="width:100%; border-collapse:collapse;">';
+                installationTableHTML += `<tr><td>Microred</td><td>${window.installationData.alias || 'N/A'} - ${window.installationData.provincia || 'N/A'}, ${window.installationData.departamento || 'N/A'}</td></tr>`;
+                installationTableHTML += `<tr><td>Coordenadas</td><td>${window.installationData.lat || 'N/A'}, ${window.installationData.lon || 'N/A'}</td></tr>`;
+                installationTableHTML += `<tr><td>Fecha/Hora Actual</td><td>${currentDateTime.toLocaleString('es-ES', options)}</td></tr>`;
+                installationTableHTML += '</table>';
+            } else {
+                installationTableHTML = `<p>Datos de instalación no disponibles.</p><p>Fecha/Hora: ${currentDateTime.toLocaleString()}</p>`;
+            }
 
-                // Agrega la imagen al PDF y lo descarga
-                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-                pdf.save("dashboard.pdf");
-            }).catch(error => {
-                console.error("Error al exportar el PDF:", error);
+            // 1. Extraer datos de Victron (valores actuales)
+            let solarYield;
+            if (window.victronData.currentTotalSolarYieldTime < window.victronData.currentTotalConsumptionTime) {
+                solarYield = 0;
+            } else {
+                solarYield = window.victronData.currentTotalSolarYield;
+            }
+            let victronTableHTML = "";
+            if (window.victronData) {
+                victronTableHTML = '<table style="width:100%; border-collapse:collapse;">';
+                victronTableHTML += '<thead><tr><th>Concepto</th><th>Valor</th></tr></thead><tbody>';
+                victronTableHTML += `<tr><td>Producción Solar Total</td><td>${solarYield} kWh</td></tr>`;
+                victronTableHTML += `<tr><td>Voltaje de Baterías</td><td>${window.victronData.currentBVAvg} V</td></tr>`;
+                victronTableHTML += `<tr><td>Consumo Total</td><td>${window.victronData.currentTotalConsumption} kWh</td></tr>`;
+                victronTableHTML += '</tbody></table>';
+            } else {
+                victronTableHTML = "No se encontraron datos Victron.";
+            }
+
+            // 2. Extraer datos de sensores climáticos (WeatherLink) en formato de tabla
+            let weatherTableHTML = "";
+            if (window.weatherMetrics) {
+                weatherTableHTML = '<table style="width:100%; border-collapse:collapse;">';
+                weatherTableHTML += '<thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody>';
+                weatherTableHTML += `<tr><td>Velocidad del Viento</td><td>${window.weatherMetrics.currentWindSpeed} m/s</td></tr>`;
+                weatherTableHTML += `<tr><td>Dirección del Viento</td><td>${window.weatherMetrics.currentWindDirection}°</td></tr>`;
+                weatherTableHTML += `<tr><td>Radiación Solar</td><td>${window.weatherMetrics.currentSolarRadiation} W/m²</td></tr>`;
+                weatherTableHTML += `<tr><td>THSW (Temp. Externa)</td><td>${window.weatherMetrics.currentTHSWIndex}°C</td></tr>`;
+                weatherTableHTML += `<tr><td>THW (Temp. Interna)</td><td>${window.weatherMetrics.currentTHWIndex}°C</td></tr>`;
+                weatherTableHTML += `<tr><td>Humedad</td><td>${window.weatherMetrics.currentHumidity}%</td></tr>`;
+                weatherTableHTML += '</tbody></table>';
+            } else {
+                weatherTableHTML = "No se encontraron datos de WeatherLink.";
+            }
+
+            // 3. Generar el HTML de la tabla de abonados usando window.customerList.data.
+            let abonadosDataHTML = "";
+            abonadosDataHTML += '<table style="width:100%; border-collapse:collapse;">';
+            abonadosDataHTML += '<thead><tr>';
+            abonadosDataHTML += '<th>ABONADO</th>';
+            abonadosDataHTML += '<th>STATUS</th>';
+            abonadosDataHTML += '<th>MEDIDOR</th>';
+            abonadosDataHTML += '<th>SALDO RESTANTE</th>';
+            abonadosDataHTML += '</tr></thead><tbody>';
+            window.customerList.data.forEach(customer => {
+                abonadosDataHTML += `<tr style="background-color:#f6f8f8; border-bottom: 1px solid #ddd;">`;
+                abonadosDataHTML += `<td>${customer.name || 'Alias no disponible'}</td>`;
+                let statusColor = (customer.meters && customer.meters[0] && customer.meters[0].operatingMode === 'off') ? 'red' : 'green';
+                abonadosDataHTML += `<td style="text-align:center;"><span style="color:${statusColor};">${(customer.meters && customer.meters[0] && customer.meters[0].operatingMode && customer.meters[0].operatingMode.toUpperCase()) || 'N/A'}</span></td>`;
+                abonadosDataHTML += `<td style="text-align:center;">${(customer.meters && customer.meters[0] && customer.meters[0].serial) || 'Sin Medidor'}</td>`;
+                abonadosDataHTML += `<td style="text-align:center;">${(customer.balances && customer.balances.credit && customer.balances.credit.value) || 'N/A'} ${(customer.balances && customer.balances.credit && customer.balances.credit.currency) || ''}</td>`;
+                abonadosDataHTML += `</tr>`;
             });
-        });
+            abonadosDataHTML += '</tbody></table>';
+
+            // 4. Generar la plantilla HTML final del reporte.
+            const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8">
+        <title>Reporte del Dashboard</title>
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
+        <style>
+          body { font-family: Inter, serif; margin: 20px; }
+          h1, h2, h3 { color: #333; }
+          section { margin-bottom: 40px; }
+          table { border-collapse: collapse; width: 100%; }
+          table, th, td { border: 1px solid #ddd; }
+          th, td { padding: 8px; text-align: left; }
+        </style>
+      </head>
+      <body>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <img src="/media/main_logo.png" alt="Logo" style="height: 20px;">
+            <h2>Sistema de Monitorización de Microredes - V1</h2>
+        </div>
+
+        <section>
+          <h2>Datos de la Instalación</h2>
+          ${installationTableHTML}
+        </section>
+
+        <section>
+          <h3>Datos de Victron</h3>
+          ${victronTableHTML}
+        </section>
+
+        <section>
+          <h3>Sensores Climáticos</h3>
+          ${weatherTableHTML}
+        </section>
+
+        <section>
+          <h3>Información sobre Abonados</h3>
+          <p>Abonados con poco saldo restante.</p>
+          ${abonadosDataHTML}
+        </section>
+      </body>
+      </html>
+    `;
+
+            // 5. Abrir el HTML generado en una nueva ventana o pestaña y autoejecutar Print.
+            const newWindow = window.open("", "_blank");
+            newWindow.document.open();
+            newWindow.document.write(htmlContent);
+            newWindow.document.close();
+            newWindow.focus();
+            newWindow.onload = function() {
+                newWindow.print();
+            };
+        }
+
+        // Asignar la función al botón de exportar
+        document.getElementById("btnExportarPDF").addEventListener("click", generarReporteHTML);
     </script>
 
 
 
-        <!-- 1. Funciones para el mapa y edición de sitios -->
+
+
+
+
+    <!-- 1. Funciones para el mapa y edición de sitios -->
     <script th:inline="javascript">
         function chargeMapInstalations() {
             var mapMarkersData = /*[[${microNetworkList}]]*/ [];
@@ -1430,21 +1547,44 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 .then(data => {
                     if (data.total_solar_yield && Array.isArray(data.total_solar_yield)) {
                         chart.series[0].setData(data.total_solar_yield);
+
+                        const currentTotalSolarYield = data.total_solar_yield[data.total_solar_yield.length - 1][1];
+                        const currentTotalSolarYieldTime = data.total_solar_yield[data.total_solar_yield.length - 1][0];
+                        window.victronData = window.victronData || {};
+                        window.victronData.currentTotalSolarYield = currentTotalSolarYield;
+                        window.victronData.currentTotalSolarYieldTime = currentTotalSolarYieldTime;
+
                     }
                     if (data.bv_avg && Array.isArray(data.bv_avg)) {
                         chart.series[1].setData(data.bv_avg);
+
+                        const currentBVAvg = data.bv_avg[data.bv_avg.length - 1][1];
+                        const currentBVAvgTime = data.bv_avg[data.bv_avg.length - 1][0];
+                        window.victronData = window.victronData || {};
+                        window.victronData.currentBVAvg = currentBVAvg;
+                        window.victronData.currentBVAvgTime = currentBVAvgTime;
                     }
                     if (data.bv_range && Array.isArray(data.bv_range)) {
                         chart.series[2].setData(data.bv_range);
+
                     }
                     if (data.total_consumption && Array.isArray(data.total_consumption)) {
                         chart.series[3].setData(data.total_consumption);
+
+                        const currentTotalConsumption = data.total_consumption[data.total_consumption.length - 1][1];
+                        const currentTotalConsumptionTime = data.total_consumption[data.total_consumption.length - 1][0];
+                        window.victronData = window.victronData || {};
+                        window.victronData.currentTotalConsumption = currentTotalConsumption;
+                        window.victronData.currentTotalConsumptionTime = currentTotalConsumptionTime;
+
                     }
                     if (data.totals && typeof data.totals === 'object') {
+                        console.log('Data:', data);
                         console.log('Totals:', data.totals);
                         console.log('total_solar_yield:', data.totals.total_solar_yield);
                         console.log('total_consumption:', data.totals.total_consumption);
                     }
+
                 })
                 .catch(error => console.error('Error al actualizar la gráfica:', error));
         }
@@ -1826,6 +1966,17 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     console.log("🌡️ THW Temperatura Interna (C°): ", THWIndex);
                     console.log("🌡️ Humedad porcentual (%): ", humidity);
 
+
+
+                    window.weatherMetrics = window.weatherMetrics || {};
+                    window.weatherMetrics.currentTHWIndex = THWIndex.current;
+                    window.weatherMetrics.currentTHSWIndex = THSWIndex.current;
+                    window.weatherMetrics.currentHumidity = humidity.current;
+                    window.weatherMetrics.currentSolarRadiation = solarRadiation.current;
+                    window.weatherMetrics.currentWindSpeed = windSpeed.current;
+                    window.weatherMetrics.currentWindDirection = windDirection.current;
+
+
                     // Crear gráficos
                     createGauge('THWIndexGauge', 'Temperatura Interna (THW)', THWIndex, 40, '°C');
                     createGauge('THSWIndexGauge', 'Temperatura Externa (THSW)', THSWIndex, 40, '°C');
@@ -2016,6 +2167,8 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                 .then(response => response.json())
                 .then(data => {
                     console.log("✅ CUSTOMERS obtenidos:", data);
+                    window.customerList = window.customerList || {};
+                    window.customerList.data = data;
                     customerList = data;
 
                     // Llenar la tabla con la información recibida
@@ -2099,7 +2252,7 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         loadTableData();
 
         // Recargar la tabla automáticamente cada minuto (60000 ms)
-        setInterval(loadTableData, 60000);
+        setInterval(loadTableData, 5*60000);
 
 
 
