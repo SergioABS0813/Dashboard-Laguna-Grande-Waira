@@ -68,7 +68,7 @@ public class SparkMeterService {
 
     // Falta implementar la funcion SCHEDULE para tareas periódicas para ver lo de los meters
 
-    @Scheduled(fixedRate = 300000) // cada 5 minutos (300000 ms)
+    @Scheduled(fixedRate = 60000*5) // cada 5 minutos (300000 ms)
     public void checkSparkmeterAlertsPeriodically() {
         try {
 

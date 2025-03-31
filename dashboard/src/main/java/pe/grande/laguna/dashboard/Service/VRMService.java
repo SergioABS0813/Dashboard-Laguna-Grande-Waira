@@ -243,7 +243,7 @@ public class VRMService {
         return new VRMMeasurement(siteId, lastVoltage);
     }
 
-    @Scheduled(fixedRate = 60000) // Cada 1 minutos
+    @Scheduled(fixedRate = 60000*5) // Cada 5 minutos
     public void checkVoltagesPeriodically() {
         try {
             List<Settings> optSettings = settingsRepository.findAll();
