@@ -548,7 +548,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ABONADO</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STATUS</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">MEDIDOR</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ÚLTIMA COMUNICACIÓN</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">SALDO RESTANTE</th>
                             </tr>
                             </thead>
@@ -716,7 +715,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
         </div>
 
         <section>
-          <h2>Datos de la Instalación</h2>
           ${installationTableHTML}
         </section>
 
@@ -760,33 +758,46 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
 
 
 
-    <!-- 1. Funciones para el mapa y edición de sitios -->
     <script th:inline="javascript">
         function chargeMapInstalations() {
+            // Se obtienen la lista de sitios y el sitio seleccionado (inyectados con Thymeleaf)
             var mapMarkersData = /*[[${microNetworkList}]]*/ [];
             var mapMicroNetwork = /*[[${selectedMicroNetwork}]]*/ {};
 
+            // Inicializar el mapa
             var map = L.map('map').setView([-9.189967, -75.015152], 6);
-
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 14,
                 minZoom: 6,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // 🔹 Agregamos todos los marcadores
+            // Para cada sitio en la lista, creamos un marcador con su infobox
             mapMarkersData.forEach(function(marker) {
+                var infoBox = `
+                <div style="width: 250px; padding: 5px; font-family: Inter, sans-serif;">
+                    <h3 style="margin: 0; font-size: 16px;">${marker.alias}</h3>
+                    <br>
+                    <b style="font-family: Inter, sans-serif;">Provincia:</b> ${marker.provincia || 'N/A'}
+                    <br>
+                    <b style="font-family: Inter, sans-serif;">Departamento:</b> ${marker.departamento || 'N/A'}
+                    <br>
+                    <b style="font-family: Inter, sans-serif;">Ubicación:</b> ${marker.lat}, ${marker.lon}
+                    <br>
+                    <button class="btn btn-dark" onclick="window.location.href='/dashboard/${marker.id}'" style="margin-top: 10px; padding: 5px 10px; font-family: Inter, sans-serif;">
+                        Ver Sitio
+                    </button>
+                </div>
+            `;
                 L.marker([marker.lat, marker.lon])
                     .addTo(map)
-                    .bindPopup(marker.alias);
+                    .bindPopup(infoBox);
             });
 
-            // 🔥 Si hay un sitio seleccionado, mostramos su cartilla con información
+            // Si existe un sitio seleccionado, lo marcamos y abrimos su infobox
             if (mapMicroNetwork && mapMicroNetwork.lat && mapMicroNetwork.lon) {
-                var selectedMarker = L.marker([mapMicroNetwork.lat, mapMicroNetwork.lon]).addTo(map);
-
-                var infoBox = `
-                <div style="width: 250px; padding: 10px; font-family: Inter, sans-serif;">
+                var selectedInfoBox = `
+                <div style="width: 250px; padding: 5px; font-family: Inter, sans-serif;">
                     <h3 style="margin: 0; font-size: 16px;">${mapMicroNetwork.alias}</h3>
                     <br>
                     <b style="font-family: Inter, sans-serif;">Provincia:</b> ${mapMicroNetwork.provincia}
@@ -794,19 +805,17 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
                     <b style="font-family: Inter, sans-serif;">Departamento:</b> ${mapMicroNetwork.departamento}
                     <br>
                     <b style="font-family: Inter, sans-serif;">Ubicación:</b> ${mapMicroNetwork.lat}, ${mapMicroNetwork.lon}
+                    <br>
+                    <button class="btn btn-dark" onclick="window.location.href='/dashboard/${mapMicroNetwork.id}'" style="margin-top: 10px; padding: 5px 10px; font-family: Inter, sans-serif;">
+                        Ver Sitio
+                    </button>
                 </div>
             `;
-
-                selectedMarker.bindPopup(infoBox).openPopup();
-
-                // 📌 Mover la vista para centrar el sitio seleccionado
+                var selectedMarker = L.marker([mapMicroNetwork.lat, mapMicroNetwork.lon]).addTo(map);
+                selectedMarker.bindPopup(selectedInfoBox).openPopup();
+                // Centrar la vista en el sitio seleccionado
                 map.setView([mapMicroNetwork.lat, mapMicroNetwork.lon], 10);
             }
-        }
-
-        function editSite(siteId) {
-            alert(`Editar sitio con ID: ${siteId}`);
-            // Aquí puedes abrir un modal o redirigir a otra vista para configuración
         }
     </script>
 
@@ -2213,9 +2222,6 @@ DEMO REFERENCE: https://demos.creative-tim.com/material-dashboard/pages/dashboar
             </td>
             <td class="align-middle text-center">
                 <span class="text-secondary text-xs font-weight-bold">${customer.meters?.[0]?.serial || 'Sin Medidor'}</span>
-            </td>
-            <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">${customer.id || 'N/A'}</span>
             </td>
             <td class="align-middle text-center">
                 <span class="text-secondary text-xs font-weight-bold">${customer.balances?.credit?.value || 'N/A'} ${customer.balances?.credit?.currency || ''}</span>
