@@ -18,5 +18,18 @@ Este proyecto consiste en el desarrollo de un dashboard para la visualización y
 ## 🚀 Objetivo
 Brindar una herramienta que permita a la empresa monitorear el consumo eléctrico y variables ambientales para la toma de decisiones.
 
+## 📸 Vista del sistema
+
+### Vista de Instalaciones de las Microrredes
+![Instalaciones](assets/instalaciones.png)
+
+### Vista de Usuarios
+![Usuarios](assets/usuarios.png)
+
+### Vista del Dashboard de una Microrred
+![Dashboard](assets/dashboard/dashboard_1.png)
+![Dashboard](assets/dashboard/dashboard_2.png)
+![Dashboard](assets/dashboard/dashboard_3.png)
+
 ## 📎 Nota
 Proyecto desarrollado como trabajo freelance para Waira Energía en colaboración con un equipo reducido.
